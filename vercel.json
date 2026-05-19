@@ -1,0 +1,10 @@
+{"rewrites":[
+  {"source":"/admin/:path*","destination":"/index.html"},
+  {"source":"/:country/:path*","destination":"/index.html"},
+  {"source":"/product/:id","destination":"/index.html"},
+  {"source":"/category/:slug","destination":"/index.html"},
+  {"source":"/about","destination":"/index.html"},
+  {"source":"/contact","destination":"/index.html"},
+  {"source":"/sitemap.xml","destination":"/index.html"},
+  {"source":"/robots.txt","destination":"/index.html"}
+],"cleanUrls":true,"trailingSlash":false}
