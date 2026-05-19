@@ -1,31 +1,12 @@
-{
-  "rewrites": [
-    {"source": "/admin", "destination": "/index.html"},
-    {"source": "/admin/", "destination": "/index.html"},
-    {"source": "/admin/dashboard", "destination": "/index.html"},
-    {"source": "/admin/dashboard/", "destination": "/index.html"},
-    {"source": "/de/admin", "destination": "/index.html"},
-    {"source": "/de/admin/", "destination": "/index.html"},
-    {"source": "/es/admin", "destination": "/index.html"},
-    {"source": "/it/admin", "destination": "/index.html"},
-    {"source": "/fr/admin", "destination": "/index.html"},
-    {"source": "/:country?/product/:id", "destination": "/index.html"},
-    {"source": "/:country?/category/:slug", "destination": "/index.html"},
-    {"source": "/:country?/about", "destination": "/index.html"},
-    {"source": "/:country?/contact", "destination": "/index.html"},
-    {"source": "/:country?/sitemap.xml", "destination": "/index.html"},
-    {"source": "/:country?/robots.txt", "destination": "/index.html"},
-    {"source": "/(.*)", "destination": "/index.html"}
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    }
-  ]
-}
+{"rewrites":[
+  {"source":"/assets/:path*","destination":"/assets/:path*"},
+  {"source":"/_worker.js","destination":"/_worker.js"},
+  {"source":"/admin/:path*","destination":"/index.html"},
+  {"source":"/:country/:path*","destination":"/index.html"},
+  {"source":"/product/:id","destination":"/index.html"},
+  {"source":"/category/:slug","destination":"/index.html"},
+  {"source":"/about","destination":"/index.html"},
+  {"source":"/contact","destination":"/index.html"},
+  {"source":"/sitemap.xml","destination":"/index.html"},
+  {"source":"/robots.txt","destination":"/index.html"}
+],"cleanUrls":true,"trailingSlash":false}
