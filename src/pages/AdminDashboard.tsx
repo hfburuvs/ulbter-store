@@ -471,19 +471,30 @@ function ProductsTab() {
       const csvBrands = new Map<string, { name: string; slug: string; categorySlug: string }>();
       const csvCats = new Map<string, { name: string; slug: string }>();
 
+      // Helper: generate slug from name
+      const toSlug = (name: string) => name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
+
       for (const row of allRows) {
         const userAction = actionMap.get(row.title?.toLowerCase());
         if (userAction === "skip") continue;
-        if (row.category_name && row.category_slug) {
-          csvCats.set(row.category_slug, { name: row.category_name, slug: row.category_slug });
+
+        // Collect category: prefer explicit slug, fallback to generated slug from name
+        const catName = row.category_name?.trim();
+        const catSlug = row.category_slug?.trim() || (catName ? toSlug(catName) : '');
+        if (catName && catSlug) {
+          csvCats.set(catSlug, { name: catName, slug: catSlug });
         }
-        if (row.brand_name && row.brand_slug) {
-          let targetCatSlug = row.category_slug;
+
+        // Collect brand: prefer explicit slug, fallback to generated slug from name
+        const brandName = row.brand_name?.trim();
+        const brandSlug = row.brand_slug?.trim() || (brandName ? toSlug(brandName) : '');
+        if (brandName && brandSlug) {
+          let targetCatSlug = catSlug;
           if (!targetCatSlug && row.category_id) {
             const existingCat = liveCats.find((c: any) => c.id === row.category_id);
             if (existingCat) targetCatSlug = existingCat.slug;
           }
-          csvBrands.set(row.brand_slug, { name: row.brand_name, slug: row.brand_slug, categorySlug: targetCatSlug });
+          csvBrands.set(brandSlug, { name: brandName, slug: brandSlug, categorySlug: targetCatSlug });
         }
       }
       console.log("[IMPORT] PHASE 3 - CSV unique items:", { csvCats: Array.from(csvCats.keys()), csvBrands: Array.from(csvBrands.entries()) });
@@ -553,6 +564,7 @@ function ProductsTab() {
         if (userAction === "skip") { skipped++; continue; }
 
         // Resolve category_id: explicit ID > lookup by slug > lookup by name > fallback
+        const catSlugFromName = row.category_name?.trim() ? toSlug(row.category_name) : '';
         let resolvedCatId: number | null = null;
         if (row.category_id && parseInt(String(row.category_id)) > 0) {
           const exists = liveCats.some((c: any) => c.id === parseInt(String(row.category_id)));
@@ -560,6 +572,9 @@ function ProductsTab() {
         }
         if (!resolvedCatId && row.category_slug) {
           resolvedCatId = catSlugMap.get(row.category_slug) || null;
+        }
+        if (!resolvedCatId && catSlugFromName) {
+          resolvedCatId = catSlugMap.get(catSlugFromName) || null;
         }
         if (!resolvedCatId && row.category_name) {
           resolvedCatId = catNameMap.get(row.category_name.toLowerCase()) || null;
@@ -571,6 +586,7 @@ function ProductsTab() {
         row.category_id = resolvedCatId;
 
         // Resolve brand_id: explicit ID > lookup by slug > lookup by name > fallback
+        const brandSlugFromName = row.brand_name?.trim() ? toSlug(row.brand_name) : '';
         let resolvedBrandId: number | null = null;
         if (row.brand_id && parseInt(String(row.brand_id)) > 0) {
           const exists = liveBrands.some((b: any) => b.id === parseInt(String(row.brand_id)));
@@ -578,6 +594,9 @@ function ProductsTab() {
         }
         if (!resolvedBrandId && row.brand_slug) {
           resolvedBrandId = brandSlugMap.get(row.brand_slug) || null;
+        }
+        if (!resolvedBrandId && brandSlugFromName) {
+          resolvedBrandId = brandSlugMap.get(brandSlugFromName) || null;
         }
         if (!resolvedBrandId && row.brand_name) {
           resolvedBrandId = brandNameMap.get(row.brand_name.toLowerCase()) || null;
@@ -1698,41 +1717,69 @@ function PasswordChangeSection() {
 
 /* ============ SEO ============ */
 function SeoTab() {
-  const [items, setItems] = useState<any[]>([]);
-  const [key, setKey] = useState("");
-  const [value, setValue] = useState("");
+  const [metaDescription, setMetaDescription] = useState("");
+  const [metaKeywords, setMetaKeywords] = useState("");
+  const [savedDesc, setSavedDesc] = useState("");
+  const [savedKeywords, setSavedKeywords] = useState("");
 
   async function load() {
     const { data } = await supabase.from("seo_settings").select("*");
-    setItems(data || []);
+    const items = data || [];
+    const desc = items.find((i: any) => i.key === "metaDescription")?.value || "";
+    const kw = items.find((i: any) => i.key === "metaKeywords")?.value || "";
+    setMetaDescription(desc);
+    setMetaKeywords(kw);
+    setSavedDesc(desc);
+    setSavedKeywords(kw);
   }
 
   useEffect(() => { load(); }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const save = async (key: string, value: string) => {
     const { data: existing } = await supabase.from("seo_settings").select("id").eq("key", key).single();
     if (existing) { await supabase.from("seo_settings").update({ value }).eq("key", key); }
     else { await supabase.from("seo_settings").insert({ key, value }); }
-    setKey(""); setValue(""); load();
+  };
+
+  const handleSaveDescription = async () => {
+    await save("metaDescription", metaDescription);
+    setSavedDesc(metaDescription);
+  };
+
+  const handleSaveKeywords = async () => {
+    await save("metaKeywords", metaKeywords);
+    setSavedKeywords(metaKeywords);
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <h2 className="text-xl font-bold text-gray-900">SEO Settings</h2>
-      <form onSubmit={handleSubmit} className="flex gap-2">
-        <input placeholder="Key" value={key} onChange={(e) => setKey(e.target.value)} className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
-        <input placeholder="Value" value={value} onChange={(e) => setValue(e.target.value)} className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
-        <button type="submit" className="px-4 py-2 bg-[#2563EB] text-white rounded-lg text-sm font-medium">Add</button>
-      </form>
-      <div className="bg-white rounded-xl border border-gray-100">
-        {items.map((item) => (
-          <div key={item.id} className="flex items-center justify-between px-4 py-3 border-b border-gray-50 last:border-0">
-            <div className="min-w-0"><span className="font-medium text-gray-900">{item.key}</span><p className="text-xs text-gray-500 truncate">{item.value}</p></div>
-            <button onClick={() => { if (confirm("Delete?")) { supabase.from("seo_settings").delete().eq("id", item.id).then(() => load()); } }} className="p-1 hover:bg-red-50 rounded"><Trash2 className="w-3.5 h-3.5 text-red-400" /></button>
-          </div>
-        ))}
-        {items.length === 0 && <p className="text-sm text-gray-400 px-4 py-8 text-center">No SEO settings</p>}
+
+      {/* Meta Description */}
+      <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-semibold text-gray-900">Meta Description</label>
+          {savedDesc === metaDescription && metaDescription && <span className="text-xs text-green-600">Saved</span>}
+        </div>
+        <p className="text-xs text-gray-500">Shown in Google search results as the page description. Keep under 160 characters.</p>
+        <textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} placeholder="e.g. ULBTER offers premium camera accessories including screen protectors and lens caps..." className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" rows={3} />
+        <div className="flex items-center justify-between">
+          <span className={`text-xs ${metaDescription.length > 160 ? 'text-red-500' : 'text-gray-400'}`}>{metaDescription.length}/160 chars</span>
+          <button onClick={handleSaveDescription} className="px-4 py-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-lg text-sm font-medium">Save</button>
+        </div>
+      </div>
+
+      {/* Meta Keywords */}
+      <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-semibold text-gray-900">Meta Keywords</label>
+          {savedKeywords === metaKeywords && metaKeywords && <span className="text-xs text-green-600">Saved</span>}
+        </div>
+        <p className="text-xs text-gray-500">Comma-separated keywords. Note: Google no longer uses this for ranking, but some other search engines do.</p>
+        <input value={metaKeywords} onChange={(e) => setMetaKeywords(e.target.value)} placeholder="e.g. camera accessories, screen protector, gopro case, lens cap" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
+        <div className="flex justify-end">
+          <button onClick={handleSaveKeywords} className="px-4 py-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-lg text-sm font-medium">Save</button>
+        </div>
       </div>
     </div>
   );
