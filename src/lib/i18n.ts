@@ -4,19 +4,32 @@
 // Product data (titles/descriptions) comes from Supabase per country — NOT translated
 // ============================================
 
-export type CountryCode = "us" | "de" | "es" | "it" | "fr";
+export type CountryCode = string;
 
 export const DEFAULT_COUNTRY: CountryCode = "us";
 
-export const VALID_COUNTRIES: CountryCode[] = ["us", "de", "es", "it", "fr"];
+// Base countries (built-in 5), more can be added via DB
+export const BASE_COUNTRIES: CountryCode[] = ["us", "de", "es", "it", "fr"];
 
-export const countryConfig: Record<CountryCode, { flag: string; name: string; domain: string; currency: string; locale: string }> = {
+// Config for built-in countries; dynamic ones will be fetched from DB
+export const countryConfig: Record<string, { flag: string; name: string; domain: string; currency: string; locale: string }> = {
   us: { flag: "🇺🇸", name: "United States", domain: "amazon.com", currency: "$", locale: "en-US" },
   de: { flag: "🇩🇪", name: "Deutschland", domain: "amazon.de", currency: "€", locale: "de-DE" },
   es: { flag: "🇪🇸", name: "Espana", domain: "amazon.es", currency: "€", locale: "es-ES" },
   it: { flag: "🇮🇹", name: "Italia", domain: "amazon.it", currency: "€", locale: "it-IT" },
   fr: { flag: "🇫🇷", name: "France", domain: "amazon.fr", currency: "€", locale: "fr-FR" },
 };
+
+// Get config for a country (built-in or fallback to English defaults)
+export function getCountryConfig(code: string) {
+  return countryConfig[code] || {
+    flag: "🌍",
+    name: code.toUpperCase(),
+    domain: "amazon.com",
+    currency: "$",
+    locale: "en-US",
+  };
+}
 
 export const translations: Record<CountryCode, Record<string, string>> = {
   us: {
@@ -111,26 +124,26 @@ export const translations: Record<CountryCode, Record<string, string>> = {
     contactEmail: "E-Mail an",
     contactHours: "Wir antworten in der Regel innerhalb von 24 Stunden.",
     countryLabel: "Land",
-    aboutHero: "Ihre vertrauenswurdige Quelle fur erstklassigen Gerateschutz",
+    aboutHero: "Ihre vertrauenswürdige Quelle für erstklassigen Geräteschutz",
     aboutSubtitle: "Die Geschichte hinter",
-    aboutStory: "Gegrundet aus Leidenschaft fur Technologie und Schutz, begann ulbter als kleines Unternehmen mit einer einfachen Mission: unsere geliebten Gerate vor dem alltaglichen Verschleiss zu schutzen. Was als Suche nach dem perfekten Displayschutz begann, hat sich zu einer umfassenden Produktlinie premium Zubehorteile fur Smartwatches, Kameras und mobile Gerate entwickelt. Wir glauben, dass Schutz niemals Stil oder Funktionalitat beeintrachtigen sollte. Jedes Produkt in unserem Katalog wird sorgfaltig getestet und ausgewahlt, um unsere hohen Standards an Qualitat, Haltbarkeit und Benutzerfreundlichkeit zu erfullen.",
-    aboutWhyTitle: "Warum uns wahlen?",
+    aboutStory: "Gegründet aus Leidenschaft für Technologie und Schutz, begann ulbter als kleines Unternehmen mit einer einfachen Mission: unsere geliebten Geräte vor dem alltäglichen Verschleiß zu schützen. Was als Suche nach dem perfekten Displayschutz begann, hat sich zu einer umfassenden Produktlinie premium Zubehörteile für Smartwatches, Kameras und mobile Geräte entwickelt. Wir glauben, dass Schutz niemals Stil oder Funktionalität beeinträchtigen sollte. Jedes Produkt in unserem Katalog wird sorgfältig getestet und ausgewählt, um unsere hohen Standards an Qualität, Haltbarkeit und Benutzerfreundlichkeit zu erfüllen.",
+    aboutWhyTitle: "Warum uns wählen?",
     aboutFeature1: "Premium-Materialien",
-    aboutFeature1Desc: "Wir verwenden nur hochwertiges gehartetes Glas und erstklassige Polymere fur maximale Haltbarkeit und Klarheit.",
-    aboutFeature2: "Prazise Passform",
-    aboutFeature2Desc: "Jeder Schutz wird laserzugeschnitten, um den genauen Abmessungen Ihres Gerats zu entsprechen.",
+    aboutFeature1Desc: "Wir verwenden nur hochwertiges gehärtetes Glas und erstklassige Polymere für maximale Haltbarkeit und Klarheit.",
+    aboutFeature2: "Präzise Passform",
+    aboutFeature2Desc: "Jeder Schutz wird lasergeschnitten, um den genauen Abmessungen Ihres Geräts zu entsprechen.",
     aboutFeature3: "Kristallklar",
-    aboutFeature3Desc: "Geniessen Sie 99,9% Transparenz mit unseren HD-klaren Schutzfolien, die die ursprungliche Bildqualitat erhalten.",
+    aboutFeature3Desc: "Genießen Sie 99,9% Transparenz mit unseren HD-klaren Schutzfolien, die die ursprüngliche Bildqualität erhalten.",
     aboutFeature4: "Einfache Montage",
     aboutFeature4Desc: "Blasenfreie Anwendung dank fortschrittlicher Klebetechnologie und Montagesets.",
     aboutFeature5: "Maximaler Schutz",
-    aboutFeature5Desc: "9H Hartegrad bietet uberlegenen Schutz gegen Kratzer, Stosse und alltaglichen Verschleiss.",
+    aboutFeature5Desc: "9H Härtegrad bietet überlegenen Schutz gegen Kratzer, Stöße und alltäglichen Verschleiß.",
     aboutFeature6: "Kundenorientiert",
-    aboutFeature6Desc: "Engagiertes Support-Team und Zufriedenheitsgarantie fur jedes Produkt, das wir verkaufen.",
+    aboutFeature6Desc: "Engagiertes Support-Team und Zufriedenheitsgarantie für jedes Produkt, das wir verkaufen.",
     aboutCommitment: "Unser Engagement",
-    aboutCommitmentText: "Bei ulbter setzen wir uns nicht nur fur Produkte ein, sondern fur Seelenfrieden. Wir verstehen, dass Ihre Gerate ein integraler Bestandteil Ihres taglichen Lebens sind, und unsere Mission ist es, sie zu schutzen, ohne Kompromisse bei Asthetik oder Funktionalitat einzugehen. Wir erforschen und entwickeln kontinuierlich neue Losungen, um stets einen Schritt voraus zu sein und sicherzustellen, dass wir bereit sind, wenn ein neues Gerat auf den Markt kommt. Unser Engagement erstreckt sich uber unsere Produkte hinaus auf unseren Kundenservice, wo wir uns bemühen, ein nahtloses Einkaufserlebnis vom Browsen bis zur Lieferung und daruber hinaus zu bieten.",
-    aboutCTA: "Bereit, Ihre Gerate zu schutzen?",
-    aboutCTADesc: "Entdecken Sie noch heute unsere Kollektion premium Displayschutzfolien und Zubehor.",
+    aboutCommitmentText: "Bei ulbter setzen wir uns nicht nur für Produkte ein, sondern für Seelenfrieden. Wir verstehen, dass Ihre Geräte ein integraler Bestandteil Ihres täglichen Lebens sind, und unsere Mission ist es, sie zu schützen, ohne Kompromisse bei Ästhetik oder Funktionalität einzugehen. Wir erforschen und entwickeln kontinuierlich neue Lösungen, um stets einen Schritt voraus zu sein und sicherzustellen, dass wenn ein neues Gerät auf den Markt kommt, wir die passende Schutzlösung bereithalten. Unser Engagement erstreckt sich über unsere Produkte hinaus auf unseren Kundenservice, wo wir uns bemühen, ein nahtloses Einkaufserlebnis vom Browsen bis zur Lieferung und darüber hinaus zu bieten.",
+    aboutCTA: "Bereit, Ihre Geräte zu schützen?",
+    aboutCTADesc: "Entdecken Sie noch heute unsere Kollektion premium Displayschutzfolien und Zubehör.",
     aboutShopNow: "Jetzt shoppen",
   },
   es: {
@@ -168,26 +181,26 @@ export const translations: Record<CountryCode, Record<string, string>> = {
     contactEmail: "Envienos un correo a",
     contactHours: "Normalmente respondemos en 24 horas.",
     countryLabel: "Pais",
-    aboutHero: "Su fuente de confianza para proteccion premium de dispositivos",
-    aboutSubtitle: "La historia detras de",
-    aboutStory: "Fundada con pasion por la tecnologia y la proteccion, ulbter comenzo como una pequena empresa dedicada a resolver un problema comun: mantener nuestros queridos dispositivos a salvo del desgaste diario. Lo que comenzo como una busqueda del protector de pantalla perfecto ha evolucionado hasta convertirse en una completa linea de accesorios premium para smartwatches, camaras y dispositivos moviles. Creemos que la proteccion nunca debe comprometer el estilo ni la funcionalidad. Cada producto de nuestro catalogo se prueba y selecciona meticulosamente para garantizar que cumpla con nuestros altos estandares de calidad, durabilidad y experiencia de usuario.",
-    aboutWhyTitle: "¿Por que elegirnos?",
+    aboutHero: "Su fuente de confianza para protección premium de dispositivos",
+    aboutSubtitle: "La historia detrás de",
+    aboutStory: "Fundada con pasión por la tecnología y la protección, ulbter comenzó como una pequeña empresa dedicada a resolver un problema común: mantener nuestros queridos dispositivos a salvo del desgaste diario. Lo que comenzó como una búsqueda del protector de pantalla perfecto ha evolucionado hasta convertirse en una completa línea de accesorios premium para smartwatches, cámaras y dispositivos móviles. Creemos que la protección nunca debe comprometer el estilo ni la funcionalidad. Cada producto de nuestro catálogo se prueba y selecciona meticulosamente para garantizar que cumpla con nuestros altos estándares de calidad, durabilidad y experiencia de usuario.",
+    aboutWhyTitle: "¿Por qué elegirnos?",
     aboutFeature1: "Materiales premium",
-    aboutFeature1Desc: "Utilizamos solo vidrio templado de primera calidad y polimeros de alta calidad para una durabilidad y claridad maximas.",
-    aboutFeature2: "Ajuste de precision",
-    aboutFeature2Desc: "Cada protector se corta con laser para coincidir con las dimensiones exactas de su dispositivo.",
+    aboutFeature1Desc: "Utilizamos solo vidrio templado de primera calidad y polímeros de alta calidad para una durabilidad y claridad máximas.",
+    aboutFeature2: "Ajuste de precisión",
+    aboutFeature2Desc: "Cada protector se corta con láser para coincidir con las dimensiones exactas de su dispositivo.",
     aboutFeature3: "Cristalino",
     aboutFeature3Desc: "Disfrute de un 99,9% de transparencia con nuestros protectores HD que mantienen la calidad de pantalla original.",
-    aboutFeature4: "Instalacion facil",
-    aboutFeature4Desc: "Aplicacion sin burbujas con nuestra tecnologia adhesiva avanzada y kits de instalacion.",
-    aboutFeature5: "Proteccion maxima",
-    aboutFeature5Desc: "Dureza 9H que proporciona una defensa superior contra aranazos, impactos y desgaste diario.",
+    aboutFeature4: "Instalación fácil",
+    aboutFeature4Desc: "Aplicación sin burbujas con nuestra tecnología adhesiva avanzada y kits de instalación.",
+    aboutFeature5: "Protección máxima",
+    aboutFeature5Desc: "Dureza 9H que proporciona una defensa superior contra arañazos, impactos y desgaste diario.",
     aboutFeature6: "Enfocado en el cliente",
-    aboutFeature6Desc: "Equipo de soporte dedicado y garantia de satisfaccion en cada producto que vendemos.",
+    aboutFeature6Desc: "Equipo de soporte dedicado y garantía de satisfacción en cada producto que vendemos.",
     aboutCommitment: "Nuestro compromiso",
-    aboutCommitmentText: "En ulbter, estamos comprometidos no solo con productos, sino con la tranquilidad. Entendemos que sus dispositivos son una parte integral de su vida diaria, y nuestra mision es mantenerlos protegidos sin comprometer la estetica ni la funcionalidad. Investigamos y desarrollamos continuamente nuevas soluciones para mantenernos a la vanguardia, asegurandonos de que cuando un nuevo dispositivo llega al mercado, nosotros ya tenemos la proteccion lista. Nuestro compromiso va mas alla de nuestros productos hasta llegar a nuestro servicio al cliente, donde nos esforzamos por proporcionar una experiencia de compra sin problemas desde la navegacion hasta la entrega y mas alla.",
+    aboutCommitmentText: "En ulbter, estamos comprometidos no solo con productos, sino con la tranquilidad. Entendemos que sus dispositivos son una parte integral de su vida diaria, y nuestra misión es mantenerlos protegidos sin comprometer la estética ni la funcionalidad. Investigamos y desarrollamos continuamente nuevas soluciones para mantenernos a la vanguardia, asegurándonos de que cuando un nuevo dispositivo llega al mercado, nosotros ya tenemos la protección lista. Nuestro compromiso va más allá de nuestros productos hasta llegar a nuestro servicio al cliente, donde nos esforzamos por proporcionar una experiencia de compra sin problemas desde la navegación hasta la entrega y más allá.",
     aboutCTA: "¿Listo para proteger sus dispositivos?",
-    aboutCTADesc: "Explore nuestra coleccion de protectores de pantalla premium y accesorios hoy mismo.",
+    aboutCTADesc: "Explore nuestra colección de protectores de pantalla premium y accesorios hoy mismo.",
     aboutShopNow: "Comprar ahora",
   },
   it: {
@@ -227,14 +240,14 @@ export const translations: Record<CountryCode, Record<string, string>> = {
     countryLabel: "Paese",
     aboutHero: "La tua fonte affidabile per la protezione premium dei dispositivi",
     aboutSubtitle: "La storia dietro",
-    aboutStory: "Fondata con passione per la tecnologia e la protezione, ulbter e nata come piccola azienda dedicata a risolvere un problema comune: proteggere i nostri amati dispositivi dall'usura quotidiana. Cio che e iniziato come ricerca del proteggi schermo perfetto si e evoluto in una completa linea di accessori premium per smartwatch, fotocamere e dispositivi mobili. Crediamo che la protezione non debba mai compromettere stile o funzionalita. Ogni prodotto nel nostro catalogo viene meticolosamente testato e selezionato per garantire che soddisfi i nostri elevati standard di qualita, durata ed esperienza utente.",
-    aboutWhyTitle: "Perche sceglierci?",
+    aboutStory: "Fondata con passione per la tecnologia e la protezione, ulbter è nata come piccola azienda dedicata a risolvere un problema comune: proteggere i nostri amati dispositivi dall'usura quotidiana. Ciò che è iniziato come ricerca del proteggi schermo perfetto si è evoluto in una completa linea di accessori premium per smartwatch, fotocamere e dispositivi mobili. Crediamo che la protezione non debba mai compromettere stile o funzionalità. Ogni prodotto nel nostro catalogo viene meticolosamente testato e selezionato per garantire che soddisfi i nostri elevati standard di qualità, durata ed esperienza utente.",
+    aboutWhyTitle: "Perché sceglierci?",
     aboutFeature1: "Materiali premium",
-    aboutFeature1Desc: "Utilizziamo solo vetro temperato di prima qualita e polimeri di alta qualita per una durata e chiarezza massime.",
+    aboutFeature1Desc: "Utilizziamo solo vetro temperato di prima qualità e polimeri di alta qualità per una durata e chiarezza massime.",
     aboutFeature2: "Taglio di precisione",
     aboutFeature2Desc: "Ogni protezione viene tagliata al laser per corrispondere alle dimensioni esatte del tuo dispositivo.",
     aboutFeature3: "Cristallino",
-    aboutFeature3Desc: "Goditi una trasparenza del 99,9% con le nostre protezioni HD che mantengono la qualita originale del display.",
+    aboutFeature3Desc: "Goditi una trasparenza del 99,9% con le nostre protezioni HD che mantengono la qualità originale del display.",
     aboutFeature4: "Installazione facile",
     aboutFeature4Desc: "Applicazione senza bolle con la nostra tecnologia adesiva avanzata e kit di installazione.",
     aboutFeature5: "Protezione massima",
@@ -242,7 +255,7 @@ export const translations: Record<CountryCode, Record<string, string>> = {
     aboutFeature6: "Orientato al cliente",
     aboutFeature6Desc: "Team di supporto dedicato e garanzia di soddisfazione su ogni prodotto che vendiamo.",
     aboutCommitment: "Il nostro impegno",
-    aboutCommitmentText: "Da ulbter, ci impegniamo non solo a fornire prodotti, ma tranquillita. Comprendiamo che i tuoi dispositivi sono una parte integrante della tua vita quotidiana, e la nostra missione e tenerli protetti senza compromettere l'estetica o la funzionalita. Ricerciamo e sviluppiamo continuamente nuove soluzioni per rimanere all'avanguardia, assicurandoci che quando un nuovo dispositivo arriva sul mercato, noi abbiamo gia la protezione pronta. Il nostro impegno si estende oltre i prodotti fino ad arrivare al nostro servizio clienti, dove ci sforziamo di fornire un'esperienza di acquisto impeccabile dalla navigazione alla consegna e oltre.",
+    aboutCommitmentText: "Da ulbter, ci impegniamo a fornire non solo prodotti, ma tranquillità. Comprendiamo che i tuoi dispositivi sono una parte integrante della tua vita quotidiana, e la nostra missione è tenerli protetti senza compromettere l'estetica o la funzionalità. Ricerciamo e sviluppiamo continuamente nuove soluzioni per rimanere all'avanguardia, assicurandoci che quando un nuovo dispositivo arriva sul mercato, noi abbiamo già la protezione pronta. Il nostro impegno si estende oltre i prodotti fino ad arrivare al servizio clienti, dove ci sforziamo di fornire un'esperienza di acquisto impeccabile dalla navigazione alla consegna e oltre.",
     aboutCTA: "Pronto a proteggere i tuoi dispositivi?",
     aboutCTADesc: "Esplora oggi stesso la nostra collezione di proteggi schermo premium e accessori.",
     aboutShopNow: "Acquista ora",
@@ -283,8 +296,8 @@ export const translations: Record<CountryCode, Record<string, string>> = {
     contactHours: "Nous repondons generalement dans les 24 heures.",
     countryLabel: "Pays",
     aboutHero: "Votre source de confiance pour la protection premium des appareils",
-    aboutSubtitle: "L'histoire derriere",
-    aboutStory: "Fondee avec une passion pour la technologie et la protection, ulbter a commence comme une petite entreprise dediee a resoudre un probleme commun: proteger nos appareils bien-aimes de l'usure quotidienne. Ce qui a commence comme une quete du protecteur d'ecran parfait a evolue en une gamme complete d'accessoires premium pour montres connectees, appareils photo et appareils mobiles. Nous croyons que la protection ne devrait jamais compromettre le style ou la fonctionnalite. Chaque produit de notre catalogue est meticuleusement teste et selectionne pour garantir qu'il repond a nos normes elevees de qualite, de durabilite et d'experience utilisateur.",
+    aboutSubtitle: "L'histoire derrière",
+    aboutStory: "Fondée avec une passion pour la technologie et la protection, ulbter a commence comme une petite entreprise dediee a resoudre un probleme commun: proteger nos appareils bien-aimes de l'usure quotidienne. Ce qui a commence comme une quete du protecteur d'ecran parfait a evolue en une gamme complete d'accessoires premium pour montres connectees, appareils photo et appareils mobiles. Nous croyons que la protection ne devrait jamais compromettre le style ou la fonctionnalite. Chaque produit de notre catalogue est meticuleusement teste et selectionne pour garantir qu'il repond a nos normes elevees de qualite, de durabilite et d'experience utilisateur.",
     aboutWhyTitle: "Pourquoi nous choisir?",
     aboutFeature1: "Materiaux premium",
     aboutFeature1Desc: "Nous n'utilisons que du verre trempe de qualite superieure et des polymeres de haute qualite pour une durabilite et une clarte maximales.",
@@ -306,14 +319,24 @@ export const translations: Record<CountryCode, Record<string, string>> = {
   },
 };
 
+// Valid 2-letter country codes from path (us, de, es, it, fr, uk, etc.)
+const VALID_PATH_CODES = new Set(["us", "de", "es", "it", "fr"]);
+
 export function getCountryFromPath(path: string): CountryCode {
   const segments = path.split("/").filter(Boolean);
-  const first = segments[0] as CountryCode;
-  return VALID_COUNTRIES.includes(first) ? first : DEFAULT_COUNTRY;
+  const first = segments[0];
+  // Accept any 2-letter code as a potential country path segment
+  if (first && first.length === 2 && /^[a-z]{2}$/i.test(first)) {
+    return first.toLowerCase();
+  }
+  return DEFAULT_COUNTRY;
 }
 
 export function t(country: CountryCode, key: string): string {
-  return translations[country]?.[key] ?? translations[DEFAULT_COUNTRY][key] ?? key;
+  // Only 5 built-in countries have full translations;
+  // all others fall back to English (us)
+  const langCountry = BASE_COUNTRIES.includes(country) ? country : DEFAULT_COUNTRY;
+  return translations[langCountry]?.[key] ?? translations[DEFAULT_COUNTRY][key] ?? key;
 }
 
 // Generate a path with country prefix
