@@ -1416,7 +1416,27 @@ function CountriesTab() {
       <form onSubmit={handleSave} className="grid grid-cols-6 gap-2">
         <input placeholder="Code (e.g. us)" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} className="border p-2 rounded" required />
         <input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="border p-2 rounded" required />
-        <input placeholder="Currency ($)" value={form.currency_symbol} onChange={(e) => setForm({ ...form, currency_symbol: e.target.value })} className="border p-2 rounded" />
+        <select value={form.currency_symbol} onChange={(e) => setForm({ ...form, currency_symbol: e.target.value })} className="border p-2 rounded" title="Currency Symbol">
+          <option value="">Select Currency</option>
+          <option value="$">$ USD (US Dollar)</option>
+          <option value="€">€ EUR (Euro)</option>
+          <option value="£">£ GBP (British Pound)</option>
+          <option value="¥">¥ JPY (Japanese Yen)</option>
+          <option value="A$">A$ AUD (Australian Dollar)</option>
+          <option value="C$">C$ CAD (Canadian Dollar)</option>
+          <option value="CHF">CHF (Swiss Franc)</option>
+          <option value="kr">kr SEK (Swedish Krona)</option>
+          <option value="kr">kr NOK (Norwegian Krone)</option>
+          <option value="kr">kr DKK (Danish Krone)</option>
+          <option value="zł">zł PLN (Polish Zloty)</option>
+          <option value="₹">₹ INR (Indian Rupee)</option>
+          <option value="R">R ZAR (South African Rand)</option>
+          <option value="R$">R$ BRL (Brazilian Real)</option>
+          <option value="₩">₩ KRW (South Korean Won)</option>
+          <option value="MX$">MX$ MXN (Mexican Peso)</option>
+          <option value="AED">AED (UAE Dirham)</option>
+          <option value="S$">S$ SGD (Singapore Dollar)</option>
+        </select>
         <input placeholder="Flag emoji" value={form.flag} onChange={(e) => setForm({ ...form, flag: e.target.value })} className="border p-2 rounded" />
         <input type="number" placeholder="Order" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })} className="border p-2 rounded" />
         <div className="flex gap-2">
