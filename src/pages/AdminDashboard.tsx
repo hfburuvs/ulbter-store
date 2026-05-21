@@ -379,10 +379,12 @@ function ProductsTab() {
           if (!row.title?.trim()) rowErrors.push(`Row ${rowNum}: title is required`);
           if (!row.price || parseFloat(String(row.price)) <= 0) rowErrors.push(`Row ${rowNum}: price must be > 0`);
           if (!row.amazon_link?.trim()) rowErrors.push(`Row ${rowNum}: amazon_link is required`);
-          if (!row.country?.trim()) rowErrors.push(`Row ${rowNum}: country is required (us/de/es/it/fr)`);
-          else {
-            const validCountries = ["us", "de", "es", "it", "fr"];
-            if (!validCountries.includes(row.country.trim().toLowerCase())) rowErrors.push(`Row ${rowNum}: country "${row.country}" is invalid. Must be one of: us, de, es, it, fr`);
+          if (!row.country?.trim()) {
+            const validCodes = countries.map((c: any) => c.code?.toLowerCase()).filter(Boolean);
+            rowErrors.push(`Row ${rowNum}: country is required (${validCodes.join(", ") || "check Countries tab"})`);
+          } else {
+            const validCodes = countries.map((c: any) => c.code?.toLowerCase()).filter(Boolean);
+            if (!validCodes.includes(row.country.trim().toLowerCase())) rowErrors.push(`Row ${rowNum}: country "${row.country}" is invalid. Must be one of: ${validCodes.join(", ") || "check Countries tab"}`);
           }
           // Must have category identification (by ID or name - slug auto-generated from name if missing)
           const hasCatId = row.category_id && parseInt(String(row.category_id)) > 0;
