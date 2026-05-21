@@ -4,9 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "mkdir -p dist/assets && cp index.html dist/index.html && cp assets/index-v2.js dist/assets/index-v2.js 2>/dev/null || true && cp assets/index-k8uOQL_1.css dist/assets/index-k8uOQL_1.css 2>/dev/null || true && echo 'Static build complete'"
+    "build": "mkdir -p dist/assets && cp index.html dist/index.html && sed -i 's|/assets/index-5yEUSmV9.js|/assets/index.js|g; s|/assets/index-BuziMgzv.css|/assets/index.css|g' dist/index.html && cp assets/index-5yEUSmV9.js dist/assets/index.js && cp assets/index-BuziMgzv.css dist/assets/index.css && echo 'Static build complete'"
   },
   "dependencies": {},
   "devDependencies": {},
-  "engines": { "node": ">=20.0.0" }
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }
