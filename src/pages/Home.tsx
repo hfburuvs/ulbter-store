@@ -82,6 +82,32 @@ export default function Home() {
     loadData();
   }, []);
 
+  // Handle scroll target from other pages (via sessionStorage)
+  useEffect(() => {
+    if (loading || categories.length === 0) return;
+    const targetId = sessionStorage.getItem("scrollToCategory");
+    if (!targetId) return;
+    sessionStorage.removeItem("scrollToCategory");
+    // Wait for images to load, then scroll with retry
+    const scrollWithRetry = (attempt: number) => {
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        // Verify scroll position after a short delay
+        if (attempt < 3) {
+          setTimeout(() => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < 0 || rect.top > window.innerHeight) {
+              el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }, 600);
+        }
+      }
+    };
+    const timer = setTimeout(() => scrollWithRetry(0), 600);
+    return () => clearTimeout(timer);
+  }, [categories, loading]);
+
   // Search products when query changes (filtered by country)
   useEffect(() => {
     if (!searchQuery.trim()) {
@@ -122,7 +148,6 @@ export default function Home() {
   };
 
   // Handle ?cat=xxx param — scroll to category after data loads
-  // Handle ?cat=xxx param — scroll to category after data loads
   useEffect(() => {
     const catSlug = searchParams.get("cat");
     if (!catSlug || loading || categories.length === 0) return;
@@ -135,19 +160,6 @@ export default function Home() {
     }, 300);
     return () => clearTimeout(timer);
   }, [searchParams, categories, loading]);
-
-  // Handle sessionStorage scroll target (from cross-page category navigation)
-  useEffect(() => {
-    if (loading || categories.length === 0) return;
-    const targetId = sessionStorage.getItem("scrollToCategory");
-    if (!targetId) return;
-    sessionStorage.removeItem("scrollToCategory");
-    const timer = setTimeout(() => {
-      const el = document.getElementById(targetId);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 400);
-    return () => clearTimeout(timer);
-  }, [categories, loading]);
 
   // Show search results view
   if (searchQuery) {
@@ -375,13 +387,13 @@ function BrandGroup({ brand, categoryId }: { brand: Brand; categoryId: number })
 
       {!collapsed && (
         isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5" aria-hidden="true">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" aria-hidden="true">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-72 bg-gray-200 rounded-xl animate-pulse" />
+              <div key={i} className="h-80 bg-gray-200 rounded-2xl animate-pulse" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5" role="list" aria-label={`${brand.name} products`}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" role="list" aria-label={`${brand.name} products`}>
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -395,31 +407,31 @@ function BrandGroup({ brand, categoryId }: { brand: Brand; categoryId: number })
 function ProductCard({ product }: { product: Product }) {
   const { country, path, config } = useCountry();
   return (
-    <article className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+    <article className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
       <Link to={path(`/product/${product.id}`)} className="block" aria-label={`View details: ${product.title}`}>
         <div className="aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
           <img
             src={product.image_url}
             alt={product.title}
-            className="w-full h-full object-contain p-4"
+            className="w-full h-full object-contain p-6"
             loading="lazy"
             decoding="async"
           />
         </div>
       </Link>
 
-      <div className="p-4">
-        <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-2 hover:text-[#2563EB] transition-colors leading-snug">
+      <div className="p-5">
+        <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-3 hover:text-[#2563EB] transition-colors leading-relaxed">
           <Link to={path(`/product/${product.id}`)}>{product.title}</Link>
         </h4>
 
         <div className="flex items-center justify-between gap-2">
-          <span className="text-lg font-bold text-gray-900">{config.currency}{product.price}</span>
+          <span className="text-xl font-bold text-gray-900">{config.currency}{product.price}</span>
           <a
             href={product.amazon_link}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-medium py-2 px-3 rounded-lg transition-colors flex-shrink-0"
+            className="inline-flex items-center gap-1.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-medium py-2.5 px-4 rounded-xl transition-colors flex-shrink-0"
             aria-label={`${config.domain}: ${product.title}`}
             onClick={(e) => e.stopPropagation()}
           >
@@ -431,4 +443,3 @@ function ProductCard({ product }: { product: Product }) {
       </div>
     </article>
   );
-}
