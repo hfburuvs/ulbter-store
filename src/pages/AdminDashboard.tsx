@@ -1648,6 +1648,7 @@ function SettingsTab() {
     { key: "aboutCommitmentText", label: "About Commitment Text", long: true },
     { key: "aboutCTA", label: "About CTA Heading" },
     { key: "aboutCTADesc", label: "About CTA Description" },
+    { key: "currencySymbol", label: "Currency Symbol" },
     { key: "footerAbout", label: "Footer About Text", long: true },
   ];
 
@@ -1683,7 +1684,26 @@ function SettingsTab() {
         {keys.map(({ key, label, long }) => (
           <div key={key}>
             <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-            {long ? (
+            {key === "currencySymbol" ? (
+              <select value={settings[key] || "$"} onChange={(e) => setSettings({ ...settings, [key]: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
+                <option value="$">$ USD (US Dollar)</option>
+                <option value="€">€ EUR (Euro)</option>
+                <option value="£">£ GBP (British Pound)</option>
+                <option value="¥">¥ JPY (Japanese Yen)</option>
+                <option value="A$">A$ AUD (Australian Dollar)</option>
+                <option value="C$">C$ CAD (Canadian Dollar)</option>
+                <option value="CHF">CHF (Swiss Franc)</option>
+                <option value="CN¥">CN¥ CNY (Chinese Yuan)</option>
+                <option value="HK$">HK$ HKD (Hong Kong Dollar)</option>
+                <option value="₩">₩ KRW (Korean Won)</option>
+                <option value="₹">₹ INR (Indian Rupee)</option>
+                <option value="R$">R$ BRL (Brazilian Real)</option>
+                <option value="MX$">MX$ MXN (Mexican Peso)</option>
+                <option value="R">R ZAR (South African Rand)</option>
+                <option value="kr">kr SEK (Swedish Krona)</option>
+                <option value="₽">₽ RUB (Russian Ruble)</option>
+              </select>
+            ) : long ? (
               <textarea value={settings[key] || ""} onChange={(e) => setSettings({ ...settings, [key]: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" rows={4} />
             ) : key === "metaDescription" || key === "heroSubtitle" ? (
               <textarea value={settings[key] || ""} onChange={(e) => setSettings({ ...settings, [key]: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" rows={2} />
