@@ -14,5 +14,29 @@
 </head>
 <body>
   <div id="root"></div>
+  <script>
+    // Import button anti-double-click protection
+    (function() {
+      let importLocked = false;
+      document.addEventListener('click', function(e) {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        const text = btn.textContent.trim();
+        if (text === 'Confirm Import' && !importLocked) {
+          importLocked = true;
+          btn.disabled = true;
+          btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" style="animation:spin 1s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="60" stroke-dashoffset="20"/></svg>Importing...';
+          btn.style.opacity = '0.7';
+          const cancelBtn = btn.parentElement.querySelector('button:not([disabled])');
+          if (cancelBtn && cancelBtn.textContent.trim() === 'Cancel') {
+            cancelBtn.disabled = true;
+            cancelBtn.style.opacity = '0.5';
+          }
+          setTimeout(function() { importLocked = false; }, 30000);
+        }
+      });
+      document.head.insertAdjacentHTML('beforeend', '<style>@keyframes spin{to{transform:rotate(360deg)}}</style>');
+    })();
+  </script>
 </body>
 </html>
