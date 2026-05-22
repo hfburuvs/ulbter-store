@@ -1412,7 +1412,7 @@ function CarouselTab() {
   };
 
   const startEdit = (item: any) => { setEditId(item.id); setForm({ image_url: item.image_url, title: item.title || "", subtitle: item.subtitle || "", button_link: item.button_link || "", sort_order: String(item.sort_order || 0) }); setPreviewUrl(item.image_url); setUploadError(""); setShowForm(true); };
-  const startAdd = () => { setEditId(null); setForm({ image_url: "", title: "", subtitle: "", link: "", sort_order: "0" }); setPreviewUrl(""); setUploadError(""); setShowForm(true); };
+  const startAdd = () => { setEditId(null); setForm({ image_url: "", title: "", subtitle: "", button_link: "", sort_order: "0" }); setPreviewUrl(""); setUploadError(""); setShowForm(true); };
 
   return (
     <div className="space-y-4">
