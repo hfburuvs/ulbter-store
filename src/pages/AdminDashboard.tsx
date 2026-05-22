@@ -223,6 +223,9 @@ function ProductsTab() {
 
   useEffect(() => { loadData(); }, []);
 
+  // Reset selection when filter changes
+  useEffect(() => { setSelectedIds(new Set()); }, [countryFilter]);
+
   // Sort products: if sort_order exists use it, otherwise use id desc
   const sortedProducts = [...products].sort((a, b) => {
     if (a.sort_order !== undefined && b.sort_order !== undefined && a.sort_order !== b.sort_order) {
