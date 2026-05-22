@@ -171,7 +171,7 @@ export default function Home() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold mb-1">
-                  {t("searchBtn")}: "<span className="text-[#2563EB]">{searchQuery}</span>"
+                  {t("searchBtn")}: "<span className="text-[#10B981]">{searchQuery}</span>"
                 </h1>
                 <p className="text-gray-400 text-sm">
                   {searchResults.length} product{searchResults.length !== 1 ? "s" : ""} found
@@ -208,7 +208,7 @@ export default function Home() {
               <p className="text-sm text-gray-500 mb-4">{t("search")}</p>
               <button
                 onClick={clearSearch}
-                className="text-[#2563EB] hover:underline text-sm font-medium"
+                className="text-[#10B981] hover:underline text-sm font-medium"
               >
                 {t("allProducts")}
               </button>
@@ -296,20 +296,20 @@ function CategorySection({ category }: { category: Category }) {
           onClick={() => setCollapsed(!collapsed)}
           className="flex items-center gap-3 group w-full text-left"
         >
-          <div className="w-8 h-8 bg-[#2563EB]/10 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-[#10B981]/10 rounded-lg flex items-center justify-center">
             {category.slug === "camera" || category.slug === "camera-accessories" ? (
-              <Camera className="w-5 h-5 text-[#2563EB]" aria-hidden="true" />
+              <Camera className="w-5 h-5 text-[#10B981]" aria-hidden="true" />
             ) : category.slug === "watch" || category.slug === "watch-accessories" ? (
-              <Watch className="w-5 h-5 text-[#2563EB]" aria-hidden="true" />
+              <Watch className="w-5 h-5 text-[#10B981]" aria-hidden="true" />
             ) : (
-              <Star className="w-5 h-5 text-[#2563EB]" aria-hidden="true" />
+              <Star className="w-5 h-5 text-[#10B981]" aria-hidden="true" />
             )}
           </div>
           <h2 className="text-2xl font-bold text-gray-900">{category.name}</h2>
           {collapsed ? (
-            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#2563EB] transition-colors" />
+            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#10B981] transition-colors" />
           ) : (
-            <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-[#2563EB] transition-colors" />
+            <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-[#10B981] transition-colors" />
           )}
         </button>
         {!collapsed && (
@@ -317,7 +317,7 @@ function CategorySection({ category }: { category: Category }) {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none bg-white border border-gray-200 text-gray-700 text-sm rounded-lg pl-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB] cursor-pointer"
+              className="appearance-none bg-white border border-gray-200 text-gray-700 text-sm rounded-lg pl-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981] cursor-pointer"
               aria-label="Sort products"
             >
               <option value="default">Default</option>
@@ -406,11 +406,11 @@ function BrandGroup({ brand, categoryId, sortBy = "default" }: { brand: Brand; c
       >
         <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
           {collapsed ? (
-            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#2563EB] transition-colors" />
+            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#10B981] transition-colors" />
           ) : (
-            <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-[#2563EB] transition-colors" />
+            <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-[#10B981] transition-colors" />
           )}
-          <span className="w-2 h-2 bg-[#2563EB] rounded-full" aria-hidden="true" />
+          <span className="w-2 h-2 bg-[#10B981] rounded-full" aria-hidden="true" />
           {brand.name}
         </h3>
         <span className="text-xs text-gray-400">{products.length} items</span>
@@ -452,7 +452,7 @@ function ProductCard({ product }: { product: Product }) {
       </Link>
 
       <div className="p-5">
-        <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-3 hover:text-[#2563EB] transition-colors leading-relaxed">
+        <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-3 hover:text-[#10B981] transition-colors leading-relaxed">
           <Link to={path(`/product/${product.id}`)}>{product.title}</Link>
         </h4>
 
@@ -462,7 +462,7 @@ function ProductCard({ product }: { product: Product }) {
             href={product.amazon_link}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-medium py-2.5 px-4 rounded-xl transition-colors flex-shrink-0"
+            className="inline-flex items-center gap-1.5 bg-[#10B981] hover:bg-[#059669] text-white text-xs font-medium py-2.5 px-4 rounded-xl transition-colors flex-shrink-0"
             aria-label={`${config.domain}: ${product.title}`}
             onClick={(e) => e.stopPropagation()}
           >

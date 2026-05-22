@@ -44,7 +44,7 @@ export default function About() {
         }} />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            {c("aboutTitle")} <span className="text-[#2563EB]">ulbter</span>
+            {c("aboutTitle")} <span className="text-[#10B981]">ulbter</span>
           </h1>
           <p className="text-lg text-gray-300 max-w-2xl mx-auto">
             {c("aboutHero")}
@@ -56,20 +56,20 @@ export default function About() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              {c("aboutSubtitle")} <span className="text-[#2563EB]">9H Films</span>
+              {c("aboutSubtitle")} <span className="text-[#10B981]">9H Films</span>
             </h2>
             <div className="space-y-4 text-gray-600 leading-relaxed">
               <p>{c("aboutStory")}</p>
             </div>
           </div>
-          <div className="bg-gradient-to-br from-[#2563EB]/10 to-[#111827]/10 rounded-2xl p-8 text-center">
-            <div className="text-6xl font-black text-[#2563EB] mb-2">ulbter</div>
+          <div className="bg-gradient-to-br from-[#10B981]/10 to-[#111827]/10 rounded-2xl p-8 text-center">
+            <div className="text-6xl font-black text-[#10B981] mb-2">ulbter</div>
             <div className="text-xl font-bold text-gray-900 mb-4">Precision Armor</div>
             <div className="text-lg text-gray-600 italic">Unstoppable Clarity</div>
             <div className="mt-6 flex justify-center gap-4">
-              <Shield className="w-8 h-8 text-[#2563EB]" />
-              <Eye className="w-8 h-8 text-[#2563EB]" />
-              <Smartphone className="w-8 h-8 text-[#2563EB]" />
+              <Shield className="w-8 h-8 text-[#10B981]" />
+              <Eye className="w-8 h-8 text-[#10B981]" />
+              <Smartphone className="w-8 h-8 text-[#10B981]" />
             </div>
           </div>
         </div>
@@ -83,7 +83,7 @@ export default function About() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((f, i) => (
               <div key={i} className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
-                <f.icon className="w-10 h-10 text-[#2563EB] mb-4" />
+                <f.icon className="w-10 h-10 text-[#10B981] mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{t(f.titleKey)}</h3>
                 <p className="text-sm text-gray-500 leading-relaxed">{t(f.descKey)}</p>
               </div>
@@ -109,7 +109,7 @@ export default function About() {
           <p className="text-gray-300 mb-8 max-w-xl mx-auto">
             {c("aboutCTADesc")}
           </p>
-          <Link to={path("/")} className="inline-flex items-center gap-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-lg font-semibold py-3 px-8 rounded-lg transition-colors">
+          <Link to={path("/")} className="inline-flex items-center gap-2 bg-[#10B981] hover:bg-[#059669] text-white text-lg font-semibold py-3 px-8 rounded-lg transition-colors">
             {t("aboutShopNow")}
           </Link>
         </div>

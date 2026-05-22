@@ -10,8 +10,8 @@
 @layer base {
   :root {
     /* ---- Brand Colors ---- */
-    --color-primary: #2563EB;
-    --color-primary-hover: #1D4ED8;
+    --color-primary: #10B981;
+    --color-primary-hover: #059669;
     --color-accent-yellow: #FFD814;
     --color-accent-yellow-hover: #F7CA00;
     --color-star: #FFA41C;
@@ -320,7 +320,7 @@
     background-color: #FEF2F2;
   }
   .icon-btn:hover.icon-btn-edit {
-    color: #2563EB;
+    color: #10B981;
     background-color: #EFF6FF;
   }
 }
