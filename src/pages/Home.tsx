@@ -190,15 +190,15 @@ export default function Home() {
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {searchLoading ? (
-            <div className="animate-pulse grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-72 bg-gray-200 rounded-xl" />
+            <div className="animate-pulse space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-48 bg-gray-200 rounded-xl" />
               ))}
             </div>
           ) : searchResults.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            <div className="space-y-4">
               {searchResults.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductRow key={product.id} product={product} />
               ))}
             </div>
           ) : (
@@ -461,15 +461,15 @@ function BrandGroup({ brand, categoryId, sortBy = "default" }: { brand: Brand; c
 
       {!collapsed && (
         isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" aria-hidden="true">
+          <div className="space-y-4" aria-hidden="true">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-80 bg-gray-200 rounded-2xl animate-pulse" />
+              <div key={i} className="h-48 bg-gray-200 rounded-xl animate-pulse" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" role="list" aria-label={`${brand.name} products`}>
+          <div className="space-y-4" role="list" aria-label={`${brand.name} products`}>
             {sortedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductRow key={product.id} product={product} />
             ))}
           </div>
         )
@@ -478,40 +478,80 @@ function BrandGroup({ brand, categoryId, sortBy = "default" }: { brand: Brand; c
   );
 }
 
-function ProductCard({ product }: { product: Product }) {
+function ProductRow({ product }: { product: Product }) {
   const { country, path, config } = useCountry();
   return (
-    <article className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-      <Link to={path(`/product/${product.id}`)} className="block" aria-label={`View details: ${product.title}`}>
-        <div className="aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
+    <article className="product-card bg-white rounded-xl border border-black/[0.08] p-4 md:p-5 flex gap-5 md:gap-6 hover:shadow-lg transition-all duration-300">
+      {/* Product Image */}
+      <Link to={path(`/product/${product.id}`)} className="block flex-shrink-0" aria-label={`View details: ${product.title}`}>
+        <div className="w-40 h-40 md:w-52 md:h-52 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
           <img
             src={product.image_url}
             alt={product.title}
-            className="w-full h-full object-contain p-6"
+            className="w-full h-full object-contain p-3 md:p-4"
             loading="lazy"
             decoding="async"
           />
         </div>
       </Link>
 
-      <div className="p-5">
-        <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-3 hover:text-brand-600 transition-colors leading-relaxed">
-          <Link to={path(`/product/${product.id}`)}>{product.title}</Link>
-        </h4>
+      {/* Product Info */}
+      <div className="flex-1 min-w-0 py-1 flex flex-col justify-between">
+        <div>
+          {/* Tags */}
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            {product.category_name && (
+              <span className="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">{product.category_name}</span>
+            )}
+            {product.brand_name && (
+              <span className="text-xs text-gray-400">Brand: {product.brand_name}</span>
+            )}
+          </div>
 
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-xl font-bold text-gray-900">{config.currency}{product.price}</span>
+          {/* Title */}
+          <h4 className="text-base md:text-lg font-semibold text-gray-900 mb-2 hover:text-brand-600 transition-colors leading-snug">
+            <Link to={path(`/product/${product.id}`)}>{product.title}</Link>
+          </h4>
+
+          {/* Description */}
+          {product.description && (
+            <p className="text-sm text-gray-500 line-clamp-2 mb-3 leading-relaxed">{product.description}</p>
+          )}
+
+          {/* Rating */}
+          {product.rating && product.rating > 0 && (
+            <div className="flex items-center gap-1.5">
+              <div className="flex text-yellow-400">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <svg key={star} className={`w-4 h-4 ${star <= Math.round(product.rating || 0) ? 'fill-current' : 'text-gray-200 fill-current'}`} viewBox="0 0 20 20">
+                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                  </svg>
+                ))}
+              </div>
+              <span className="text-sm text-gray-500">({product.rating}){product.reviews ? ` ${product.reviews} reviews` : ''}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Price + CTA */}
+        <div className="flex items-end justify-between mt-4 gap-4">
+          <div className="flex items-baseline gap-2">
+            <span className="text-xl md:text-2xl font-bold text-gray-900">{config.currency}{product.price}</span>
+            {product.original_price && product.original_price > product.price && (
+              <span className="text-sm text-gray-400 line-through">{config.currency}{product.original_price}</span>
+            )}
+          </div>
           <a
             href={product.amazon_link}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-medium py-2.5 px-4 rounded-xl transition-colors flex-shrink-0"
+            className="btn-primary text-white px-5 md:px-6 py-2.5 rounded-full text-sm font-semibold flex-shrink-0"
             aria-label={`${config.domain}: ${product.title}`}
             onClick={(e) => e.stopPropagation()}
           >
-            <span className="hidden sm:inline">Amazon</span>
-            <span className="sm:hidden">Buy</span>
-            <ExternalLink className="w-3 h-3" aria-hidden="true" />
+            <span className="hidden sm:inline">Check Price on Amazon</span>
+            <span className="sm:hidden">Amazon</span>
+            <ExternalLink className="w-3.5 h-3.5 inline-block ml-1.5 -mt-0.5" aria-hidden="true" />
           </a>
         </div>
       </div>

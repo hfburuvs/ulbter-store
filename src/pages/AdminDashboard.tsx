@@ -1352,27 +1352,26 @@ function CarouselTab() {
     if (!validTypes.includes(file.type)) { setUploadError("Only JPG, PNG, WebP allowed"); return; }
     if (file.size > 2 * 1024 * 1024) { setUploadError("Max 2MB"); return; }
 
-    // Upload to Supabase Storage
+    // Try to create bucket if it doesn't exist, then upload
     const fileExt = file.name.split('.').pop() || 'jpg';
     const fileName = `carousel-${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
     try {
+      // First try to create the bucket (will fail silently if it already exists)
+      try {
+        await supabase.storage.createBucket('carousel', { public: true });
+      } catch { /* bucket may already exist, ignore */ }
+
       const { error: uploadErr } = await supabase.storage.from("carousel").upload(fileName, file, { contentType: file.type });
       if (uploadErr) {
-        // Fallback to base64 if storage bucket doesn't exist
-        const reader = new FileReader();
-        reader.onload = (ev) => { const result = ev.target?.result as string; setPreviewUrl(result); setForm((p) => ({ ...p, image_url: result })); };
-        reader.readAsDataURL(file);
+        setUploadError(`Storage upload failed: ${uploadErr.message}. Please use "Or paste image URL" field below instead.`);
         return;
       }
       const { data: urlData } = supabase.storage.from("carousel").getPublicUrl(fileName);
       const publicUrl = urlData?.publicUrl || "";
       setPreviewUrl(publicUrl);
       setForm((p) => ({ ...p, image_url: publicUrl }));
-    } catch {
-      // Fallback to base64
-      const reader = new FileReader();
-      reader.onload = (ev) => { const result = ev.target?.result as string; setPreviewUrl(result); setForm((p) => ({ ...p, image_url: result })); };
-      reader.readAsDataURL(file);
+    } catch (err: any) {
+      setUploadError(`Upload failed: ${err?.message || 'Unknown error'}. Please use "Or paste image URL" field instead.`);
     }
   };
 
