@@ -1394,9 +1394,11 @@ function CarouselTab() {
       if (!form.image_url) { setUploadError("Please upload an image"); return; }
       const data = { ...form, sort_order: parseInt(form.sort_order) || 0 };
       if (editId) {
-        await supabase.from("carousel").update(data).eq("id", editId);
+        const { error: updateErr } = await supabase.from("carousel").update(data).eq("id", editId);
+        if (updateErr) { setError(updateErr.message || "Update failed"); return; }
       } else {
-        await supabase.from("carousel").insert({ ...data, is_active: 1 });
+        const { error: insertErr } = await supabase.from("carousel").insert({ ...data, is_active: 1 });
+        if (insertErr) { setError(insertErr.message || "Insert failed"); return; }
       }
       setShowForm(false); setEditId(null); setForm({ image_url: "", title: "", subtitle: "", link: "", sort_order: "0" }); setPreviewUrl(""); setUploadError(""); load();
     } catch (err: any) {
