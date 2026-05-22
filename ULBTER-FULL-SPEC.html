@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>ULBTER V1.5 完整技术规格与功能手册</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif; background: #f8fafc; color: #334155; line-height: 1.7; font-size: 14px; }
+  .container { max-width: 960px; margin: 0 auto; padding: 30px 20px; }
+  .cover { background: linear-gradient(135deg, #16a34a, #15803d); color: white; padding: 50px 30px; border-radius: 14px; text-align: center; margin-bottom: 30px; }
+  .cover h1 { font-size: 34px; font-weight: 800; margin-bottom: 10px; }
+  .cover p { font-size: 15px; opacity: 0.9; }
+  .section { background: white; border-radius: 10px; padding: 28px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .section h2 { font-size: 20px; color: #16a34a; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid #f0fdf4; }
+  .section h3 { font-size: 16px; color: #1e293b; margin: 18px 0 10px; padding-left: 10px; border-left: 3px solid #16a34a; }
+  .section h4 { font-size: 14px; color: #475569; margin: 14px 0 6px; font-weight: 600; }
+  p, li { margin-bottom: 7px; }
+  ul, ol { margin: 8px 0 8px 22px; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+  th { background: #f8fafc; text-align: left; padding: 7px 10px; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0; }
+  td { padding: 7px 10px; border-bottom: 1px solid #f1f5f9; }
+  code { background: #f1f5f9; padding: 2px 7px; border-radius: 3px; font-size: 12px; font-family: 'Courier New', monospace; color: #334155; }
+  pre { background: #1e293b; color: #e2e8f0; padding: 14px; border-radius: 8px; overflow-x: auto; font-size: 12px; margin: 10px 0; line-height: 1.6; }
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; margin-right: 5px; }
+  .tag-green { background: #f0fdf4; color: #16a34a; }
+  .tip { background: #f0fdf4; border-left: 3px solid #16a34a; padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 10px 0; font-size: 13px; }
+  .warning { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 10px 0; font-size: 13px; }
+  .footer { text-align: center; padding: 25px 0; color: #94a3b8; font-size: 12px; border-top: 1px solid #e2e8f0; margin-top: 30px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="cover">
+  <h1>ULBTER V1.5 完整技术规格</h1>
+  <p>面向AI复制的全量技术文档 — 架构、代码、数据库、部署、功能一览</p>
+</div>
+
+<!-- ==================== 1. 项目概述 ==================== -->
+<div class="section">
+<h2>1. 项目概述</h2>
+<p><strong>项目名称</strong>：ULBTER Store — 跨境电商品牌独立站（绿色主题版本）</p>
+<p><strong>品牌定位</strong>：销售智能手表、相机等数码配件的跨境电商品牌，主打屏幕保护膜、保护壳等配件</p>
+<p><strong>当前版本</strong>：V1.5 (Stable)</p>
+<p><strong>Git Tag</strong>：v1.5</p>
+<p><strong>GitHub 仓库</strong>：<code>https://github.com/hfburuvs/ulbter-store</code></p>
+<p><strong>部署地址</strong>：Vercel 自动部署</p>
+<p><strong> sister 项目</strong>：iDaPro Store（蓝色主题版本，仓库：<code>https://github.com/hfburuvs/idapro-store</code>，版本 V1.0）</p>
+
+<h3>1.1 核心特性</h3>
+<ul>
+  <li>绿色主题（primary color: #16a34a / brand-600）</li>
+  <li>多国家站点切换（US/UK/DE/ES/IT/FR），自动显示对应货币符号</li>
+  <li>完整后台管理系统（14个功能板块）</li>
+  <li>产品 CSV 批量导入/导出</li>
+  <li>轮播图管理 + 视频轮播管理</li>
+  <li>分类图片圆形导航</li>
+  <li>产品分页 + 国家筛选 + 批量操作</li>
+  <li>SEO 元信息配置</li>
+  <li>客户留言 + 邮件订阅管理</li>
+  <li>图片 base64 本地存储（无需图床）</li>
+</ul>
+</div>
+
+<!-- ==================== 2. 技术栈 ==================== -->
+<div class="section">
+<h2>2. 完整技术栈</h2>
+<table>
+<thead><tr><th>层级</th><th>技术</th><th>版本</th></tr></thead>
+<tbody>
+<tr><td>前端框架</td><td>React</td><td>^18.3.0</td></tr>
+<tr><td>语言</td><td>TypeScript</td><td>^5.8.0</td></tr>
+<tr><td>构建工具</td><td>Vite</td><td>^6.3.0</td></tr>
+<tr><td>路由</td><td>React Router (v7)</td><td>^7.0.0</td></tr>
+<tr><td>CSS 框架</td><td>Tailwind CSS</td><td>^3.4.0</td></tr>
+<tr><td>CSS 处理</td><td>PostCSS + Autoprefixer</td><td>^10.4.0</td></tr>
+<tr><td>图标</td><td>Lucide React</td><td>^0.500.0</td></tr>
+<tr><td>后端服务</td><td>Supabase (PostgreSQL + Auth + Storage + Edge Functions)</td><td>^2.49.0</td></tr>
+<tr><td>部署平台</td><td>Vercel</td><td>自动构建</td></tr>
+<tr><td>版本控制</td><td>Git + GitHub</td><td>-</td></tr>
+</tbody>
+</table>
+
+<h3>2.1 完整依赖清单 (package.json)</h3>
+<pre>{
+  "name": "ulbter-store",
+  "private": true,
+  "version": "1.5.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "react-router": "^7.0.0",
+    "react-helmet-async": "^2.0.0",
+    "lucide-react": "^0.500.0",
+    "@supabase/supabase-js": "^2.49.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.4.0",
+    "vite": "^6.3.0",
+    "typescript": "^5.8.0",
+    "tailwindcss": "^3.4.0",
+    "autoprefixer": "^10.4.0"
+  },
+  "engines": { "node": ">=20.0.0" }
+}</pre>
+</div>
+
+<!-- ==================== 3. 配置文件 ==================== -->
+<div class="section">
+<h2>3. 配置文件（完整内容）</h2>
+
+<h3>3.1 vite.config.ts</h3>
+<pre>import path from "path"
+import { fileURLToPath } from "url"
+import react from "@vitejs/plugin-react"
+import { defineConfig } from "vite"
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  build: {
+    outDir: "dist",
+    emptyOutDir: true,
+  },
+})</pre>
+
+<h3>3.2 tailwind.config.js</h3>
+<pre>/** @type {import('tailwindcss').Config} */
+export default {
+  darkMode: ["class"],
+  content: ["./index.html", "./src/**/*.{ts,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive) / <alpha-value>)",
+          foreground: "hsl(var(--destructive-foreground) / <alpha-value>)",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        brand: {
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          300: '#86efac',
+          400: '#4ade80',
+          500: '#22c55e',
+          600: '#16a34a',
+          700: '#15803d',
+          800: '#166534',
+          900: '#14532d',
+        },
+      },
+    },
+  },
+  plugins: [],
+}</pre>
+
+<h3>3.3 postcss.config.cjs</h3>
+<pre>module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}</pre>
+
+<h3>3.4 tsconfig.json</h3>
+<pre>{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.server.json" }
+  ]
+}</pre>
+
+<h3>3.5 tsconfig.app.json</h3>
+<pre>{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}</pre>
+
+<h3>3.6 tsconfig.node.json</h3>
+<pre>{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["vite.config.ts"]
+}</pre>
+
+<h3>3.7 tsconfig.server.json</h3>
+<pre>{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.server.tsbuildinfo",
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "types": ["node"],
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["vite.config.ts"]
+}</pre>
+
+<h3>3.8 index.html（完整）</h3>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;ulbter&lt;/title&gt;
+  &lt;script&gt;
+    window.__SUPABASE_URL__ = 'YOUR_SUPABASE_URL';
+    window.__SUPABASE_KEY__ = 'YOUR_SUPABASE_ANON_KEY';
+    window.__ADMIN_PASS__ = 'YOUR_ADMIN_PASSWORD';
+  &lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div id="root"&gt;&lt;/div&gt;
+  &lt;script type="module" src="/src/main.tsx"&gt;&lt;/script&gt;
+  &lt;script&gt;
+    // Import button anti-double-click hotfix
+    (function() {
+      var importLocked = false;
+      document.addEventListener('click', function(e) {
+        var btn = e.target.closest('button');
+        if (!btn) return;
+        var text = btn.textContent.trim();
+        if (text === 'Confirm Import' && !importLocked) {
+          importLocked = true;
+          btn.disabled = true;
+          btn.innerHTML = '&lt;svg width="14" height="14" viewBox="0 0 24 24" style="animation:spin 1s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px"&gt;&lt;circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="60" stroke-dashoffset="20"/&gt;&lt;/svg&gt;Importing...';
+          btn.style.opacity = '0.7';
+          var cancelBtn = btn.parentElement.querySelector('button:not([disabled])');
+          if (cancelBtn && cancelBtn.textContent.trim() === 'Cancel') {
+            cancelBtn.disabled = true;
+            cancelBtn.style.opacity = '0.5';
+          }
+          setTimeout(function() { importLocked = false; }, 30000);
+        }
+      });
+      var style = document.createElement('style');
+      style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+      document.head.appendChild(style);
+    })();
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+<h3>3.9 vercel.json</h3>
+<pre>{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/api/proxy-image",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    }
+  ]
+}</pre>
+</div>
+
+<!-- ==================== 4. 项目文件结构 ==================== -->
+<div class="section">
+<h2>4. 项目文件结构</h2>
+<pre>ulbter-store/
+├── index.html                          # 入口 HTML
+├── package.json                        # 依赖清单
+├── vite.config.ts                      # Vite 配置
+├── tailwind.config.js                  # Tailwind 配置
+├── postcss.config.cjs                  # PostCSS 配置
+├── tsconfig.json                       # TS 根配置
+├── tsconfig.app.json                   # TS App 配置
+├── tsconfig.node.json                  # TS Node 配置
+├── tsconfig.server.json                # TS Server 配置
+├── vercel.json                         # Vercel 部署配置
+├── public/                             # 静态资源
+│   ├── cat-camera.jpg                  # 分类默认图-Camera
+│   ├── cat-watch.jpg                   # 分类默认图-Watch
+│   └── cat-accessories.jpg             # 分类默认图-Accessories
+├── src/
+│   ├── main.tsx                        # 应用入口
+│   ├── App.tsx                         # 根组件（路由+布局+Helmet）
+│   ├── index.css                       # 全局 CSS（Tailwind + 品牌变量）
+│   ├── pages/
+│   │   ├── Home.tsx                    # 首页
+│   │   ├── ProductDetail.tsx           # 产品详情
+│   │   ├── About.tsx                   # 关于我们（含视频轮播）
+│   │   ├── Contact.tsx                 # 联系页面
+│   │   └── AdminDashboard.tsx          # 后台管理（主入口，所有Tab）
+│   ├── components/
+│   │   ├── Layout.tsx                  # 页面布局（导航栏+二级分类+Footer）
+│   │   ├── Carousel.tsx                # 轮播组件
+│   │   └── ErrorBoundary.tsx           # 错误边界
+│   ├── hooks/
+│   │   └── useCountry.ts              # 国家切换 Hook
+│   ├── lib/
+│   │   ├── supabase.ts                # Supabase 客户端初始化
+│   │   ├── i18n.ts                    # 国际化配置（翻译+国家配置）
+│   │   └── utils.ts                   # 工具函数
+│   └── types/
+│       └── index.ts                   # TypeScript 类型定义</pre>
+</div>
+
+<!-- ==================== 5. 前端架构 ==================== -->
+<div class="section">
+<h2>5. 前端架构详解</h2>
+
+<h3>5.1 组件层级</h3>
+<pre>App
+├── ErrorBoundary (全局错误边界)
+│   └── AppRoutes
+│       └── Layout (所有页面共享)
+│           ├── TopBar (绿色公告条)
+│           ├── Navbar (主导航栏，sticky)
+│           ├── SubNav (二级分类导航，sticky)
+│           ├── Outlet (路由内容)
+│           │   ├── Home
+│           │   │   ├── Featured Categories (圆形图标导航)
+│           │   │   ├── Hero Carousel (轮播+文字)
+│           │   │   └── CategorySections
+│           │   │       └── CategorySection
+│           │   │           └── BrandGroup (动态从products获取品牌)
+│           │   │               └── ProductRow (水平列表项)
+│           │   ├── ProductDetail
+│           │   ├── About (含视频轮播)
+│           │   ├── Contact
+│           │   └── AdminDashboard
+│           │       └── Sidebar Tabs (14个Tab组件)
+│           └── Footer (白色4列布局)
+</pre>
+
+<h3>5.2 路由配置 (App.tsx)</h3>
+<pre>/              → Home
+/product/:id   → ProductDetail
+/about         → About
+/contact       → Contact
+/admin         → AdminDashboard
+/*             → Home (fallback)
+</pre>
+
+<h3>5.3 状态管理</h3>
+<p><strong>无全局状态管理库</strong>，使用 React 原生 useState/useContext：</p>
+<ul>
+  <li><strong>CountryContext</strong>（Context API）：通过 useCountry() Hook 提供国家、货币、翻译、路径生成、切换函数</li>
+  <li><strong>Admin Dashboard</strong>：每个 Tab 独立管理自己的 state，通过 activeTab 状态切换显示</li>
+  <li><strong>Home Page</strong>：categories, slides, settingsMap, loading 等通过 useState 管理</li>
+</ul>
+
+<h3>5.4 国际化实现 (i18n.ts)</h3>
+<p>使用 <strong>对象映射 + Context</strong>，非 i18next 库：</p>
+<pre>// countryConfig: 每个国家的域名、货币符号、国旗、语言
+const countryConfig = {
+  us: { flag: "🇺🇸", name: "United States", domain: "amazon.com", currency: "$", locale: "en-US" },
+  uk: { flag: "🇬🇧", name: "United Kingdom", domain: "amazon.co.uk", currency: "£", locale: "en-GB" },
+  de: { flag: "🇩🇪", name: "Deutschland", domain: "amazon.de", currency: "€", locale: "de-DE" },
+  es: { flag: "🇪🇸", name: "Espana", domain: "amazon.es", currency: "€", locale: "es-ES" },
+  it: { flag: "🇮🇹", name: "Italia", domain: "amazon.it", currency: "€", locale: "it-IT" },
+  fr: { flag: "🇫🇷", name: "France", domain: "amazon.fr", currency: "€", locale: "fr-FR" },
+};
+
+// translations: 每个语言的完整翻译键值对
+// 通过 URL 参数 ?country=de 提取国家，返回对应的翻译对象 t()
+// 所有组件通过 useCountry() Hook 获取 t、country、currency 等</pre>
+
+<h3>5.5 CSS 架构 (index.css)</h3>
+<ul>
+  <li>使用 Tailwind CSS 工具类为主</li>
+  <li>品牌色 CSS 变量：--color-primary: #16a34a, --color-primary-hover: #15803d</li>
+  <li>自定义 class：.hero-pattern（绿色渐变背景）, .btn-primary（渐变按钮）, .nav-pill（导航pill）, .product-card（产品卡片）, .scrollbar-hide（隐藏滚动条）</li>
+  <li>背景色 --background: hsl(0 0% 100%), --foreground: hsl(222.2 84% 4.9%)</li>
+</ul>
+</div>
+
+<!-- ==================== 6. 数据库架构 ==================== -->
+<div class="section">
+<h2>6. 数据库架构（Supabase PostgreSQL）</h2>
+
+<h3>6.1 完整建表 SQL（一键初始化）</h3>
+<pre>-- ===== 1. Settings =====
+CREATE TABLE IF NOT EXISTS public.settings (
+  id SERIAL PRIMARY KEY,
+  key TEXT NOT NULL UNIQUE,
+  value TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ===== 2. Categories =====
+CREATE TABLE IF NOT EXISTS public.categories (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  slug TEXT NOT NULL UNIQUE,
+  icon TEXT,
+  image_url TEXT,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ===== 3. Brands =====
+CREATE TABLE IF NOT EXISTS public.brands (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  slug TEXT NOT NULL,
+  category_id INTEGER REFERENCES public.categories(id) ON DELETE CASCADE,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ===== 4. Countries =====
+CREATE TABLE IF NOT EXISTS public.countries (
+  id SERIAL PRIMARY KEY,
+  code TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  currency TEXT NOT NULL,
+  flag TEXT,
+  domain TEXT,
+  is_active INTEGER DEFAULT 1,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ===== 5. Products =====
+CREATE TABLE IF NOT EXISTS public.products (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  image_url TEXT,
+  price NUMERIC(10,2),
+  amazon_link TEXT,
+  description TEXT,
+  rating NUMERIC(3,1),
+  reviews INTEGER DEFAULT 0,
+  category_id INTEGER REFERENCES public.categories(id),
+  brand_id INTEGER REFERENCES public.brands(id),
+  country TEXT,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ===== 6. Carousel =====
+CREATE TABLE IF NOT EXISTS public.carousel (
+  id SERIAL PRIMARY KEY,
+  image_url TEXT NOT NULL,
+  title TEXT,
+  subtitle TEXT,
+  button_link TEXT,
+  is_active INTEGER DEFAULT 1,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ===== 7. Videos (V1.5) =====
+CREATE TABLE IF NOT EXISTS public.videos (
+  id SERIAL PRIMARY KEY,
+  title TEXT,
+  video_url TEXT NOT NULL,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ===== 8. Navigation =====
+CREATE TABLE IF NOT EXISTS public.navigation (
+  id SERIAL PRIMARY KEY,
+  label TEXT NOT NULL,
+  link TEXT,
+  type TEXT DEFAULT 'link',
+  parent_id INTEGER,
+  sort_order INTEGER DEFAULT 0
+);
+
+-- ===== 9. Messages =====
+CREATE TABLE IF NOT EXISTS public.messages (
+  id SERIAL PRIMARY KEY,
+  name TEXT,
+  email TEXT,
+  content TEXT,
+  is_read INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ===== 10. Subscribers =====
+CREATE TABLE IF NOT EXISTS public.subscribers (
+  id SERIAL PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ===== 11. Analytics =====
+CREATE TABLE IF NOT EXISTS public.analytics (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  code TEXT NOT NULL,
+  is_active INTEGER DEFAULT 1,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ===== Enable RLS =====
+ALTER TABLE public.settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.brands ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.countries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.carousel ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.videos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.navigation ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscribers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.analytics ENABLE ROW LEVEL SECURITY;
+
+-- ===== Create open policies =====
+CREATE POLICY "Allow all" ON public.settings FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all" ON public.categories FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all" ON public.brands FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all" ON public.countries FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all" ON public.products FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all" ON public.carousel FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all" ON public.videos FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all" ON public.navigation FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all" ON public.messages FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all" ON public.subscribers FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all" ON public.analytics FOR ALL USING (true) WITH CHECK (true);</pre>
+
+<h3>6.2 RLS 策略说明</h3>
+<p>所有表使用 <code>CREATE POLICY "Allow all"</code>，允许匿名用户（anon key）执行所有 CRUD 操作。这是内部后台使用的简化策略。生产环境建议改为基于认证的策略。</p>
+</div>
+
+<!-- ==================== 7. 核心代码文件 ==================== -->
+<div class="section">
+<h2>7. 核心代码文件（完整源码）</h2>
+
+<h3>7.1 src/main.tsx</h3>
+<pre>import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
+import App from "./App";
+import "./index.css";
+
+createRoot(document.getElementById("root")!).render(
+  &lt;StrictMode&gt;
+    &lt;HelmetProvider&gt;
+      &lt;App /&gt;
+    &lt;/HelmetProvider&gt;
+  &lt;/StrictMode&gt;
+);</pre>
+
+<h3>7.2 src/App.tsx</h3>
+<pre>import { Routes, Route } from "react-router";
+import { Helmet } from "react-helmet-async";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
+import ProductDetail from "./pages/ProductDetail";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminLogin from "./pages/AdminLogin";
+
+function AppRoutes() {
+  return (
+    &lt;Routes&gt;
+      &lt;Route path="/" element={&lt;Layout /&gt;}&gt;
+        &lt;Route index element={&lt;Home /&gt;} /&gt;
+        &lt;Route path="product/:id" element={&lt;ProductDetail /&gt;} /&gt;
+        &lt;Route path="about" element={&lt;About /&gt;} /&gt;
+        &lt;Route path="contact" element={&lt;Contact /&gt;} /&gt;
+        &lt;Route path="*" element={&lt;Home /&gt;} /&gt;
+      &lt;/Route&gt;
+    &lt;/Routes&gt;
+  );
+}
+
+export default function App() {
+  return (
+    &lt;&gt;
+      &lt;Helmet&gt;
+        &lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;
+      &lt;/Helmet&gt;
+      &lt;AppRoutes /&gt;
+    &lt;/&gt;
+  );
+}</pre>
+
+<h3>7.3 src/lib/supabase.ts</h3>
+<pre>import { createClient } from "@supabase/supabase-js";
+
+const url = (window as any).__SUPABASE_URL__;
+const key = (window as any).__SUPABASE_KEY__;
+
+export const supabase = createClient(url, key);
+
+// Tables: products, categories, brands, countries, carousel, videos, navigation, settings, messages, subscribers, analytics
+// Use: const { data, error } = await supabase.from("products").select("*");</pre>
+
+<h3>7.4 src/lib/i18n.ts（核心国际化文件）</h3>
+<pre>export type CountryCode = "us" | "uk" | "de" | "es" | "it" | "fr";
+export const BASE_COUNTRIES: CountryCode[] = ["us", "uk", "de", "es", "it", "fr"];
+
+export const countryConfig: Record&lt;string, { flag: string; name: string; domain: string; currency: string; locale: string }&gt; = {
+  us: { flag: "🇺🇸", name: "United States", domain: "amazon.com", currency: "$", locale: "en-US" },
+  uk: { flag: "🇬🇧", name: "United Kingdom", domain: "amazon.co.uk", currency: "£", locale: "en-GB" },
+  de: { flag: "🇩🇪", name: "Deutschland", domain: "amazon.de", currency: "€", locale: "de-DE" },
+  es: { flag: "🇪🇸", name: "Espana", domain: "amazon.es", currency: "€", locale: "es-ES" },
+  it: { flag: "🇮🇹", name: "Italia", domain: "amazon.it", currency: "€", locale: "it-IT" },
+  fr: { flag: "🇫🇷", name: "France", domain: "amazon.fr", currency: "€", locale: "fr-FR" },
+};
+
+// 翻译内容省略（包含所有页面文字的完整翻译对象，每个语言一个对象）
+// 通过 getTranslation(country) 获取对应语言的翻译对象</pre>
+
+<h3>7.5 src/hooks/useCountry.ts</h3>
+<pre>// 通过 URL 参数 ?country=de 获取当前国家
+// 返回: { country, t, path, switchCountry, config }
+// country: 当前国家代码
+// t: 翻译函数 t("key") 返回对应语言的文本
+// path: 路径生成函数 path("/about") → "/about?country=de"
+// switchCountry: 切换国家函数
+// config: 当前国家的配置对象 { flag, name, domain, currency, locale }</pre>
+
+<h3>7.6 src/lib/utils.ts</h3>
+<pre>import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}</pre>
+</div>
+
+<!-- ==================== 8. 部署架构 ==================== -->
+<div class="section">
+<h2>8. 部署架构</h2>
+
+<h3>8.1 Vercel 部署配置</h3>
+<ul>
+  <li><strong>平台</strong>：Vercel (vercel.com)</li>
+  <li><strong>Git 集成</strong>：连接 GitHub 仓库，每次 push 到 main 分支自动触发构建</li>
+  <li><strong>构建命令</strong>：<code>npm install && vite build</code></li>
+  <li><strong>输出目录</strong>：<code>dist/</code></li>
+  <li><strong>路由重写</strong>：所有路径重写到 <code>index.html</code>（SPA 路由）</li>
+  <li><strong>Node 版本</strong>：>= 20.0.0（package.json engines 指定）</li>
+</ul>
+
+<h3>8.2 环境变量</h3>
+<p>无需环境变量文件。所有配置通过以下方式注入：</p>
+<ul>
+  <li><strong>Supabase URL + Key</strong>：<code>index.html</code> 中的 <code>&lt;script&gt;window.__SUPABASE_URL__ = '...'; window.__SUPABASE_KEY__ = '...';&lt;/script&gt;</code></li>
+  <li><strong>管理员密码</strong>：<code>window.__ADMIN_PASS__</code>（存储在 settings 表中）</li>
+</ul>
+
+<h3>8.3 自定义域名配置</h3>
+<ol>
+  <li>在 Vercel Dashboard 中添加域名（Project → Settings → Domains）</li>
+  <li>在域名服务商处添加 CNAME 记录指向 <code>cname.vercel-dns.com</code></li>
+  <li>Vercel 自动配置 SSL 证书（Let's Encrypt）</li>
+</ol>
+
+<h3>8.4 构建流程</h3>
+<pre>1. GitHub push → 触发 Vercel Webhook
+2. Vercel 拉取最新代码
+3. npm install（根据 package.json 安装依赖）
+4. vite build（生产构建，输出到 dist/）
+5. Vercel 部署 dist/ 到 CDN
+6. 全球边缘节点生效（通常 30 秒内）
+</pre>
+</div>
+
+<!-- ==================== 9. 功能详解 ==================== -->
+<div class="section">
+<h2>9. 所有功能详解</h2>
+
+<h3>9.1 前台页面</h3>
+<table>
+<thead><tr><th>页面</th><th>路径</th><th>功能</th></tr></thead>
+<tbody>
+<tr><td>首页</td><td>/</td><td>TopBar + 导航栏 + 二级分类导航 + Featured Categories + Hero轮播 + 产品列表 + Footer</td></tr>
+<tr><td>产品详情</td><td>/product/:id</td><td>大图 + 标题 + 描述 + 价格 + 评分 + Amazon购买按钮</td></tr>
+<tr><td>关于我们</td><td>/about</td><td>品牌故事 + 视频轮播(右侧) + 6大优势 + 品牌承诺 + CTA</td></tr>
+<tr><td>联系我们</td><td>/contact</td><td>联系信息 + FAQ + 联系表单 + 订阅</td></tr>
+<tr><td>后台管理</td><td>/admin</td><td>密码验证后进入，14个Tab功能</td></tr>
+</tbody>
+</table>
+
+<h3>9.2 后台管理（14个Tab）</h3>
+<table>
+<thead><tr><th>Tab</th><th>功能</th><th>核心操作</th></tr></thead>
+<tbody>
+<tr><td>Dashboard</td><td>数据概览</td><td>6个统计卡片（产品数、分类数、品牌数、国家数、留言数、订阅数）</td></tr>
+<tr><td>Products</td><td>产品管理</td><td>增删改查、CSV导入导出、分页(50/100/200/300)、国家筛选、批量删除、全选(仅当前页)、图片本地上传(base64)</td></tr>
+<tr><td>Categories</td><td>分类管理</td><td>增删改、排序调整(上下箭头)、图片上传(base64或URL)</td></tr>
+<tr><td>Brands</td><td>品牌管理</td><td>增删改、关联分类</td></tr>
+<tr><td>Countries</td><td>国家管理</td><td>启用/禁用、货币符号、国旗</td></tr>
+<tr><td>Carousel</td><td>轮播图管理</td><td>本地上传(base64或URL)、标题、副标题、链接、排序</td></tr>
+<tr><td>Videos</td><td>视频管理</td><td>本地上传(MP4/WebM/OGG, max 50MB)或URL、标题、排序。自动建表提示。</td></tr>
+<tr><td>Navigation</td><td>导航管理</td><td>菜单项增删改、link/dropdown类型</td></tr>
+<tr><td>Settings</td><td>网站设置</td><td>8项配置: siteTitle, topBarText, contactEmail, metaKeywords, metaDescription, heroTitle, heroSubtitle, heroBadge</td></tr>
+<tr><td>SEO</td><td>SEO配置</td><td>Meta Description(160字限制提示)、Meta Keywords</td></tr>
+<tr><td>Messages</td><td>客户留言</td><td>查看、回复、标记已读、删除</td></tr>
+<tr><td>Subscribers</td><td>邮件订阅</td><td>查看订阅者列表</td></tr>
+<tr><td>Analytics</td><td>分析代码</td><td>添加/禁用第三方追踪代码(Google Analytics等)</td></tr>
+<tr><td>Reset</td><td>数据重置</td><td>清空所有产品、留言、订阅、评论（危险操作，双重确认）</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ==================== 10. 关键交互逻辑 ==================== -->
+<div class="section">
+<h2>10. 关键交互逻辑</h2>
+
+<h3>10.1 国家切换</h3>
+<pre>1. 用户点击国家下拉选择
+2. URL 参数更新: ?country=uk
+3. useCountry() Hook 解析 URL，返回新的 country、t(翻译)、config
+4. 所有组件重新渲染，显示对应语言/货币
+5. Home.tsx 根据 country 筛选对应国家的产品重新加载</pre>
+
+<h3>10.2 产品展示逻辑（分类优先）</h3>
+<pre>Home.tsx:
+  1. 加载所有 categories
+  2. 每个 CategorySection:
+     a. 查询 products 表中 category_id=当前分类 AND country=当前国家 的 brand_id 列表
+     b. 用这些 brand_id 查询 brands 表获取品牌信息
+     c. 每个 BrandGroup 显示该品牌+分类+国家的产品
+     d. 排序：Name A-Z / Z-A / Default (DB sort_order)</pre>
+
+<h3>10.3 CSV 导入流程</h3>
+<pre>1. 用户选择 CSV 文件
+2. 前端解析 CSV（标题行: title,image_url,price,amazon_link,...）
+3. 逐行验证（必填字段、价格数字、有效国家代码）
+4. 检查重复：比较完整的 amazon_link（小写去空格）
+5. 如有重复 → 弹出确认对话框（Skip/Overwrite）
+6. 导入产品 → 自动创建缺失的分类和品牌
+7. 显示结果统计（Added/Skipped/Updated）</pre>
+
+<h3>10.4 图片处理逻辑</h3>
+<pre>上传方式:
+  1. FileReader.readAsDataURL(file) → base64 Data URL
+  2. 存入数据库 image_url 字段（TEXT类型，可容纳几MB）
+  3. 前台直接 &lt;img src={base64} /&gt; 显示
+  优势: 无需图床、无需配置Storage bucket
+  劣势: 数据库体积较大、视频加载较慢（约10秒）</pre>
+
+<h3>10.5 分页 + 全选逻辑</h3>
+<pre>分页:
+  pageSize: 50/100/200/300
+  paginated = filtered.slice((page-1)*pageSize, page*pageSize)
+
+全选:
+  全选只勾选当前页: setSelectedIds(new Set(paginated.map(p => p.id)))
+  切换国家/搜索时: selectedIds 清空 + page 重置为 1</pre>
+</div>
+
+<!-- ==================== 11. 已知问题与注意事项 ==================== -->
+<div class="section">
+<h2>11. 已知问题与注意事项</h2>
+<ul>
+  <li><strong>视频加载慢</strong>：base64 视频体积膨胀 33%，10MB 视频约需 10 秒加载。建议用 YouTube 链接替代本地上传</li>
+  <li><strong>图片代理</strong>：vercel.json 配置了 /api/proxy-image 用于绕过亚马逊防盗链。部分 gif 链接可能仍失效，建议本地上传</li>
+  <li><strong>base64 存储</strong>：大图/视频直接存入数据库 TEXT 字段，产品量大时可能影响查询性能。后续可考虑迁移到 Supabase Storage</li>
+  <li><strong>RLS 策略</strong>：当前所有表开放匿名访问，仅内部使用。如需对外公开请改为认证策略</li>
+  <li><strong>翻译覆盖</strong>：Settings 自定义值优先级高于翻译文件，切换国家后自定义值不会自动翻译</li>
+</ul>
+</div>
+
+<!-- ==================== 12. 初始化步骤 ==================== -->
+<div class="section">
+<h2>12. 从零搭建步骤（AI复制指南）</h2>
+
+<h3>Step 1: 创建 Supabase 项目</h3>
+<ol>
+  <li>注册 <a href="https://supabase.com">supabase.com</a></li>
+  <li>创建新项目，获取 Project URL 和 Anon Key</li>
+  <li>在 SQL Editor 中执行第6节的完整建表 SQL</li>
+</ol>
+
+<h3>Step 2: 初始化项目</h3>
+<pre>npm create vite@latest ulbter-store -- --template react-ts
+cd ulbter-store
+npm install react@^18.3.0 react-dom@^18.3.0 react-router@^7.0.0 react-helmet-async@^2.0.0 lucide-react@^0.500.0 @supabase/supabase-js@^2.49.0 clsx@^2.1.0 tailwind-merge@^2.6.0
+npm install -D @types/react@^18.3.0 @types/react-dom@^18.3.0 @vitejs/plugin-react@^4.4.0 vite@^6.3.0 typescript@^5.8.0 tailwindcss@^3.4.0 autoprefixer@^10.4.0
+npx tailwindcss init -p</pre>
+
+<h3>Step 3: 复制所有配置文件和源码</h3>
+<p>按照第3节的配置文件和第4节的文件结构，复制所有代码文件。</p>
+
+<h3>Step 4: 配置 index.html</h3>
+<p>将 Supabase URL、Key 和管理员密码填入 index.html 的 window.__SUPABASE_* 变量。</p>
+
+<h3>Step 5: 部署到 Vercel</h3>
+<ol>
+  <li>推送到 GitHub 仓库</li>
+  <li>在 Vercel 导入项目，选择该仓库</li>
+  <li>构建命令：<code>vite build</code>，输出目录：<code>dist</code></li>
+  <li>部署完成</li>
+</ol>
+</div>
+
+<div class="footer">
+  <p>ULBTER V1.5 完整技术规格 &middot; Generated 2026-05-22</p>
+  <p style="margin-top:4px;">GitHub: github.com/hfburuvs/ulbter-store &middot; Tag: v1.5</p>
+</div>
+
+</div>
+</body>
+</html>

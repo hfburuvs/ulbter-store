@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ULBTER V1.5 版本变更记录</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; background: #f8fafc; color: #334155; line-height: 1.7; }
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+  .cover { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; padding: 60px 40px; border-radius: 16px; text-align: center; margin-bottom: 40px; }
+  .cover h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+  .cover .subtitle { font-size: 16px; opacity: 0.9; margin-bottom: 20px; }
+  .cover .badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 6px 20px; border-radius: 20px; font-size: 14px; }
+  .section { background: white; border-radius: 12px; padding: 32px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .section h2 { font-size: 20px; color: #16a34a; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #f0fdf4; display: flex; align-items: center; gap: 8px; }
+  .section h3 { font-size: 16px; color: #1e293b; margin: 20px 0 10px; padding-left: 10px; border-left: 3px solid #16a34a; }
+  h4 { font-size: 14px; color: #475569; margin: 14px 0 6px; font-weight: 600; }
+  p, li { font-size: 14px; margin-bottom: 8px; }
+  ul, ol { margin: 8px 0 8px 24px; }
+  li { margin-bottom: 5px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: #f8fafc; text-align: left; padding: 8px 12px; color: #64748b; font-weight: 500; border-bottom: 1px solid #e2e8f0; }
+  td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; }
+  tr:hover td { background: #f8fafc; }
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; margin-right: 6px; }
+  .tag-green { background: #f0fdf4; color: #16a34a; }
+  .tag-blue { background: #eff6ff; color: #2563eb; }
+  .tag-amber { background: #fffbeb; color: #d97706; }
+  .tag-red { background: #fef2f2; color: #dc2626; }
+  .tip { background: #f0fdf4; border-left: 3px solid #16a34a; padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 13px; }
+  .warning { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 13px; }
+  code { background: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-size: 13px; font-family: 'Courier New', monospace; }
+  pre { background: #1e293b; color: #e2e8f0; padding: 14px; border-radius: 8px; overflow-x: auto; font-size: 12px; margin: 10px 0; }
+  .version-timeline { position: relative; padding-left: 24px; }
+  .version-timeline::before { content: ''; position: absolute; left: 6px; top: 0; bottom: 0; width: 2px; background: #e2e8f0; }
+  .version-item { position: relative; margin-bottom: 24px; }
+  .version-item::before { content: ''; position: absolute; left: -22px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: #16a34a; }
+  .version-item.current::before { background: #16a34a; box-shadow: 0 0 0 4px rgba(22,163,74,0.2); }
+  .version-item h3 { margin: 0 0 8px; border: none; padding: 0; font-size: 16px; }
+  .version-item .date { font-size: 12px; color: #94a3b8; }
+  .footer { text-align: center; padding: 30px 0; color: #94a3b8; font-size: 13px; border-top: 1px solid #e2e8f0; margin-top: 40px; }
+  @media print { .section { page-break-inside: avoid; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="cover">
+  <h1>ULBTER V1.5 版本变更记录</h1>
+  <p class="subtitle">从 V1.0 到 V1.5 的完整功能演进与修复记录</p>
+  <div class="badge">当前版本 V1.5 Stable</div>
+</div>
+
+<!-- ==================== 版本时间线 ==================== -->
+<div class="section">
+  <h2>版本演进时间线</h2>
+  <div class="version-timeline">
+    <div class="version-item">
+      <h3>V1.0 <span class="date">初始版本</span></h3>
+      <p>蓝色主题 (#2563EB)，基础后台管理功能，产品/分类/品牌/国家管理</p>
+    </div>
+    <div class="version-item">
+      <h3>V1.1 <span class="date">CSS样式变更</span></h3>
+      <p>绿色主题 (#10B981)，产品列表水平布局，Hero区域改造，导航栏pill样式</p>
+    </div>
+    <div class="version-item">
+      <h3>V1.2 <span class="date">核心功能修复</span></h3>
+      <p>topBarText设置、产品排序、搜索栏clear、Carousel上传修复</p>
+    </div>
+    <div class="version-item">
+      <h3>V1.3 <span class="date">主题恢复与布局</span></h3>
+      <p>绿色主题源码级恢复，产品列表改为水平行布局，Carousel图片上传base64回退</p>
+    </div>
+    <div class="version-item">
+      <h3>V1.4 <span class="date">V7样品全面应用</span></h3>
+      <p>搜索栏居中、hero-pattern背景、白色Footer、Hero轮播、Featured Categories、后台分页、全选优化</p>
+    </div>
+    <div class="version-item current">
+      <h3>V1.5 <span class="date">当前稳定版</span></h3>
+      <p>视频轮播专栏、二级分类导航、分类图片管理、CSV重复修复、分类优先级展示、全选当前页</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== V1.5 新增功能 ==================== -->
+<div class="section">
+  <h2>V1.5 新增功能（6项）</h2>
+
+  <h3>1. 前台 About 页面视频轮播专栏</h3>
+  <p>About 页面 "The Story Behind 9H Films" 右侧板块支持视频轮播展示：</p>
+  <ul>
+    <li>后台新增 <strong>Videos</strong> 管理板块（侧边栏菜单）</li>
+    <li>支持 YouTube 链接或直接 MP4 链接</li>
+    <li>支持本地上传（MP4/WebM/OGG，最大 50MB）</li>
+    <li>多个视频自动轮播，左右箭头 + 底部圆点指示器切换</li>
+    <li>无视频时显示默认品牌展示卡片（ulbter Precision Armor）</li>
+  </ul>
+
+  <h3>2. 二级分类导航栏（Sticky）</h3>
+  <p>搜索栏下方新增水平分类快速导航：</p>
+  <ul>
+    <li>显示所有分类名称，按后台 sort_order 排序</li>
+    <li>点击平滑滚动到对应分类区块</li>
+    <li>滚动时固定显示（sticky top-16），始终可见</li>
+    <li>移动端自动隐藏</li>
+  </ul>
+
+  <h3>3. Featured Categories 圆形图标导航</h3>
+  <p>首页 Hero 轮播上方显示分类图标导航：</p>
+  <ul>
+    <li>圆形外框 + 分类图片 + 分类名称</li>
+    <li>点击跳转对应分类区块</li>
+    <li>支持横向滑动</li>
+    <li>已预生成 Camera / Watch / Accessories 三张默认图片</li>
+  </ul>
+
+  <h3>4. 后台分类图片管理</h3>
+  <p>Categories 板块支持上传分类图片：</p>
+  <ul>
+    <li>本地上传（JPG/PNG/WebP，最大 2MB）</li>
+    <li>或粘贴外部图片 URL</li>
+    <li>推荐 1:1 比例，400x400px 或更大</li>
+    <li>图片用于前台 Featured Categories 圆形导航展示</li>
+  </ul>
+  <div class="tip">需要先执行 SQL: <code>ALTER TABLE public.categories ADD COLUMN IF NOT EXISTS image_url TEXT;</code></div>
+
+  <h3>5. 后台 Videos 管理板块</h3>
+  <p>侧边栏新增 Videos 菜单，管理工厂/生产线视频：</p>
+  <ul>
+    <li>添加/编辑/删除视频</li>
+    <li>支持标题、视频 URL、排序号</li>
+    <li>本地上传或外部链接</li>
+  </ul>
+  <div class="tip">需要先执行 SQL 创建 videos 表（后台会提示具体 SQL）</div>
+
+  <h3>6. 产品图片本地上传</h3>
+  <p>后台 Products 添加/编辑表单中，Image URL 字段旁新增 Upload 按钮：</p>
+  <ul>
+    <li>选择本地图片自动转为 base64 Data URL</li>
+    <li>JPG/PNG/WebP，最大 2MB</li>
+    <li>无需登录 Supabase 即可上传产品图片</li>
+  </ul>
+</div>
+
+<!-- ==================== V1.4 功能 ==================== -->
+<div class="section">
+  <h2>V1.4 功能（9项）</h2>
+
+  <h3>1. 搜索栏居中 + 圆角样式</h3>
+  <p>搜索框从导航栏右侧移到中间位置，改为圆角输入框（rounded-full），占位符为 "Search products, brands, categories..."</p>
+
+  <h3>2. Hero 轮播组件</h3>
+  <p>前台 Hero 区域支持多张轮播图自动切换：</p>
+  <ul>
+    <li>每 5 秒自动切换</li>
+    <li>左右箭头手动切换</li>
+    <li>底部圆点指示器</li>
+    <li>支持点击跳转链接（button_link）</li>
+    <li>单张图时不显示导航控件</li>
+  </ul>
+
+  <h3>3. 白色 Footer</h3>
+  <p>Footer 从深色背景改为白色，新增 Newsletter 订阅区域，4列布局</p>
+
+  <h3>4. Hero Badge 后台可编辑</h3>
+  <p>Settings 新增 "Hero Badge Text" 字段，控制 Hero 区域左上角绿色脉冲标签文字</p>
+
+  <h3>5. 后台产品分页 + 固定表头</h3>
+  <table>
+    <thead><tr><th>功能</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>分页大小</td><td>可选 50 / 100 / 200 / 300 条/页</td></tr>
+      <tr><td>页码导航</td><td>First / Prev / 页码 / Next / Last</td></tr>
+      <tr><td>固定表头</td><td>position: sticky 滚动时表头固定</td></tr>
+      <tr><td>筛选重置</td><td>切换国家或搜索时自动回到第1页</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6. 排序简化</h3>
+  <p>排序选项从5个简化为3个：Default / Name: A-Z / Name: Z-A（移除价格排序）</p>
+
+  <h3>7. UK 国家支持</h3>
+  <p>新增 UK（英国）站点支持，货币符号为 £，国旗 🇬🇧，域名 amazon.co.uk</p>
+
+  <h3>8. topBarText 翻译体系</h3>
+  <p>topBarText 和 heroBadge 加入翻译体系，切换国家时自动显示对应语言</p>
+
+  <h3>9. About / Contact 风格统一</h3>
+  <p>About 和 Contact 页面改为 Home 同款绿色主题（hero-pattern 背景 + badge + 绿色高亮）</p>
+</div>
+
+<!-- ==================== V1.2-V1.3 核心修复 ==================== -->
+<div class="section">
+  <h2>V1.2 - V1.3 核心修复（12项）</h2>
+
+  <table>
+    <thead><tr><th>问题</th><th>修复方案</th><th>版本</th></tr></thead>
+    <tbody>
+      <tr><td>Top Bar 文字不可自定义</td><td>Settings 新增 Top Bar Announcement Text 字段</td><td>V1.2</td></tr>
+      <tr><td>产品排序不生效</td><td>CategorySection 添加 sortBy state，BrandGroup 接收并应用排序</td><td>V1.2</td></tr>
+      <tr><td>搜索栏 clear 不清空</td><td>添加 X 清除按钮 + URL 同步 + 路由变化重置</td><td>V1.2</td></tr>
+      <tr><td>Carousel 上传不生效</td><td>改为先上传 Supabase Storage，失败回退 base64</td><td>V1.2</td></tr>
+      <tr><td>Carousel link 列名错误</td><td>link → button_link 匹配数据库 schema</td><td>V1.2</td></tr>
+      <tr><td>主题回退到蓝色</td><td>源码中所有 #2563EB → #10B981 批量替换</td><td>V1.3</td></tr>
+      <tr><td>产品列表网格布局</td><td>改为水平列表布局（左侧图片 + 右侧信息）</td><td>V1.3</td></tr>
+      <tr><td>Carousel 添加无提示</td><td>显式检查 insert/update 返回的 error 属性</td><td>V1.3</td></tr>
+      <tr><td>UK 货币显示为 $</td><td>countryConfig 新增 uk: { currency: "£" }</td><td>V1.4</td></tr>
+      <tr><td>后台价格统一显示 $</td><td>根据产品 country 字段动态显示货币符号</td><td>V1.4</td></tr>
+      <tr><td>后台无国家筛选</td><td>搜索框旁新增国家筛选下拉菜单</td><td>V1.4</td></tr>
+      <tr><td>筛选切换 selected 不重置</td><td>useEffect 监听 countryFilter 变化时重置 selectedIds</td><td>V1.4</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== V1.5 修复 ==================== -->
+<div class="section">
+  <h2>V1.5 修复（6项）</h2>
+
+  <table>
+    <thead><tr><th>问题</th><th>修复方案</th></tr></thead>
+    <tbody>
+      <tr><td>CSV 导入 UK 报重复</td><td>重复判断从 ASIN 改为完整 amazon_link 比较</td></tr>
+      <tr><td>前台分类按品牌优先级展示</td><td>CategorySection 从 products 表动态获取品牌，确保分类优先</td></tr>
+      <tr><td>Featured Categories 位置不佳</td><td>上移到 Hero 轮播上方，二级导航下方</td></tr>
+      <tr><td>全选勾选所有分页</td><td>改为只勾选当前页内容</td></tr>
+      <tr><td>Import 按钮无 loading</td><td>添加 importingCSV state，按钮显示转圈动画并禁用</td></tr>
+      <tr><td>Videos Add 按钮无 loading</td><td>添加 saving state，按钮显示转圈动画并禁用</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== 技术架构 ==================== -->
+<div class="section">
+  <h2>技术架构</h2>
+  <table>
+    <thead><tr><th>层级</th><th>技术栈</th></tr></thead>
+    <tbody>
+      <tr><td>前端框架</td><td>React 18 + TypeScript + Vite 6</td></tr>
+      <tr><td>样式</td><td>Tailwind CSS 3.4</td></tr>
+      <tr><td>路由</td><td>React Router 7</td></tr>
+      <tr><td>数据库</td><td>Supabase (PostgreSQL)</td></tr>
+      <tr><td>部署</td><td>Vercel (自动构建)</td></tr>
+      <tr><td>版本管理</td><td>GitHub + Git Tags</td></tr>
+    </tbody>
+  </table>
+
+  <h3>数据表结构</h3>
+  <table>
+    <thead><tr><th>表名</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td>products</td><td>产品数据</td></tr>
+      <tr><td>categories</td><td>分类数据（含 image_url）</td></tr>
+      <tr><td>brands</td><td>品牌数据</td></tr>
+      <tr><td>countries</td><td>国家站点配置</td></tr>
+      <tr><td>carousel</td><td>轮播图数据</td></tr>
+      <tr><td>videos</td><td>视频数据（V1.5 新增）</td></tr>
+      <tr><td>settings</td><td>网站全局配置</td></tr>
+      <tr><td>messages</td><td>客户留言</td></tr>
+      <tr><td>subscribers</td><td>邮件订阅</td></tr>
+      <tr><td>navigation</td><td>导航菜单</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== 国家配置 ==================== -->
+<div class="section">
+  <h2>支持的国家/地区</h2>
+  <table>
+    <thead><tr><th>代码</th><th>名称</th><th>货币</th><th>国旗</th><th>亚马逊域名</th></tr></thead>
+    <tbody>
+      <tr><td>us</td><td>United States</td><td>$</td><td>🇺🇸</td><td>amazon.com</td></tr>
+      <tr><td>uk</td><td>United Kingdom</td><td>£</td><td>🇬🇧</td><td>amazon.co.uk</td></tr>
+      <tr><td>de</td><td>Deutschland</td><td>€</td><td>🇩🇪</td><td>amazon.de</td></tr>
+      <tr><td>es</td><td>Espana</td><td>€</td><td>🇪🇸</td><td>amazon.es</td></tr>
+      <tr><td>it</td><td>Italia</td><td>€</td><td>🇮🇹</td><td>amazon.it</td></tr>
+      <tr><td>fr</td><td>France</td><td>€</td><td>🇫🇷</td><td>amazon.fr</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== 后台板块 ==================== -->
+<div class="section">
+  <h2>后台管理板块（14个）</h2>
+  <table>
+    <thead><tr><th>板块</th><th>功能</th></tr></thead>
+    <tbody>
+      <tr><td>Dashboard</td><td>数据概览（产品数、分类数、品牌数、留言数等）</td></tr>
+      <tr><td>Products</td><td>产品增删改查、CSV导入导出、分页、国家筛选、批量删除</td></tr>
+      <tr><td>Categories</td><td>分类增删改、排序调整、图片上传</td></tr>
+      <tr><td>Brands</td><td>品牌增删改、关联分类</td></tr>
+      <tr><td>Countries</td><td>国家启用/禁用、添加新国家</td></tr>
+      <tr><td>Carousel</td><td>轮播图上传/URL、标题、链接、排序</td></tr>
+      <tr><td>Videos</td><td>视频上传/URL、标题、排序（V1.5 新增）</td></tr>
+      <tr><td>Navigation</td><td>导航菜单项管理（link/dropdown）</td></tr>
+      <tr><td>Settings</td><td>网站标题、公告栏、Hero配置、密码修改等 8 项配置</td></tr>
+      <tr><td>SEO</td><td>Meta Description、Meta Keywords</td></tr>
+      <tr><td>Messages</td><td>客户留言查看、回复、标记已读</td></tr>
+      <tr><td>Subscribers</td><td>邮件订阅者列表</td></tr>
+      <tr><td>Analytics</td><td>第三方追踪代码管理</td></tr>
+      <tr><td>Reset Data</td><td>数据重置（危险操作）</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== 前台页面 ==================== -->
+<div class="section">
+  <h2>前台页面结构</h2>
+
+  <h3>首页（Home）</h3>
+  <p>从上到下依次为：</p>
+  <ol>
+    <li><strong>Top Bar</strong>：绿色公告条（Settings → Top Bar Announcement Text 控制）</li>
+    <li><strong>主导航栏</strong>：Logo + 搜索框 + 导航链接 + 国家切换（sticky）</li>
+    <li><strong>二级分类导航</strong>：水平分类快速链接（sticky）</li>
+    <li><strong>Featured Categories</strong>：圆形分类图标导航</li>
+    <li><strong>Hero 轮播</strong>：左侧文字 + 右侧轮播图（自动切换 + 手动切换）</li>
+    <li><strong>产品列表</strong>：按分类分组，每行一个产品（水平布局）</li>
+    <li><strong>Footer</strong>：白色背景，4列布局 + Newsletter 订阅</li>
+  </ol>
+
+  <h3>About 页面</h3>
+  <p>Hero Banner → 品牌故事 → 6大优势 → 品牌承诺 → CTA</p>
+  <p>右侧支持视频轮播（后台 Videos 控制）</p>
+
+  <h3>Contact 页面</h3>
+  <p>Hero Banner → 联系信息 + FAQ + 联系表单</p>
+
+  <h3>产品详情页</h3>
+  <p>大图 + 标题 + 描述 + 价格 + 评分 + Amazon 购买按钮</p>
+</div>
+
+<!-- ==================== 已知限制 ==================== -->
+<div class="section">
+  <h2>已知限制</h2>
+  <ul>
+    <li><strong>视频加载速度</strong>：base64 编码的视频体积膨胀约 33%，10MB 视频约需 10 秒加载。建议使用 YouTube 链接替代本地上传</li>
+    <li><strong>图片代理</strong>：亚马逊图片防盗链，部分图片 URL 可能失效。建议本地上传或使用可靠图床</li>
+    <li><strong>base64 存储</strong>：产品图和轮播图使用 base64 存入数据库，大量大图可能影响查询性能</li>
+    <li><strong>翻译覆盖</strong>：后台 Settings 自定义值优先级高于翻译文件，切换国家后自定义值不会自动翻译</li>
+  </ul>
+</div>
+
+<div class="footer">
+  <p>ULBTER Store V1.5 &middot; Generated on 2026-05-22</p>
+  <p style="margin-top:4px;">GitHub: hfburuvs/ulbter-store &middot; Tag: v1.5</p>
+</div>
+
+</div>
+</body>
+</html>
