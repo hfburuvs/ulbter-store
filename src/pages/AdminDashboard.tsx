@@ -393,8 +393,10 @@ function ProductsTab() {
           if (!row.amazon_link?.trim()) rowErrors.push(`Row ${rowNum}: amazon_link is required`);
           if (!row.country?.trim()) rowErrors.push(`Row ${rowNum}: country is required (us/de/es/it/fr)`);
           else {
-            const validCountries = ["us", "de", "es", "it", "fr"];
-            if (!validCountries.includes(row.country.trim().toLowerCase())) rowErrors.push(`Row ${rowNum}: country "${row.country}" is invalid. Must be one of: us, de, es, it, fr`);
+            const validCountryCodes = (countries || []).map((c: any) => c.code?.toLowerCase()).filter(Boolean);
+            if (validCountryCodes.length > 0 && !validCountryCodes.includes(row.country.trim().toLowerCase())) {
+              rowErrors.push(`Row ${rowNum}: country "${row.country}" is invalid. Must be one of: ${validCountryCodes.join(", ")}`);
+            }
           }
           // Must have category identification (by ID or name - slug auto-generated from name if missing)
           const hasCatId = row.category_id && parseInt(String(row.category_id)) > 0;
@@ -1130,8 +1132,10 @@ function CategoriesTab() {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [uploadLabel, setUploadLabel] = useState("Upload Image");
   const [editId, setEditId] = useState<number | null>(null);
   const [error, setError] = useState("");
+  const [imgError, setImgError] = useState("");
 
   async function load() {
     try {
@@ -1210,12 +1214,26 @@ function CategoriesTab() {
     load();
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImgError("");
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    if (!validTypes.includes(file.type)) { setImgError("Only JPG, PNG, WebP allowed"); return; }
+    if (file.size > 2 * 1024 * 1024) { setImgError("Max 2MB"); return; }
+    const reader = new FileReader();
+    reader.onload = (ev) => { const result = ev.target?.result as string; setImageUrl(result); setUploadLabel(file.name); };
+    reader.onerror = () => setImgError("Failed to read file");
+    reader.readAsDataURL(file);
+  };
+
   const startEdit = (c: any) => {
     setEditId(c.id);
     setId(String(c.id));
     setName(c.name);
     setSlug(c.slug);
     setImageUrl(c.image_url || "");
+    setUploadLabel(c.image_url ? "Change Image" : "Upload Image");
   };
 
   return (
@@ -1229,18 +1247,21 @@ function CategoriesTab() {
           <input placeholder="Slug *" value={slug} onChange={(e) => setSlug(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
           <div className="flex gap-2">
             <button type="submit" className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Add"}</button>
-            {editId && <button type="button" onClick={() => { setEditId(null); setId(""); setName(""); setSlug(""); setImageUrl(""); }} className="px-3 py-2 bg-gray-100 rounded-lg text-sm">Cancel</button>}
+            {editId && <button type="button" onClick={() => { setEditId(null); setId(""); setName(""); setSlug(""); setImageUrl(""); setUploadLabel("Upload Image"); }} className="px-3 py-2 bg-gray-100 rounded-lg text-sm">Cancel</button>}
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <input placeholder="Category Image URL (optional, for front-end featured categories)" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" />
-          <div className="flex items-center gap-2">
-            {imageUrl && (
-              <img src={imageUrl} alt="Preview" className="w-10 h-10 rounded-lg object-cover border border-gray-200" />
-            )}
-            <span className="text-xs text-gray-400">Recommended: 1:1 ratio, 400x400px or larger</span>
-          </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <label className="cursor-pointer px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 flex items-center gap-1.5">
+            <Upload className="w-4 h-4" /> {uploadLabel}
+            <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" className="hidden" onChange={handleImageUpload} />
+          </label>
+          <input placeholder="Or paste image URL" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm flex-1 min-w-[200px]" />
+          {imageUrl && (
+            <img src={imageUrl} alt="Preview" className="w-10 h-10 rounded-lg object-cover border border-gray-200" />
+          )}
+          <span className="text-xs text-gray-400">JPG/PNG/WebP, max 2MB. Recommended: 1:1, 400x400px+</span>
         </div>
+        {imgError && <p className="text-xs text-red-500">{imgError}</p>}
       </form>
       <div className="bg-white rounded-xl border border-gray-100">
         {items.map((c, idx) => (
@@ -1548,22 +1569,71 @@ function VideosTab() {
   const [sortOrder, setSortOrder] = useState("0");
   const [editId, setEditId] = useState<number | null>(null);
   const [error, setError] = useState("");
+  const [uploadError, setUploadError] = useState("");
+  const [uploadLabel, setUploadLabel] = useState("Upload Video");
 
   async function load() {
     try {
       const { data, error: err } = await supabase.from("videos").select("*").order("sort_order", { ascending: true });
-      if (err) throw err;
-      setItems(data || []);
+      if (err) {
+        if (err.message?.includes("Could not find the table") || err.code === "PGRST205") {
+          setError("TABLE_NOT_FOUND");
+        } else {
+          setError(err.message);
+        }
+        setItems([]);
+      } else setItems(data || []);
     } catch (err: any) {
       setError(err.message || "Failed to load videos");
+      setItems([]);
     }
   }
 
+  const handleCreateTable = async () => {
+    try {
+      // Try creating via RPC or direct SQL
+      const { error } = await supabase.rpc("exec_sql", { sql: `
+        CREATE TABLE IF NOT EXISTS public.videos (
+          id SERIAL PRIMARY KEY,
+          title TEXT,
+          video_url TEXT NOT NULL,
+          sort_order INTEGER DEFAULT 0,
+          created_at TIMESTAMPTZ DEFAULT NOW()
+        );
+        ALTER TABLE public.videos ENABLE ROW LEVEL SECURITY;
+        CREATE POLICY "Allow all" ON public.videos FOR ALL USING (true) WITH CHECK (true);
+      ` });
+      if (error) throw error;
+      setError(""); load();
+    } catch {
+      // Fallback: show SQL for manual execution
+      setError("SQL_REQUIRED");
+    }
+  };
+
   useEffect(() => { load(); }, []);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadError("");
+    const validTypes = ["video/mp4", "video/webm", "video/ogg"];
+    if (!validTypes.includes(file.type)) { setUploadError("Only MP4, WebM, OGG allowed"); return; }
+    if (file.size > 50 * 1024 * 1024) { setUploadError("Max 50MB"); return; }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const result = ev.target?.result as string;
+      setVideoUrl(result);
+      setUploadLabel(file.name);
+    };
+    reader.onerror = () => setUploadError("Failed to read file");
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); setError("");
     try {
+      if (!videoUrl) { setUploadError("Please upload a video or paste a URL"); return; }
       const data = { title, video_url: videoUrl, sort_order: parseInt(sortOrder) || 0 };
       if (editId) {
         const { error: updErr } = await supabase.from("videos").update(data).eq("id", editId);
@@ -1572,7 +1642,7 @@ function VideosTab() {
         const { error: insErr } = await supabase.from("videos").insert(data);
         if (insErr) { setError(insErr.message); return; }
       }
-      setTitle(""); setVideoUrl(""); setSortOrder("0"); setEditId(null); load();
+      setTitle(""); setVideoUrl(""); setSortOrder("0"); setEditId(null); setUploadLabel("Upload Video"); setUploadError(""); load();
     } catch (err: any) { setError(err.message || "Failed to save"); }
   };
 
@@ -1584,29 +1654,60 @@ function VideosTab() {
 
   return (
     <div className="space-y-4">
-      {error && <ErrorMsg msg={error} onClose={() => setError("")} />}
+      {error && error !== "TABLE_NOT_FOUND" && error !== "SQL_REQUIRED" && <ErrorMsg msg={error} onClose={() => setError("")} />}
+      {(error === "TABLE_NOT_FOUND" || error === "SQL_REQUIRED") && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
+          <h3 className="font-semibold text-amber-800 mb-2">Video Table Not Found</h3>
+          <p className="text-sm text-amber-700 mb-4">The videos table needs to be created in your Supabase database. Run this SQL in your Supabase SQL Editor:</p>
+          <pre className="bg-white border border-amber-200 rounded-lg p-3 text-xs text-gray-700 overflow-x-auto mb-4">{`CREATE TABLE IF NOT EXISTS public.videos (
+  id SERIAL PRIMARY KEY,
+  title TEXT,
+  video_url TEXT NOT NULL,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE public.videos ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow all" ON public.videos FOR ALL USING (true) WITH CHECK (true);`}</pre>
+          <button onClick={handleCreateTable} className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-700 transition-colors">Try Auto-Create</button>
+          {error === "SQL_REQUIRED" && <p className="text-xs text-amber-600 mt-2">Auto-create failed. Please run the SQL above manually in Supabase SQL Editor.</p>}
+        </div>
+      )}
       <h2 className="text-xl font-bold text-gray-900">Videos</h2>
       <p className="text-sm text-gray-500">Upload factory/production line videos. They will be displayed in a carousel on the About page.</p>
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" />
-          <input placeholder="Video URL (YouTube embed or direct MP4 link)" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
-          <input placeholder="Sort Order" type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" />
+          <div className="flex gap-2">
+            <label className="cursor-pointer px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 flex items-center gap-1.5 flex-1">
+              <Upload className="w-4 h-4" /> {uploadLabel}
+              <input type="file" accept="video/mp4,video/webm,video/ogg" className="hidden" onChange={handleFileUpload} />
+            </label>
+          </div>
+          <input placeholder="Or paste Video URL (YouTube/MP4)" value={videoUrl} onChange={(e) => { setVideoUrl(e.target.value); if (e.target.value) setUploadLabel("URL"); }} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" />
+        </div>
+        {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
+        <div className="flex items-center gap-3">
+          <input placeholder="Sort Order" type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm w-24" />
+          <span className="text-xs text-gray-400">MP4/WebM/OGG, max 50MB. For best results use 1920x1080, 10-30 seconds.</span>
         </div>
         <div className="flex gap-2">
           <button type="submit" className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Add"}</button>
-          {editId && <button type="button" onClick={() => { setEditId(null); setTitle(""); setVideoUrl(""); setSortOrder("0"); }} className="px-3 py-2 bg-gray-100 rounded-lg text-sm">Cancel</button>}
+          {editId && <button type="button" onClick={() => { setEditId(null); setTitle(""); setVideoUrl(""); setSortOrder("0"); setUploadLabel("Upload Video"); }} className="px-3 py-2 bg-gray-100 rounded-lg text-sm">Cancel</button>}
         </div>
       </form>
       <div className="space-y-3">
         {items.map((item) => (
           <div key={item.id} className="bg-white rounded-xl border border-gray-100 p-4 flex gap-4 items-center">
-            <div className="w-24 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <Video className="w-6 h-6 text-gray-400" />
+            <div className="w-24 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+              {item.video_url?.startsWith("data:video") || !item.video_url?.includes("youtube") && !item.video_url?.includes("youtu.be") ? (
+                <video src={item.video_url} className="w-full h-full object-cover" muted />
+              ) : (
+                <Video className="w-6 h-6 text-gray-400" />
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-medium text-gray-900 truncate">{item.title || "Untitled"}</p>
-              <p className="text-xs text-gray-500 truncate">{item.video_url}</p>
+              <p className="text-xs text-gray-500 truncate">{item.video_url?.startsWith("data:") ? "(uploaded file)" : item.video_url}</p>
             </div>
             <div className="flex gap-1">
               <button onClick={() => { setEditId(item.id); setTitle(item.title); setVideoUrl(item.video_url); setSortOrder(String(item.sort_order)); }} className="p-1 hover:bg-gray-100 rounded"><Pencil className="w-3.5 h-3.5 text-gray-500" /></button>
@@ -1614,7 +1715,7 @@ function VideosTab() {
             </div>
           </div>
         ))}
-        {items.length === 0 && <p className="text-sm text-gray-400 text-center py-8">No videos. Add your first factory/production video above.</p>}
+        {items.length === 0 && <p className="text-sm text-gray-400 text-center py-8">No videos. Upload your first factory/production video above.</p>}
       </div>
     </div>
   );
