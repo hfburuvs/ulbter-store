@@ -1326,7 +1326,7 @@ function BrandsTab() {
 function CarouselTab() {
   const [items, setItems] = useState<any[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ image_url: "", title: "", subtitle: "", link: "", sort_order: "0" });
+  const [form, setForm] = useState({ image_url: "", title: "", subtitle: "", button_link: "", sort_order: "0" });
   const [editId, setEditId] = useState<number | null>(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [uploadError, setUploadError] = useState("");
@@ -1400,7 +1400,7 @@ function CarouselTab() {
         const { error: insertErr } = await supabase.from("carousel").insert({ ...data, is_active: 1 });
         if (insertErr) { setError(insertErr.message || "Insert failed"); return; }
       }
-      setShowForm(false); setEditId(null); setForm({ image_url: "", title: "", subtitle: "", link: "", sort_order: "0" }); setPreviewUrl(""); setUploadError(""); load();
+      setShowForm(false); setEditId(null); setForm({ image_url: "", title: "", subtitle: "", button_link: "", sort_order: "0" }); setPreviewUrl(""); setUploadError(""); load();
     } catch (err: any) {
       setError(err.message || "Failed to save");
     }
@@ -1411,7 +1411,7 @@ function CarouselTab() {
     load();
   };
 
-  const startEdit = (item: any) => { setEditId(item.id); setForm({ image_url: item.image_url, title: item.title || "", subtitle: item.subtitle || "", link: item.link || "", sort_order: String(item.sort_order || 0) }); setPreviewUrl(item.image_url); setUploadError(""); setShowForm(true); };
+  const startEdit = (item: any) => { setEditId(item.id); setForm({ image_url: item.image_url, title: item.title || "", subtitle: item.subtitle || "", button_link: item.button_link || "", sort_order: String(item.sort_order || 0) }); setPreviewUrl(item.image_url); setUploadError(""); setShowForm(true); };
   const startAdd = () => { setEditId(null); setForm({ image_url: "", title: "", subtitle: "", link: "", sort_order: "0" }); setPreviewUrl(""); setUploadError(""); setShowForm(true); };
 
   return (
@@ -1438,7 +1438,7 @@ function CarouselTab() {
           {previewUrl && <img src={previewUrl} alt="Preview" className="w-full max-h-48 object-contain rounded-lg border border-gray-100 bg-gray-50" />}
           <input placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
           <input placeholder="Subtitle" value={form.subtitle} onChange={(e) => setForm({ ...form, subtitle: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
-          <input placeholder="Link" value={form.link} onChange={(e) => setForm({ ...form, link: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
+          <input placeholder="Link" value={form.button_link} onChange={(e) => setForm({ ...form, button_link: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
           <input placeholder="Sort Order" type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
           <div className="flex gap-2">
             <button type="submit" className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Create"}</button>
