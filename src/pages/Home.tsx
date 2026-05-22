@@ -277,13 +277,21 @@ export default function Home() {
                     {/* Slides */}
                     <div className="relative aspect-[16/10] overflow-hidden rounded-xl">
                       {slides.map((slide, index) => (
-                        <img
+                        <a
                           key={slide.id}
-                          src={slide.image_url}
-                          alt={slide.title || "Featured"}
-                          className={`absolute inset-0 w-full h-full object-cover rounded-xl transition-opacity duration-700 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
-                          loading={index === 0 ? "eager" : "lazy"}
-                        />
+                          href={slide.button_link || "#"}
+                          target={slide.button_link ? "_blank" : undefined}
+                          rel={slide.button_link ? "noopener noreferrer" : undefined}
+                          onClick={(e) => { if (!slide.button_link) e.preventDefault(); }}
+                          className={`absolute inset-0 transition-opacity duration-700 ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                        >
+                          <img
+                            src={slide.image_url}
+                            alt={slide.title || "Featured"}
+                            className="w-full h-full object-cover rounded-xl cursor-pointer"
+                            loading={index === 0 ? "eager" : "lazy"}
+                          />
+                        </a>
                       ))}
                     </div>
                     {/* Navigation arrows */}
