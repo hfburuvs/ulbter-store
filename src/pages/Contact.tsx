@@ -58,8 +58,8 @@ export default function Contact() {
             <div className="space-y-4">
               {contactEmail && (
                 <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-[#10B981]/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-5 h-5 text-[#10B981]" />
+                  <div className="w-10 h-10 bg-[brand-600]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-5 h-5 text-[brand-600]" />
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900">Email</p>
@@ -68,8 +68,8 @@ export default function Contact() {
                 </div>
               )}
               <div className="flex items-start space-x-3">
-                <div className="w-10 h-10 bg-[#10B981]/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <MessageSquare className="w-5 h-5 text-[#10B981]" />
+                <div className="w-10 h-10 bg-[brand-600]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <MessageSquare className="w-5 h-5 text-[brand-600]" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900">{t("contactResponseTime")}</p>
@@ -77,8 +77,8 @@ export default function Contact() {
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <div className="w-10 h-10 bg-[#10B981]/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <User className="w-5 h-5 text-[#10B981]" />
+                <div className="w-10 h-10 bg-[brand-600]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <User className="w-5 h-5 text-[brand-600]" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900">{t("contactBusinessHours")}</p>
@@ -110,7 +110,7 @@ export default function Contact() {
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">{t("contactSuccessTitle")}</h3>
               <p className="text-sm text-gray-500 mb-6">{t("contactSuccessDesc")}</p>
-              <button onClick={() => setSubmitted(false)} className="text-[#10B981] hover:underline text-sm font-medium">{t("contactSendAnother")}</button>
+              <button onClick={() => setSubmitted(false)} className="text-[brand-600] hover:underline text-sm font-medium">{t("contactSendAnother")}</button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -118,21 +118,21 @@ export default function Contact() {
               {error && <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg text-sm"><AlertCircle className="w-4 h-4 flex-shrink-0" /><span>{error}</span></div>}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("contactNameLabel")}</label>
-                <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981] text-sm" placeholder={t("contactNamePlaceholder")} />
+                <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[brand-600]/20 focus:border-[brand-600] text-sm" placeholder={t("contactNamePlaceholder")} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("contactEmailLabel")}</label>
-                <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981] text-sm" placeholder={t("contactEmailPlaceholder")} />
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[brand-600]/20 focus:border-[brand-600] text-sm" placeholder={t("contactEmailPlaceholder")} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("contactMessageLabel")}</label>
-                <textarea value={content} onChange={e => setContent(e.target.value)} rows={5} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981] text-sm resize-none" placeholder={t("contactMessagePlaceholder")} />
+                <textarea value={content} onChange={e => setContent(e.target.value)} rows={5} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[brand-600]/20 focus:border-[brand-600] text-sm resize-none" placeholder={t("contactMessagePlaceholder")} />
               </div>
               <label className="flex items-center space-x-2 cursor-pointer">
-                <input type="checkbox" checked={subscribe} onChange={e => setSubscribe(e.target.checked)} className="w-4 h-4 rounded border-gray-300 text-[#10B981] focus:ring-[#10B981]/20" />
+                <input type="checkbox" checked={subscribe} onChange={e => setSubscribe(e.target.checked)} className="w-4 h-4 rounded border-gray-300 text-[brand-600] focus:ring-[brand-600]/20" />
                 <span className="text-sm text-gray-600">{t("contactSubscribe")}</span>
               </label>
-              <button type="submit" disabled={sending} className="w-full py-2.5 bg-[#10B981] hover:bg-[#059669] text-white font-medium rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+              <button type="submit" disabled={sending} className="w-full py-2.5 bg-[brand-600] hover:bg-[brand-700] text-white font-medium rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
                 <Send className="w-4 h-4" /><span>{sending ? t("contactSending") : t("contactSend")}</span>
               </button>
             </form>

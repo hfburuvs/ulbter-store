@@ -163,14 +163,21 @@ export default function Layout({ children }: { children: ReactNode }) {
         <meta name="robots" content="index, follow" />
       </Helmet>
 
-      {/* ===== TOP NAVIGATION BAR ===== */}
-      <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+      {/* ===== TOP BAR ===== */}
+      <div className="bg-brand-700 text-white text-xs py-2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+          <span className="truncate">{settingsMap["topBarText"] || "Free shipping on orders over $50 | New arrivals weekly"}</span>
+        </div>
+      </div>
+
+      {/* ===== NAVIGATION BAR ===== */}
+      <nav className="bg-white/95 backdrop-blur-md border-b border-black/[0.06] sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
-              <div className="w-8 h-8 bg-[#10B981] rounded-md flex items-center justify-center">
-                <ShoppingBag className="w-5 h-5 text-white" />
+              <div className="w-9 h-9 bg-gradient-to-br from-brand-500 to-brand-700 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">U</span>
               </div>
               <span className="text-xl font-bold text-gray-900 tracking-tight">
                 {siteTitle}
@@ -196,7 +203,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     if (children.length > 0 || isProducts) {
                       return (
                         <div key={item.id} className="relative group">
-                          <button className={`flex items-center space-x-1 text-sm font-medium px-3 py-2 rounded-lg transition-colors ${isActive ? "text-[#10B981] bg-emerald-50" : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"}`}>
+                          <button className={`flex items-center space-x-1 text-sm font-medium px-3 py-2 rounded-lg transition-colors ${isActive ? "text-brand-600 bg-brand-50" : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"}`}>
                             <span>{displayLabel}</span>
                             <ChevronDown className="w-3 h-3" />
                           </button>
@@ -208,23 +215,23 @@ export default function Layout({ children }: { children: ReactNode }) {
                                 if (isCatAnchor) {
                                   const catSlug = child.link.split("#cat-")[1];
                                   return (
-                                    <a key={child.id} href={child.link} onClick={(e) => { e.preventDefault(); if (isHomePath(location.pathname)) { setTimeout(() => { const el = document.getElementById(`cat-${catSlug}`); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100); } else { sessionStorage.setItem("scrollToCategory", `cat-${catSlug}`); navigate(path("/")); } }} className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-[#10B981] transition-colors">
-                                      <span className="w-2 h-2 rounded-full bg-[#10B981] mr-3" />
+                                    <a key={child.id} href={child.link} onClick={(e) => { e.preventDefault(); if (isHomePath(location.pathname)) { setTimeout(() => { const el = document.getElementById(`cat-${catSlug}`); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100); } else { sessionStorage.setItem("scrollToCategory", `cat-${catSlug}`); navigate(path("/")); } }} className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors">
+                                      <span className="w-2 h-2 rounded-full bg-[brand-600] mr-3" />
                                       {childLabel}
                                     </a>
                                   );
                                 }
                                 return (
-                                  <Link key={child.id} to={child.link} className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-[#10B981] transition-colors">
-                                    <span className="w-2 h-2 rounded-full bg-[#10B981] mr-3" />
+                                  <Link key={child.id} to={child.link} className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors">
+                                    <span className="w-2 h-2 rounded-full bg-[brand-600] mr-3" />
                                     {childLabel}
                                   </Link>
                                 );
                               })
                             ) : (
                               categories.map((cat) => (
-                                <a key={cat.id} href={path(`/#cat-${cat.slug}`)} onClick={(e) => { e.preventDefault(); setProductsOpen(false); if (isHomePath(location.pathname)) { setTimeout(() => { const el = document.getElementById(`cat-${cat.slug}`); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100); } else { sessionStorage.setItem("scrollToCategory", `cat-${cat.slug}`); navigate(path("/")); } }} className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-[#10B981] transition-colors">
-                                  <span className="w-2 h-2 rounded-full bg-[#10B981] mr-3" />
+                                <a key={cat.id} href={path(`/#cat-${cat.slug}`)} onClick={(e) => { e.preventDefault(); setProductsOpen(false); if (isHomePath(location.pathname)) { setTimeout(() => { const el = document.getElementById(`cat-${cat.slug}`); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100); } else { sessionStorage.setItem("scrollToCategory", `cat-${cat.slug}`); navigate(path("/")); } }} className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors">
+                                  <span className="w-2 h-2 rounded-full bg-[brand-600] mr-3" />
                                   {cat.name}
                                 </a>
                               ))
@@ -234,7 +241,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                       );
                     }
                     return (
-                      <Link key={item.id} to={item.link === "/" ? path("/") : item.link === "/about" ? path("/about") : item.link === "/contact" ? path("/contact") : item.link} className={`flex items-center space-x-1 text-sm font-medium px-3 py-2 rounded-lg transition-colors ${isActive ? "text-[#10B981] bg-emerald-50" : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"}`}>
+                      <Link key={item.id} to={item.link === "/" ? path("/") : item.link === "/about" ? path("/about") : item.link === "/contact" ? path("/contact") : item.link} className={`flex items-center space-x-1 text-sm font-medium px-3 py-2 rounded-lg transition-colors ${isActive ? "text-brand-600 bg-brand-50" : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"}`}>
                         <span>{displayLabel}</span>
                       </Link>
                     );
@@ -247,7 +254,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     to={path("/")}
                     className={`flex items-center space-x-1.5 text-sm font-medium px-3 py-2 rounded-lg transition-colors ${
                       cleanPath === "/"
-                        ? "text-[#10B981] bg-emerald-50"
+                        ? "text-brand-600 bg-brand-50"
                         : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                     }`}
                   >
@@ -263,7 +270,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     <button
                       className={`flex items-center space-x-1.5 text-sm font-medium px-3 py-2 rounded-lg transition-colors ${
                         location.pathname.startsWith("/category")
-                          ? "text-[#10B981] bg-emerald-50"
+                          ? "text-brand-600 bg-brand-50"
                           : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                       }`}
                     >
@@ -292,9 +299,9 @@ export default function Layout({ children }: { children: ReactNode }) {
                                 navigate(path("/"));
                               }
                             }}
-                            className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-[#10B981] transition-colors"
+                            className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors"
                           >
-                            <span className="w-2 h-2 rounded-full bg-[#10B981] mr-3" />
+                            <span className="w-2 h-2 rounded-full bg-[brand-600] mr-3" />
                             {cat.name}
                           </a>
                         ))}
@@ -306,7 +313,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     to={path("/about")}
                     className={`flex items-center space-x-1.5 text-sm font-medium px-3 py-2 rounded-lg transition-colors ${
                       cleanPath === "/about"
-                        ? "text-[#10B981] bg-emerald-50"
+                        ? "text-brand-600 bg-brand-50"
                         : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                     }`}
                   >
@@ -318,7 +325,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     to={path("/contact")}
                     className={`flex items-center space-x-1.5 text-sm font-medium px-3 py-2 rounded-lg transition-colors ${
                       cleanPath === "/contact"
-                        ? "text-[#10B981] bg-emerald-50"
+                        ? "text-brand-600 bg-brand-50"
                         : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                     }`}
                   >
@@ -344,7 +351,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                       key={c.code}
                       onClick={() => switchCountry(c.code as CountryCode)}
                       className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
-                        country === c.code ? "text-[#10B981] bg-emerald-50 font-medium" : "text-gray-700 hover:bg-emerald-50 hover:text-[#10B981]"
+                        country === c.code ? "text-brand-600 bg-brand-50 font-medium" : "text-gray-700 hover:bg-brand-50 hover:text-brand-600"
                       }`}
                     >
                       <span>{c.flag || "🌍"}</span>
@@ -374,7 +381,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search products..."
-                      className="w-44 px-3 py-1.5 text-sm border border-gray-200 border-r-0 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981]"
+                      className="w-44 px-3 py-1.5 text-sm border border-gray-200 border-r-0 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
                       autoFocus
                     />
                     {searchQuery && (
@@ -392,7 +399,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     )}
                     <button
                       type="submit"
-                      className="px-3 py-1.5 bg-[#10B981] hover:bg-[#059669] text-white rounded-r-lg transition-colors"
+                      className="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-r-lg transition-colors"
                     >
                       <Search className="w-4 h-4" />
                     </button>
@@ -442,11 +449,11 @@ export default function Layout({ children }: { children: ReactNode }) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search products..."
-                  className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981]"
+                  className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
                 />
                 <button
                   type="submit"
-                  className="px-3 py-2 bg-[#10B981] hover:bg-[#059669] text-white rounded-r-lg transition-colors"
+                  className="px-3 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-r-lg transition-colors"
                 >
                   <Search className="w-4 h-4" />
                 </button>
@@ -483,7 +490,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                       onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center space-x-2 px-3 py-2 pl-8 rounded-lg text-gray-600 hover:bg-gray-50"
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[brand-600]" />
                       <span>{cat.name}</span>
                     </Link>
                   ))}
@@ -520,7 +527,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             {/* Brand */}
             <div className="md:col-span-1">
               <div className="flex items-center space-x-2 mb-4">
-                <div className="w-7 h-7 bg-[#10B981] rounded-md flex items-center justify-center">
+                <div className="w-7 h-7 bg-[brand-600] rounded-md flex items-center justify-center">
                   <ShoppingBag className="w-4 h-4 text-white" />
                 </div>
                 <span className="text-lg font-bold text-white">
@@ -541,7 +548,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <li>
                   <Link
                     to={path("/")}
-                    className="text-sm text-gray-400 hover:text-[#10B981] transition-colors"
+                    className="text-sm text-gray-400 hover:text-[brand-600] transition-colors"
                   >
                     {t("home")}
                   </Link>
@@ -549,7 +556,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <li>
                   <Link
                     to={path("/about")}
-                    className="text-sm text-gray-400 hover:text-[#10B981] transition-colors"
+                    className="text-sm text-gray-400 hover:text-[brand-600] transition-colors"
                   >
                     {t("about")}
                   </Link>
@@ -557,7 +564,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <li>
                   <Link
                     to={path("/contact")}
-                    className="text-sm text-gray-400 hover:text-[#10B981] transition-colors"
+                    className="text-sm text-gray-400 hover:text-[brand-600] transition-colors"
                   >
                     {t("contact")}
                   </Link>
@@ -585,7 +592,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                           navigate(path("/"));
                         }
                       }}
-                      className="text-sm text-gray-400 hover:text-[#10B981] transition-colors"
+                      className="text-sm text-gray-400 hover:text-[brand-600] transition-colors"
                     >
                       {cat.name}
                     </a>
@@ -608,7 +615,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               {/* Admin entry - moved to footer */}
               <Link
                 to={path("/admin")}
-                className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-[#10B981] transition-colors bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-lg"
+                className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-[brand-600] transition-colors bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-lg"
               >
                 <Shield className="w-3.5 h-3.5" />
                 {t("adminLogin")}

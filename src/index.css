@@ -9,9 +9,10 @@
 
 @layer base {
   :root {
-    /* ---- Brand Colors ---- */
-    --color-primary: #10B981;
-    --color-primary-hover: #059669;
+    /* ---- Brand Colors (V7 Green Theme) ---- */
+    --color-primary: #16a34a;
+    --color-primary-hover: #15803d;
+    --color-primary-light: #22c55e;
     --color-accent-yellow: #FFD814;
     --color-accent-yellow-hover: #F7CA00;
     --color-star: #FFA41C;
@@ -72,7 +73,7 @@
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 38 100% 50%;
+    --primary: 142 71% 45%;
     --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
@@ -84,7 +85,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 38 100% 50%;
+    --ring: 142 71% 45%;
     --radius: 0.75rem;
   }
 
@@ -320,8 +321,8 @@
     background-color: #FEF2F2;
   }
   .icon-btn:hover.icon-btn-edit {
-    color: #10B981;
-    background-color: #EFF6FF;
+    color: var(--color-primary);
+    background-color: var(--color-bg);
   }
 }
 
