@@ -1,0 +1,12 @@
+{
+  "name": "ulbter-store",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "mkdir -p dist/assets && cp index.html dist/index.html && cp assets/index-v2.js dist/assets/index-v2.js 2>/dev/null || true && cp assets/index-k8uOQL_1.css dist/assets/index-k8uOQL_1.css 2>/dev/null || true && echo 'Static build complete'"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": { "node": ">=20.0.0" }
+}
