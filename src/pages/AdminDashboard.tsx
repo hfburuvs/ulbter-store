@@ -1348,7 +1348,14 @@ function CategoriesTab() {
           <input placeholder="Name *" value={name} onChange={(e) => setName(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
           <input placeholder="Slug *" value={slug} onChange={(e) => setSlug(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
           <div className="flex gap-2">
-            <button type="submit" className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Add"}</button>
+            <button type="submit" disabled={saving} className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium disabled:opacity-60 flex items-center gap-1.5">
+              {saving ? (
+                <>
+                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" /></svg>
+                  {editId ? "Updating..." : "Adding..."}
+                </>
+              ) : (editId ? "Update" : "Add")}
+            </button>
             {editId && <button type="button" onClick={() => { setEditId(null); setId(""); setName(""); setSlug(""); setImageUrl(""); setUploadLabel("Upload Image"); }} className="px-3 py-2 bg-gray-100 rounded-lg text-sm">Cancel</button>}
           </div>
         </div>
@@ -1668,6 +1675,7 @@ function VideosTab() {
   const [error, setError] = useState("");
   const [uploadError, setUploadError] = useState("");
   const [uploadLabel, setUploadLabel] = useState("Upload Video");
+  const [saving, setSaving] = useState(false);
 
   async function load() {
     try {
@@ -1728,19 +1736,20 @@ function VideosTab() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); setError("");
+    e.preventDefault(); setError(""); setSaving(true);
     try {
-      if (!videoUrl) { setUploadError("Please upload a video or paste a URL"); return; }
+      if (!videoUrl) { setUploadError("Please upload a video or paste a URL"); setSaving(false); return; }
       const data = { title, video_url: videoUrl, sort_order: parseInt(sortOrder) || 0 };
       if (editId) {
         const { error: updErr } = await supabase.from("videos").update(data).eq("id", editId);
-        if (updErr) { setError(updErr.message); return; }
+        if (updErr) { setError(updErr.message); setSaving(false); return; }
       } else {
         const { error: insErr } = await supabase.from("videos").insert(data);
-        if (insErr) { setError(insErr.message); return; }
+        if (insErr) { setError(insErr.message); setSaving(false); return; }
       }
       setTitle(""); setVideoUrl(""); setSortOrder("0"); setEditId(null); setUploadLabel("Upload Video"); setUploadError(""); load();
     } catch (err: any) { setError(err.message || "Failed to save"); }
+    finally { setSaving(false); }
   };
 
   const handleDelete = async (id: number) => {

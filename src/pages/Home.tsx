@@ -233,6 +233,47 @@ export default function Home() {
   // Normal home view
   return (
     <div>
+      {/* Featured Categories — above Hero */}
+      {categories.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+          <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide justify-center md:justify-start">
+            {categories.map((cat) => (
+              <a
+                key={cat.id}
+                href={path(`/#cat-${cat.slug}`)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  sessionStorage.setItem("scrollToCategory", `cat-${cat.slug}`);
+                  const el = document.getElementById(`cat-${cat.slug}`);
+                  if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
+                className="flex flex-col items-center gap-3 flex-shrink-0 group"
+              >
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-gray-100 group-hover:border-brand-300 transition-all overflow-hidden bg-white shadow-sm group-hover:shadow-md flex items-center justify-center">
+                  <img
+                    src={cat.image_url || `/cat-${cat.slug === "camera" || cat.slug === "camera-accessories" ? "camera" : cat.slug === "watch" || cat.slug === "watch-accessories" ? "watch" : "accessories"}.jpg`}
+                    alt={cat.name}
+                    className="w-full h-full object-contain p-2"
+                    loading="lazy"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const parent = target.parentElement;
+                      if (parent) {
+                        parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-400 font-bold text-lg">${cat.name.charAt(0)}</div>`;
+                      }
+                    }}
+                  />
+                </div>
+                <span className="text-xs md:text-sm text-gray-700 group-hover:text-brand-600 transition-colors text-center whitespace-nowrap">{cat.name}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Hero / Carousel */}
       <section className="hero-pattern py-12 md:py-16" role="banner" aria-label="Hero banner">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -339,48 +380,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Featured Categories */}
-      {categories.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">{t("shopByCategory") || "Shop by Category"}</h2>
-          <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
-            {categories.map((cat) => (
-              <a
-                key={cat.id}
-                href={path(`/#cat-${cat.slug}`)}
-                onClick={(e) => {
-                  e.preventDefault();
-                  sessionStorage.setItem("scrollToCategory", `cat-${cat.slug}`);
-                  const el = document.getElementById(`cat-${cat.slug}`);
-                  if (el) {
-                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
-                }}
-                className="flex flex-col items-center gap-3 flex-shrink-0 group"
-              >
-                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-gray-100 group-hover:border-brand-300 transition-all overflow-hidden bg-white shadow-sm group-hover:shadow-md flex items-center justify-center">
-                  <img
-                    src={cat.image_url || `/cat-${cat.slug === "camera" || cat.slug === "camera-accessories" ? "camera" : cat.slug === "watch" || cat.slug === "watch-accessories" ? "watch" : "accessories"}.jpg`}
-                    alt={cat.name}
-                    className="w-full h-full object-contain p-2"
-                    loading="lazy"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const parent = target.parentElement;
-                      if (parent) {
-                        parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-400 font-bold text-lg">${cat.name.charAt(0)}</div>`;
-                      }
-                    }}
-                  />
-                </div>
-                <span className="text-sm text-gray-700 group-hover:text-brand-600 transition-colors text-center whitespace-nowrap">{cat.name}</span>
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* Category Sections */}
       <main id="products" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 space-y-16">
