@@ -203,6 +203,7 @@ function ProductsTab() {
   const [sortOrderTip, setSortOrderTip] = useState(false);
   const [importResult, setImportResult] = useState<{ added: number; skipped: number; updated: number; failed?: number } | null>(null);
   const [duplicateModal, setDuplicateModal] = useState<{ rows: any[]; existingTitles: Set<string> } | null>(null);
+  const [importingCSV, setImportingCSV] = useState(false);
   const [form, setForm] = useState({ title: "", image_url: "", price: "", amazon_link: "", description: "", features: "", category_id: "", brand_id: "", rating: "", reviews: "", country: "us" });
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
@@ -345,12 +346,15 @@ function ProductsTab() {
   const handleCSVImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setImportingCSV(true);
+    setError("");
+    setImportResult(null);
     const reader = new FileReader();
     reader.onload = async (ev) => {
       try {
         const text = ev.target?.result as string;
         const allLines = text.split("\n").map((l) => l.trimEnd()).filter((l) => l.trim());
-        if (allLines.length < 2) { setError("File is empty"); return; }
+        if (allLines.length < 2) { setError("File is empty"); setImportingCSV(false); return; }
 
         // Auto-detect format
         const isMarkdownTable = allLines[0].startsWith("|");
@@ -425,10 +429,10 @@ function ProductsTab() {
 
         if (errorDetails.length > 0) {
           setError(`Import validation failed (${failed} rows):\n${errorDetails.slice(0, 8).join("\n")}${errorDetails.length > 8 ? `\n(+${errorDetails.length - 8} more errors)` : ""}`);
-          if (newRows.length === 0) return; // No valid rows to import
+          if (newRows.length === 0) { setImportingCSV(false); return; }
         }
 
-        if (newRows.length === 0) { setError("No valid data rows found"); return; }
+        if (newRows.length === 0) { setError("No valid data rows found"); setImportingCSV(false); return; }
 
         // STEP 1: Check duplicates by full amazon_link (unique per product)
         const normalizeLink = (url: string) => url?.trim().toLowerCase() || "";
@@ -442,6 +446,7 @@ function ProductsTab() {
 
         if (dupRows.length > 0) {
           setDuplicateModal({ rows: dupRows, existingTitles: new Set(existingLinks as any) });
+          setImportingCSV(false);
           return;
         }
 
@@ -449,8 +454,11 @@ function ProductsTab() {
         await processImport(newRows, []);
       } catch (err: any) {
         setError(err.message || "Import failed");
+      } finally {
+        setImportingCSV(false);
       }
     };
+    reader.onerror = () => { setError("Failed to read file"); setImportingCSV(false); };
     reader.readAsText(file);
     e.target.value = "";
   };
@@ -827,9 +835,21 @@ function ProductsTab() {
               </button>
             </>
           )}
-          <label className="cursor-pointer px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors flex items-center gap-1.5">
-            <Upload className="w-4 h-4" /> Import
-            <input type="file" accept=".csv" className="hidden" onChange={handleCSVImport} />
+          <label className={`cursor-pointer px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${importingCSV ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-gray-100 hover:bg-gray-200 text-gray-700"}`}>
+            {importingCSV ? (
+              <>
+                <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                Importing...
+              </>
+            ) : (
+              <>
+                <Upload className="w-4 h-4" /> Import
+              </>
+            )}
+            <input type="file" accept=".csv" className="hidden" onChange={handleCSVImport} disabled={importingCSV} />
           </label>
           <button onClick={handleCSVExport} className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors flex items-center gap-1.5">
             <Download className="w-4 h-4" /> Export
@@ -1178,7 +1198,8 @@ function CategoriesTab() {
 
   async function load() {
     try {
-      const { data, error: err } = await supabase.from("categories").select("*").order("sort_order");
+      // Use explicit columns to avoid error when image_url column doesn't exist yet
+      const { data, error: err } = await supabase.from("categories").select("id,name,slug,sort_order,created_at").order("sort_order");
       if (err) throw err;
       setItems(data || []);
     } catch (err: any) {
@@ -1210,15 +1231,43 @@ function CategoriesTab() {
           await supabase.from("brands").update({ category_id: newId }).eq("category_id", editId);
           await supabase.from("categories").delete().eq("id", editId);
         } else {
-          const updateData: any = { name, slug };
-          if (imageUrl) updateData.image_url = imageUrl;
-          await supabase.from("categories").update(updateData).eq("id", editId);
+          let updateData: any = { name, slug };
+          if (imageUrl) {
+            // Try with image_url, fallback without it if column doesn't exist
+            const { error: testErr } = await supabase.from("categories").update({ ...updateData, image_url: imageUrl }).eq("id", editId);
+            if (testErr && (testErr.message?.includes("image_url") || testErr.code === "PGRST204")) {
+              setError(`The 'image_url' column does not exist in the categories table yet.\n\nPlease run this SQL in Supabase SQL Editor first:\n\nALTER TABLE public.categories ADD COLUMN IF NOT EXISTS image_url TEXT;\n\nThen re-upload the image.`);
+              await supabase.from("categories").update(updateData).eq("id", editId);
+              setId(""); setName(""); setSlug(""); setImageUrl(""); setUploadLabel("Upload Image"); setEditId(null); load();
+              return;
+            } else if (testErr) {
+              throw testErr;
+            }
+          } else {
+            await supabase.from("categories").update(updateData).eq("id", editId);
+          }
         }
       } else {
-        const insertData: any = { name, slug, sort_order: Math.floor(Date.now() / 1000) };
-        if (imageUrl) insertData.image_url = imageUrl;
-        const { error: err } = await supabase.from("categories").insert(insertData);
-        if (err) throw err;
+        let insertData: any = { name, slug, sort_order: Math.floor(Date.now() / 1000) };
+        if (imageUrl) {
+          // Try with image_url, fallback without it if column doesn't exist
+          const { error: testErr } = await supabase.from("categories").insert({ ...insertData, image_url: imageUrl }).select();
+          if (testErr && (testErr.message?.includes("image_url") || testErr.code === "PGRST204")) {
+            setError(`The 'image_url' column does not exist in the categories table yet.\n\nPlease run this SQL in Supabase SQL Editor first:\n\nALTER TABLE public.categories ADD COLUMN IF NOT EXISTS image_url TEXT;\n\nThen re-upload the image.`);
+            // Still insert without image_url
+            const { error: err } = await supabase.from("categories").insert(insertData);
+            if (err) throw err;
+            setId(""); setName(""); setSlug(""); setImageUrl(""); setUploadLabel("Upload Image"); setEditId(null); load();
+            return;
+          } else if (testErr) {
+            throw testErr;
+          }
+          setId(""); setName(""); setSlug(""); setImageUrl(""); setUploadLabel("Upload Image"); setEditId(null); load();
+          return;
+        } else {
+          const { error: err } = await supabase.from("categories").insert(insertData);
+          if (err) throw err;
+        }
       }
       setId(""); setName(""); setSlug(""); setImageUrl(""); setEditId(null); load();
     } catch (err: any) {
@@ -1279,6 +1328,10 @@ function CategoriesTab() {
     <div className="space-y-4">
       {error && <ErrorMsg msg={error} onClose={() => setError("")} />}
       <h2 className="text-xl font-bold text-gray-900">Categories</h2>
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-700">
+        <strong>First time setup:</strong> To enable category images, run this SQL in your Supabase SQL Editor:
+        <code className="block mt-1 bg-white border border-amber-200 px-2 py-1 rounded text-xs font-mono">ALTER TABLE public.categories ADD COLUMN IF NOT EXISTS image_url TEXT;</code>
+      </div>
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
           <input placeholder="ID (optional)" value={id} onChange={(e) => setId(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" type="number" />
@@ -1310,11 +1363,6 @@ function CategoriesTab() {
                 <button onClick={() => moveCategory(idx, "up")} disabled={idx === 0} className="p-0.5 hover:bg-gray-200 rounded disabled:opacity-30"><svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg></button>
                 <button onClick={() => moveCategory(idx, "down")} disabled={idx === items.length - 1} className="p-0.5 hover:bg-gray-200 rounded disabled:opacity-30"><svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></button>
               </div>
-              {c.image_url ? (
-                <img src={c.image_url} alt={c.name} className="w-10 h-10 rounded-lg object-cover border border-gray-200 flex-shrink-0" />
-              ) : (
-                <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 text-xs text-gray-400">No img</div>
-              )}
               <div>
                 <span className="font-medium text-gray-900">{c.name}</span>
                 <span className="text-xs text-gray-400 ml-1">/{c.slug}</span>

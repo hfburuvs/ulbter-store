@@ -500,9 +500,9 @@ export default function Layout({ children }: { children: ReactNode }) {
         )}
       </nav>
 
-      {/* ===== SUB-NAV: Category Quick Links ===== */}
+      {/* ===== SUB-NAV: Category Quick Links (sticky) ===== */}
       {categories.length > 0 && (
-        <div className="bg-white border-b border-gray-100 hidden md:block">
+        <div className="bg-white border-b border-gray-100 hidden md:block sticky top-16 z-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-1 py-2 overflow-x-auto scrollbar-hide">
               <span className="text-xs text-gray-400 font-medium mr-2 flex-shrink-0 uppercase tracking-wider">Categories</span>
