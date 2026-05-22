@@ -885,7 +885,20 @@ function ProductsTab() {
         <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input placeholder="Title *" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
-            <input placeholder="Image URL *" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
+            <div className="flex gap-2">
+              <label className="cursor-pointer px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 flex items-center gap-1.5 flex-shrink-0">
+                <Upload className="w-4 h-4" /> {form.image_url ? "Change" : "Upload"}
+                <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" className="hidden" onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  if (file.size > 2 * 1024 * 1024) { setError("Image max 2MB"); return; }
+                  const reader = new FileReader();
+                  reader.onload = (ev) => setForm({ ...form, image_url: ev.target?.result as string });
+                  reader.readAsDataURL(file);
+                }} />
+              </label>
+              <input placeholder="Image URL *" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
+            </div>
             <input placeholder="Price *" type="number" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
             <input placeholder="Amazon Link *" value={form.amazon_link} onChange={(e) => setForm({ ...form, amazon_link: e.target.value })} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
             <select value={form.category_id} onChange={(e) => setForm({ ...form, category_id: e.target.value })} className="px-3 py-2 border border-gray-200 rounded-lg text-sm">
@@ -936,10 +949,11 @@ function ProductsTab() {
                   <th className="px-2 py-2 text-left w-8">
                     <input
                       type="checkbox"
-                      checked={filtered.length > 0 && filtered.every((p: any) => selectedIds.has(p.id))}
+                      checked={paginated.length > 0 && paginated.every((p: any) => selectedIds.has(p.id))}
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setSelectedIds(new Set(filtered.map((p: any) => p.id)));
+                          // Only select current page items
+                          setSelectedIds(new Set(paginated.map((p: any) => p.id)));
                         } else {
                           setSelectedIds(new Set());
                         }
@@ -1328,10 +1342,6 @@ function CategoriesTab() {
     <div className="space-y-4">
       {error && <ErrorMsg msg={error} onClose={() => setError("")} />}
       <h2 className="text-xl font-bold text-gray-900">Categories</h2>
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-700">
-        <strong>First time setup:</strong> To enable category images, run this SQL in your Supabase SQL Editor:
-        <code className="block mt-1 bg-white border border-amber-200 px-2 py-1 rounded text-xs font-mono">ALTER TABLE public.categories ADD COLUMN IF NOT EXISTS image_url TEXT;</code>
-      </div>
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
           <input placeholder="ID (optional)" value={id} onChange={(e) => setId(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" type="number" />
