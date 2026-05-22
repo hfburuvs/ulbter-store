@@ -47,7 +47,7 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-2">
-              <ShoppingBag className="w-5 h-5 text-[brand-600]" />
+              <ShoppingBag className="w-5 h-5 text-brand-600" />
               <span className="font-semibold text-gray-900">ulbter Admin</span>
             </div>
             <button onClick={handleLogout} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-600 transition-colors">
@@ -62,7 +62,7 @@ export default function AdminDashboard() {
             <div className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
               {navItems.map((item) => (
                 <button key={item.key} onClick={() => setTab(item.key)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${tab === item.key ? "bg-[brand-600]/10 text-[brand-600]" : "text-gray-600 hover:bg-gray-100"}`}>
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${tab === item.key ? "bg-brand-600/10 text-brand-600" : "text-gray-600 hover:bg-gray-100"}`}>
                   <item.icon className="w-4 h-4" /> {item.label}
                 </button>
               ))}
@@ -169,7 +169,7 @@ function DashboardTab({ onNavigate }: { onNavigate: (t: Tab) => void }) {
               <div key={m.id} className={`py-2 border-b border-gray-50 last:border-0 ${!m.is_read ? "bg-brand-50 -mx-4 px-4" : ""}`}>
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-900">{m.name}</p>
-                  {!m.is_read && <span className="text-xs bg-[brand-600] text-white px-2 py-0.5 rounded-full">New</span>}
+                  {!m.is_read && <span className="text-xs bg-brand-600 text-white px-2 py-0.5 rounded-full">New</span>}
                 </div>
                 <p className="text-xs text-gray-500 truncate">{m.content}</p>
               </div>
@@ -757,7 +757,7 @@ function ProductsTab() {
             ))}
           </div>
           <div className="flex gap-2 mt-4">
-            <button onClick={handleConfirm} disabled={importing} className={`px-4 py-2 text-white rounded-lg text-sm font-medium flex items-center gap-2 ${importing ? "bg-gray-400 cursor-not-allowed" : "bg-[brand-600] hover:bg-[brand-700]"}`}>
+            <button onClick={handleConfirm} disabled={importing} className={`px-4 py-2 text-white rounded-lg text-sm font-medium flex items-center gap-2 ${importing ? "bg-gray-400 cursor-not-allowed" : "bg-brand-600 hover:bg-brand-700"}`}>
               {importing ? (
                 <>
                   <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
@@ -816,7 +816,7 @@ function ProductsTab() {
           <button onClick={handleCSVExport} className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors flex items-center gap-1.5">
             <Download className="w-4 h-4" /> Export
           </button>
-          <button onClick={() => { setShowForm(true); setEditId(null); setForm({ title: "", image_url: "", price: "", amazon_link: "", description: "", features: "", category_id: "", brand_id: "", rating: "", reviews: "", country: "us" }); }} className="px-3 py-2 bg-[brand-600] hover:bg-[brand-700] rounded-lg text-sm font-medium text-white transition-colors flex items-center gap-1.5">
+          <button onClick={() => { setShowForm(true); setEditId(null); setForm({ title: "", image_url: "", price: "", amazon_link: "", description: "", features: "", category_id: "", brand_id: "", rating: "", reviews: "", country: "us" }); }} className="px-3 py-2 bg-brand-600 hover:bg-brand-700 rounded-lg text-sm font-medium text-white transition-colors flex items-center gap-1.5">
             <Plus className="w-4 h-4" /> Add
           </button>
         </div>
@@ -824,7 +824,7 @@ function ProductsTab() {
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input type="text" placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[brand-600]/20 focus:border-[brand-600]" />
+          className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-600/20 focus:border-brand-600" />
       </div>
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
@@ -852,7 +852,7 @@ function ProductsTab() {
             <input placeholder="Reviews (e.g. 100, blank = random 10-200)" value={form.reviews} onChange={(e) => setForm({ ...form, reviews: e.target.value })} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" />
           </div>
           <div className="flex gap-2">
-            <button type="submit" className="px-4 py-2 bg-[brand-600] hover:bg-[brand-700] text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Create"}</button>
+            <button type="submit" className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Create"}</button>
             <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm">Cancel</button>
           </div>
         </form>
@@ -889,7 +889,7 @@ function ProductsTab() {
                           setSelectedIds(new Set());
                         }
                       }}
-                      className="w-4 h-4 accent-[brand-600]"
+                      className="w-4 h-4 accent-brand-600"
                     />
                   </th>
                   <th className="px-2 py-2 text-left w-8">Order</th>
@@ -921,7 +921,7 @@ function ProductsTab() {
                             else next.delete(p.id);
                             setSelectedIds(next);
                           }}
-                          className="w-4 h-4 accent-[brand-600]"
+                          className="w-4 h-4 accent-brand-600"
                         />
                       </td>
                       <td className="px-2 py-2">
@@ -988,23 +988,23 @@ function MessagesTab() {
     <div className="space-y-4">
       <h2 className="text-xl font-bold text-gray-900">Messages ({messages.filter((m) => !m.is_read).length} new)</h2>
       {messages.map((m) => (
-        <div key={m.id} className={`bg-white rounded-xl border p-4 ${!m.is_read ? "border-[brand-600]/30" : "border-gray-100"}`}>
+        <div key={m.id} className={`bg-white rounded-xl border p-4 ${!m.is_read ? "border-brand-600/30" : "border-gray-100"}`}>
           <div className="flex items-center gap-2 mb-1">
             <span className="font-medium text-gray-900">{m.name}</span>
             <span className="text-xs text-gray-400">{m.email}</span>
-            {!m.is_read && <span className="text-xs bg-[brand-600] text-white px-1.5 py-0.5 rounded-full">New</span>}
+            {!m.is_read && <span className="text-xs bg-brand-600 text-white px-1.5 py-0.5 rounded-full">New</span>}
           </div>
           <p className="text-sm text-gray-600 mb-2">{m.content}</p>
           {m.reply && <div className="bg-green-50 rounded-lg p-2 text-sm text-green-700 mb-2"><strong>Reply:</strong> {m.reply}</div>}
           {replying === m.id ? (
             <div className="flex gap-2">
               <input value={replyText} onChange={(e) => setReplyText(e.target.value)} placeholder="Type reply..." className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-sm" />
-              <button onClick={() => sendReply(m.id)} className="px-3 py-1.5 bg-[brand-600] text-white rounded-lg text-sm">Send</button>
+              <button onClick={() => sendReply(m.id)} className="px-3 py-1.5 bg-brand-600 text-white rounded-lg text-sm">Send</button>
               <button onClick={() => setReplying(null)} className="px-3 py-1.5 bg-gray-100 rounded-lg text-sm">Cancel</button>
             </div>
           ) : (
             <div className="flex gap-2">
-              {!m.is_read && <button onClick={() => markRead(m.id)} className="text-xs text-[brand-600] hover:underline">Mark read</button>}
+              {!m.is_read && <button onClick={() => markRead(m.id)} className="text-xs text-brand-600 hover:underline">Mark read</button>}
               <button onClick={() => { setReplying(m.id); setReplyText(""); }} className="text-xs text-emerald-600 hover:underline">Reply</button>
               <button onClick={() => del(m.id)} className="text-xs text-red-400 hover:underline">Delete</button>
             </div>
@@ -1063,7 +1063,7 @@ function SubscribersTab() {
             <tbody>
               {subscribers.map((s) => (
                 <tr key={s.id} className="border-t border-gray-50 hover:bg-gray-50">
-                  <td className="px-4 py-2 text-xs text-[brand-600] font-mono">{s.id}</td>
+                  <td className="px-4 py-2 text-xs text-brand-600 font-mono">{s.id}</td>
                   <td className="px-4 py-2 font-medium text-gray-900">{s.email}</td>
                   <td className="px-4 py-2 text-xs text-gray-500">{s.subscribed_at ? new Date(s.subscribed_at).toLocaleDateString() : "-"}</td>
                   <td className="px-4 py-2 text-right">
@@ -1170,7 +1170,7 @@ function CategoriesTab() {
         <input placeholder="Name *" value={name} onChange={(e) => setName(e.target.value)} className="sm:col-span-2 px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
         <input placeholder="Slug *" value={slug} onChange={(e) => setSlug(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
         <div className="flex gap-2">
-          <button type="submit" className="px-4 py-2 bg-[brand-600] text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Add"}</button>
+          <button type="submit" className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Add"}</button>
           {editId && <button type="button" onClick={() => { setEditId(null); setId(""); setName(""); setSlug(""); }} className="px-3 py-2 bg-gray-100 rounded-lg text-sm">Cancel</button>}
         </div>
       </form>
@@ -1185,7 +1185,7 @@ function CategoriesTab() {
               <div>
                 <span className="font-medium text-gray-900">{c.name}</span>
                 <span className="text-xs text-gray-400 ml-1">/{c.slug}</span>
-                <span className="text-xs text-[brand-600] ml-2 font-mono bg-brand-50 px-1.5 py-0.5 rounded">ID: {c.id}</span>
+                <span className="text-xs text-brand-600 ml-2 font-mono bg-brand-50 px-1.5 py-0.5 rounded">ID: {c.id}</span>
               </div>
             </div>
             <div className="flex gap-1">
@@ -1292,7 +1292,7 @@ function BrandsTab() {
           {categories.map((c) => <option key={c.id} value={c.id}>{c.name} (ID:{c.id})</option>)}
         </select>
         <div className="flex gap-2">
-          <button type="submit" className="px-4 py-2 bg-[brand-600] text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Add"}</button>
+          <button type="submit" className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Add"}</button>
           {editId && <button type="button" onClick={() => { setEditId(null); setId(""); setName(""); setSlug(""); setCategoryId(""); }} className="px-3 py-2 bg-gray-100 rounded-lg text-sm">Cancel</button>}
         </div>
       </form>
@@ -1307,7 +1307,7 @@ function BrandsTab() {
               <div>
                 <span className="font-medium text-gray-900">{b.name}</span>
                 <span className="text-xs text-gray-400 ml-1">/{b.slug}</span>
-                <span className="text-xs text-[brand-600] ml-2 font-mono bg-brand-50 px-1.5 py-0.5 rounded">ID: {b.id}</span>
+                <span className="text-xs text-brand-600 ml-2 font-mono bg-brand-50 px-1.5 py-0.5 rounded">ID: {b.id}</span>
               </div>
             </div>
             <div className="flex gap-1">
@@ -1405,7 +1405,7 @@ function CarouselTab() {
       {error && <ErrorMsg msg={error} onClose={() => setError("")} />}
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold text-gray-900">Carousel</h2>
-        <button onClick={startAdd} className="px-3 py-2 bg-[brand-600] text-white rounded-lg text-sm font-medium flex items-center gap-1.5"><Plus className="w-4 h-4" /> Add Slide</button>
+        <button onClick={startAdd} className="px-3 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium flex items-center gap-1.5"><Plus className="w-4 h-4" /> Add Slide</button>
       </div>
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
@@ -1427,7 +1427,7 @@ function CarouselTab() {
           <input placeholder="Link" value={form.link} onChange={(e) => setForm({ ...form, link: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
           <input placeholder="Sort Order" type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
           <div className="flex gap-2">
-            <button type="submit" className="px-4 py-2 bg-[brand-600] text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Create"}</button>
+            <button type="submit" className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Create"}</button>
             <button type="button" onClick={() => setShowForm(false)} className="px-3 py-2 bg-gray-100 rounded-lg text-sm">Cancel</button>
           </div>
         </form>
@@ -1617,7 +1617,7 @@ function NavigationTab() {
       <form onSubmit={handleSubmit} className="flex gap-2">
         <input placeholder="Label" value={label} onChange={(e) => setLabel(e.target.value)} className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
         <input placeholder="Link (e.g. /about)" value={link} onChange={(e) => setLink(e.target.value)} className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
-        <button type="submit" className="px-4 py-2 bg-[brand-600] text-white rounded-lg text-sm font-medium">{editId && editId > 0 ? "Update" : "Add"}</button>
+        <button type="submit" className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium">{editId && editId > 0 ? "Update" : "Add"}</button>
         {editId && <button type="button" onClick={() => { setEditId(null); setLabel(""); setLink(""); }} className="px-3 py-2 bg-gray-100 rounded-lg text-sm">Cancel</button>}
       </form>
       {!initialized ? (
@@ -1717,7 +1717,7 @@ function SettingsTab() {
             )}
           </div>
         ))}
-        <button onClick={save} disabled={saving} className="px-4 py-2 bg-[brand-600] hover:bg-[brand-700] text-white rounded-lg text-sm font-medium disabled:opacity-50">{saving ? "Saving..." : "Save Settings"}</button>
+        <button onClick={save} disabled={saving} className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium disabled:opacity-50">{saving ? "Saving..." : "Save Settings"}</button>
       </div>
 
       {/* Password Change */}
@@ -1764,14 +1764,14 @@ function PasswordChangeSection() {
 
   return (
     <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2"><Lock size={18} className="text-[brand-600]" /> Change Admin Password</h3>
+      <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2"><Lock size={18} className="text-brand-600" /> Change Admin Password</h3>
       {msg && <p className="text-sm text-green-600 bg-green-50 p-2 rounded">{msg}</p>}
       {err && <p className="text-sm text-red-600 bg-red-50 p-2 rounded">{err}</p>}
       <form onSubmit={handleChange} className="space-y-3">
         <div><label className="block text-sm font-medium text-gray-700 mb-1">Old Password</label><input type="password" value={oldPass} onChange={(e) => setOldPass(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" required /></div>
         <div><label className="block text-sm font-medium text-gray-700 mb-1">New Password</label><input type="password" value={newPass} onChange={(e) => setNewPass(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" required /></div>
         <div><label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label><input type="password" value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" required /></div>
-        <button type="submit" disabled={loading} className="px-4 py-2 bg-[brand-600] hover:bg-[brand-700] text-white rounded-lg text-sm font-medium disabled:opacity-50">{loading ? "Updating..." : "Update Password"}</button>
+        <button type="submit" disabled={loading} className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium disabled:opacity-50">{loading ? "Updating..." : "Update Password"}</button>
       </form>
     </div>
   );
@@ -1827,7 +1827,7 @@ function SeoTab() {
         <textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} placeholder="e.g. ULBTER offers premium camera accessories including screen protectors and lens caps..." className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" rows={3} />
         <div className="flex items-center justify-between">
           <span className={`text-xs ${metaDescription.length > 160 ? 'text-red-500' : 'text-gray-400'}`}>{metaDescription.length}/160 chars</span>
-          <button onClick={handleSaveDescription} className="px-4 py-2 bg-[brand-600] hover:bg-[brand-700] text-white rounded-lg text-sm font-medium">Save</button>
+          <button onClick={handleSaveDescription} className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium">Save</button>
         </div>
       </div>
 
@@ -1840,7 +1840,7 @@ function SeoTab() {
         <p className="text-xs text-gray-500">Comma-separated keywords. Note: Google no longer uses this for ranking, but some other search engines do.</p>
         <input value={metaKeywords} onChange={(e) => setMetaKeywords(e.target.value)} placeholder="e.g. camera accessories, screen protector, gopro case, lens cap" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
         <div className="flex justify-end">
-          <button onClick={handleSaveKeywords} className="px-4 py-2 bg-[brand-600] hover:bg-[brand-700] text-white rounded-lg text-sm font-medium">Save</button>
+          <button onClick={handleSaveKeywords} className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium">Save</button>
         </div>
       </div>
     </div>
@@ -1877,7 +1877,7 @@ function AnalyticsTab() {
       <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
         <input placeholder="Name (e.g. Google Analytics)" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
         <textarea placeholder="Paste tracking code..." value={code} onChange={(e) => setCode(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm font-mono" rows={6} required />
-        <button type="submit" className="px-4 py-2 bg-[brand-600] text-white rounded-lg text-sm font-medium">Add Code</button>
+        <button type="submit" className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium">Add Code</button>
       </form>
       <div className="space-y-2">
         {items.map((item) => (

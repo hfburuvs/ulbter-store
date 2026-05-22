@@ -171,7 +171,7 @@ export default function Home() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold mb-1">
-                  {t("searchBtn")}: "<span className="text-[brand-600]">{searchQuery}</span>"
+                  {t("searchBtn")}: "<span className="text-brand-600">{searchQuery}</span>"
                 </h1>
                 <p className="text-gray-400 text-sm">
                   {searchResults.length} product{searchResults.length !== 1 ? "s" : ""} found
@@ -208,7 +208,7 @@ export default function Home() {
               <p className="text-sm text-gray-500 mb-4">{t("search")}</p>
               <button
                 onClick={clearSearch}
-                className="text-[brand-600] hover:underline text-sm font-medium"
+                className="text-brand-600 hover:underline text-sm font-medium"
               >
                 {t("allProducts")}
               </button>
@@ -222,28 +222,71 @@ export default function Home() {
   // Normal home view
   return (
     <div>
-      {/* Carousel / Hero */}
-      {slides.length > 0 ? (
-        <Carousel slides={slides} />
-      ) : (
-        <section className="bg-gradient-to-r from-gray-900 to-gray-800 text-white" role="banner" aria-label="Hero banner">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-            <div className="max-w-2xl">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-4">
-                {settingsMap["heroTitle"] || (
-                  <>{t("heroTitle")}</>
+      {/* Hero / Carousel */}
+      <section className="hero-pattern py-12 md:py-16" role="banner" aria-label="Hero banner">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+            {/* Left: Text content */}
+            <div className="flex-1 space-y-5 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 bg-brand-100 text-brand-700 px-4 py-1.5 rounded-full text-sm font-medium">
+                <span className="w-2 h-2 bg-brand-500 rounded-full animate-pulse" />
+                {settingsMap["heroBadge"] || "New Collection 2026"}
+              </div>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                {settingsMap["heroTitle"] ? (
+                  <span dangerouslySetInnerHTML={{ __html: settingsMap["heroTitle"].replace(/Quality/g, '<span class="text-brand-600">Quality</span>') }} />
+                ) : (
+                  <>{t("heroTitle")?.split("Quality")[0] || "Discover "}<span className="text-brand-600">Quality</span>{t("heroTitle")?.split("Quality")[1] || " Products Daily"}</>
                 )}
               </h1>
-              <p className="text-lg text-gray-300 mb-8 leading-relaxed">
-                {settingsMap["heroSubtitle"] || t("heroSubtitle")}
+              <p className="text-base md:text-lg text-gray-600 max-w-lg mx-auto lg:mx-0 leading-relaxed">
+                {settingsMap["heroSubtitle"] || t("heroSubtitle") || "Curated selection of top-rated products from trusted brands. Shop with confidence."}
               </p>
+              <div className="flex gap-4 justify-center lg:justify-start">
+                <a
+                  href="#products"
+                  onClick={(e) => { e.preventDefault(); document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' }); }}
+                  className="btn-primary text-white px-6 md:px-8 py-3 rounded-full font-semibold text-sm inline-block"
+                >
+                  {t("exploreProducts") || "Explore Products"}
+                </a>
+                <Link
+                  to={path("/about")}
+                  className="border-2 border-gray-300 text-gray-700 px-6 md:px-8 py-3 rounded-full font-semibold text-sm hover:border-brand-500 hover:text-brand-600 transition-all inline-block"
+                >
+                  {t("learnMore") || "Learn More"}
+                </Link>
+              </div>
+            </div>
+            {/* Right: Hero image */}
+            <div className="flex-1 relative hidden lg:block">
+              <div className="absolute -inset-4 bg-brand-200 rounded-3xl opacity-30 blur-2xl" />
+              <div className="relative bg-white rounded-2xl shadow-xl p-3 md:p-4">
+                {slides.length > 0 && slides[0]?.image_url ? (
+                  <img
+                    src={slides[0].image_url}
+                    alt={slides[0].title || "Featured"}
+                    className="rounded-xl w-full object-cover"
+                    style={{ maxHeight: '360px' }}
+                    loading="eager"
+                  />
+                ) : (
+                  <img
+                    src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=500&fit=crop"
+                    alt="Featured products"
+                    className="rounded-xl w-full object-cover"
+                    style={{ maxHeight: '360px' }}
+                    loading="eager"
+                  />
+                )}
+              </div>
             </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* Category Sections */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 space-y-16">
+      <main id="products" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 space-y-16">
         {loading ? (
           <div className="animate-pulse space-y-8" aria-hidden="true">
             {[1, 2].map((i) => (
@@ -296,20 +339,20 @@ function CategorySection({ category }: { category: Category }) {
           onClick={() => setCollapsed(!collapsed)}
           className="flex items-center gap-3 group w-full text-left"
         >
-          <div className="w-8 h-8 bg-[brand-600]/10 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-brand-600/10 rounded-lg flex items-center justify-center">
             {category.slug === "camera" || category.slug === "camera-accessories" ? (
-              <Camera className="w-5 h-5 text-[brand-600]" aria-hidden="true" />
+              <Camera className="w-5 h-5 text-brand-600" aria-hidden="true" />
             ) : category.slug === "watch" || category.slug === "watch-accessories" ? (
-              <Watch className="w-5 h-5 text-[brand-600]" aria-hidden="true" />
+              <Watch className="w-5 h-5 text-brand-600" aria-hidden="true" />
             ) : (
-              <Star className="w-5 h-5 text-[brand-600]" aria-hidden="true" />
+              <Star className="w-5 h-5 text-brand-600" aria-hidden="true" />
             )}
           </div>
           <h2 className="text-2xl font-bold text-gray-900">{category.name}</h2>
           {collapsed ? (
-            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[brand-600] transition-colors" />
+            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-brand-600 transition-colors" />
           ) : (
-            <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-[brand-600] transition-colors" />
+            <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-brand-600 transition-colors" />
           )}
         </button>
         {!collapsed && (
@@ -317,7 +360,7 @@ function CategorySection({ category }: { category: Category }) {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none bg-white border border-gray-200 text-gray-700 text-sm rounded-lg pl-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-[brand-600]/20 focus:border-[brand-600] cursor-pointer"
+              className="appearance-none bg-white border border-gray-200 text-gray-700 text-sm rounded-lg pl-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-brand-600/20 focus:border-brand-600 cursor-pointer"
               aria-label="Sort products"
             >
               <option value="default">Default</option>
@@ -406,11 +449,11 @@ function BrandGroup({ brand, categoryId, sortBy = "default" }: { brand: Brand; c
       >
         <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
           {collapsed ? (
-            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[brand-600] transition-colors" />
+            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-brand-600 transition-colors" />
           ) : (
-            <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-[brand-600] transition-colors" />
+            <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-brand-600 transition-colors" />
           )}
-          <span className="w-2 h-2 bg-[brand-600] rounded-full" aria-hidden="true" />
+          <span className="w-2 h-2 bg-brand-600 rounded-full" aria-hidden="true" />
           {brand.name}
         </h3>
         <span className="text-xs text-gray-400">{products.length} items</span>
@@ -452,7 +495,7 @@ function ProductCard({ product }: { product: Product }) {
       </Link>
 
       <div className="p-5">
-        <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-3 hover:text-[brand-600] transition-colors leading-relaxed">
+        <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-3 hover:text-brand-600 transition-colors leading-relaxed">
           <Link to={path(`/product/${product.id}`)}>{product.title}</Link>
         </h4>
 
@@ -462,7 +505,7 @@ function ProductCard({ product }: { product: Product }) {
             href={product.amazon_link}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 bg-[brand-600] hover:bg-[brand-700] text-white text-xs font-medium py-2.5 px-4 rounded-xl transition-colors flex-shrink-0"
+            className="inline-flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-medium py-2.5 px-4 rounded-xl transition-colors flex-shrink-0"
             aria-label={`${config.domain}: ${product.title}`}
             onClick={(e) => e.stopPropagation()}
           >

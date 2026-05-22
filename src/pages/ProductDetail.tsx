@@ -119,7 +119,7 @@ export default function ProductDetail() {
         </h1>
         <Link
           to={path("/")}
-          className="text-[brand-600] hover:underline inline-flex items-center gap-1"
+          className="text-brand-600 hover:underline inline-flex items-center gap-1"
         >
           <ChevronLeft className="w-4 h-4" />
           {t("home")}
@@ -134,7 +134,7 @@ export default function ProductDetail() {
       <nav className="mb-6" aria-label="Breadcrumb">
         <ol className="flex items-center space-x-2 text-sm text-gray-500">
           <li>
-            <Link to={path("/")} className="hover:text-[brand-600] transition-colors">
+            <Link to={path("/")} className="hover:text-brand-600 transition-colors">
               {t("home")}
             </Link>
           </li>
@@ -185,7 +185,7 @@ export default function ProductDetail() {
               </div>
             )}
 
-            <p className="text-3xl font-bold text-[brand-600]">
+            <p className="text-3xl font-bold text-brand-600">
               {config.currency}{product.price}
             </p>
           </div>
@@ -200,7 +200,7 @@ export default function ProductDetail() {
                     key={i}
                     className="flex items-start gap-2 text-sm text-gray-600"
                   >
-                    <Star className="w-4 h-4 text-[brand-600] flex-shrink-0 mt-0.5" />
+                    <Star className="w-4 h-4 text-brand-600 flex-shrink-0 mt-0.5" />
                     {f}
                   </li>
                 ))}
@@ -224,7 +224,7 @@ export default function ProductDetail() {
               href={product.amazon_link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 w-full sm:w-auto bg-[brand-600] hover:bg-[brand-700] text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+              className="inline-flex items-center justify-center gap-2 w-full sm:w-auto bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors"
             >
               {t("buyNow")}
               <ExternalLink className="w-4 h-4" />

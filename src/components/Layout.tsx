@@ -173,7 +173,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       {/* ===== NAVIGATION BAR ===== */}
       <nav className="bg-white/95 backdrop-blur-md border-b border-black/[0.06] sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
               <div className="w-9 h-9 bg-gradient-to-br from-brand-500 to-brand-700 rounded-lg flex items-center justify-center">
@@ -184,8 +184,42 @@ export default function Layout({ children }: { children: ReactNode }) {
               </span>
             </Link>
 
+            {/* Desktop Search - Centered */}
+            <div className="hidden md:flex flex-1 max-w-xl mx-8">
+              <div className="relative w-full">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (searchQuery.trim()) {
+                      navigate(path(`/?search=${encodeURIComponent(searchQuery.trim())}`));
+                    }
+                  }}
+                  className="flex items-center"
+                >
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search products, brands, categories..."
+                    className="w-full pl-10 pr-10 py-2.5 bg-gray-100 border-0 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all"
+                  />
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => { setSearchQuery(""); navigate(path("/")); }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                      aria-label="Clear search"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </form>
+              </div>
+            </div>
+
             {/* Desktop Nav Links */}
-            <div className="hidden md:flex items-center space-x-1">
+            <div className="hidden md:flex items-center gap-1">
               {hasCustomNav ? (
                 // Dynamic nav from database
                 <>
@@ -203,7 +237,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     if (children.length > 0 || isProducts) {
                       return (
                         <div key={item.id} className="relative group">
-                          <button className={`flex items-center space-x-1 text-sm font-medium px-3 py-2 rounded-lg transition-colors ${isActive ? "text-brand-600 bg-brand-50" : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"}`}>
+                          <button className={`nav-pill flex items-center space-x-1 text-sm font-medium px-4 py-2 rounded-full transition-colors ${isActive ? "text-brand-600 bg-brand-50" : "text-gray-700 hover:text-brand-600 hover:bg-brand-50"}`}>
                             <span>{displayLabel}</span>
                             <ChevronDown className="w-3 h-3" />
                           </button>
@@ -216,14 +250,14 @@ export default function Layout({ children }: { children: ReactNode }) {
                                   const catSlug = child.link.split("#cat-")[1];
                                   return (
                                     <a key={child.id} href={child.link} onClick={(e) => { e.preventDefault(); if (isHomePath(location.pathname)) { setTimeout(() => { const el = document.getElementById(`cat-${catSlug}`); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100); } else { sessionStorage.setItem("scrollToCategory", `cat-${catSlug}`); navigate(path("/")); } }} className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors">
-                                      <span className="w-2 h-2 rounded-full bg-[brand-600] mr-3" />
+                                      <span className="w-2 h-2 rounded-full bg-brand-600 mr-3" />
                                       {childLabel}
                                     </a>
                                   );
                                 }
                                 return (
                                   <Link key={child.id} to={child.link} className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors">
-                                    <span className="w-2 h-2 rounded-full bg-[brand-600] mr-3" />
+                                    <span className="w-2 h-2 rounded-full bg-brand-600 mr-3" />
                                     {childLabel}
                                   </Link>
                                 );
@@ -231,7 +265,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                             ) : (
                               categories.map((cat) => (
                                 <a key={cat.id} href={path(`/#cat-${cat.slug}`)} onClick={(e) => { e.preventDefault(); setProductsOpen(false); if (isHomePath(location.pathname)) { setTimeout(() => { const el = document.getElementById(`cat-${cat.slug}`); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100); } else { sessionStorage.setItem("scrollToCategory", `cat-${cat.slug}`); navigate(path("/")); } }} className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors">
-                                  <span className="w-2 h-2 rounded-full bg-[brand-600] mr-3" />
+                                  <span className="w-2 h-2 rounded-full bg-brand-600 mr-3" />
                                   {cat.name}
                                 </a>
                               ))
@@ -241,7 +275,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                       );
                     }
                     return (
-                      <Link key={item.id} to={item.link === "/" ? path("/") : item.link === "/about" ? path("/about") : item.link === "/contact" ? path("/contact") : item.link} className={`flex items-center space-x-1 text-sm font-medium px-3 py-2 rounded-lg transition-colors ${isActive ? "text-brand-600 bg-brand-50" : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"}`}>
+                      <Link key={item.id} to={item.link === "/" ? path("/") : item.link === "/about" ? path("/about") : item.link === "/contact" ? path("/contact") : item.link} className={`nav-pill flex items-center space-x-1 text-sm font-medium px-4 py-2 rounded-full transition-colors ${isActive ? "text-brand-600 bg-brand-50" : "text-gray-700 hover:text-brand-600 hover:bg-brand-50"}`}>
                         <span>{displayLabel}</span>
                       </Link>
                     );
@@ -252,10 +286,10 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <>
                   <Link
                     to={path("/")}
-                    className={`flex items-center space-x-1.5 text-sm font-medium px-3 py-2 rounded-lg transition-colors ${
+                    className={`nav-pill flex items-center space-x-1.5 text-sm font-medium px-4 py-2 rounded-full transition-colors ${
                       cleanPath === "/"
                         ? "text-brand-600 bg-brand-50"
-                        : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                        : "text-gray-700 hover:text-brand-600 hover:bg-brand-50"
                     }`}
                   >
                     <Home className="w-4 h-4" />
@@ -268,10 +302,10 @@ export default function Layout({ children }: { children: ReactNode }) {
                     onMouseLeave={() => setProductsOpen(false)}
                   >
                     <button
-                      className={`flex items-center space-x-1.5 text-sm font-medium px-3 py-2 rounded-lg transition-colors ${
+                      className={`nav-pill flex items-center space-x-1.5 text-sm font-medium px-4 py-2 rounded-full transition-colors ${
                         location.pathname.startsWith("/category")
                           ? "text-brand-600 bg-brand-50"
-                          : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                          : "text-gray-700 hover:text-brand-600 hover:bg-brand-50"
                       }`}
                     >
                       <ShoppingBag className="w-4 h-4" />
@@ -301,7 +335,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                             }}
                             className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors"
                           >
-                            <span className="w-2 h-2 rounded-full bg-[brand-600] mr-3" />
+                            <span className="w-2 h-2 rounded-full bg-brand-600 mr-3" />
                             {cat.name}
                           </a>
                         ))}
@@ -311,10 +345,10 @@ export default function Layout({ children }: { children: ReactNode }) {
 
                   <Link
                     to={path("/about")}
-                    className={`flex items-center space-x-1.5 text-sm font-medium px-3 py-2 rounded-lg transition-colors ${
+                    className={`nav-pill flex items-center space-x-1.5 text-sm font-medium px-4 py-2 rounded-full transition-colors ${
                       cleanPath === "/about"
                         ? "text-brand-600 bg-brand-50"
-                        : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                        : "text-gray-700 hover:text-brand-600 hover:bg-brand-50"
                     }`}
                   >
                     <Info className="w-4 h-4" />
@@ -323,10 +357,10 @@ export default function Layout({ children }: { children: ReactNode }) {
 
                   <Link
                     to={path("/contact")}
-                    className={`flex items-center space-x-1.5 text-sm font-medium px-3 py-2 rounded-lg transition-colors ${
+                    className={`nav-pill flex items-center space-x-1.5 text-sm font-medium px-4 py-2 rounded-full transition-colors ${
                       cleanPath === "/contact"
                         ? "text-brand-600 bg-brand-50"
-                        : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                        : "text-gray-700 hover:text-brand-600 hover:bg-brand-50"
                     }`}
                   >
                     <MessageSquare className="w-4 h-4" />
@@ -336,11 +370,11 @@ export default function Layout({ children }: { children: ReactNode }) {
               )}
             </div>
 
-            {/* Right side: Country switcher + Search + Mobile menu */}
+            {/* Right side: Country switcher + Mobile menu */}
             <div className="flex items-center gap-2">
               {/* Country Switcher */}
               <div className="relative group">
-                <button className="flex items-center gap-1 text-sm font-medium px-2 py-1.5 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                <button className="flex items-center gap-1 text-sm font-medium px-2 py-1.5 rounded-full text-gray-700 hover:bg-gray-100 transition-colors">
                   <span>{dbCountries.find((c: any) => c.code === country)?.flag || countryConfig[country]?.flag || "🌍"}</span>
                   <span className="uppercase text-xs">{country}</span>
                   <ChevronDown className="w-3 h-3" />
@@ -362,57 +396,6 @@ export default function Layout({ children }: { children: ReactNode }) {
                     <p className="px-4 py-2 text-sm text-gray-400 text-center">No active countries</p>
                   )}
                 </div>
-              </div>
-
-              {/* Desktop Search */}
-              <div className="hidden md:flex items-center">
-                {searchOpen ? (
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      if (searchQuery.trim()) {
-                        navigate(path(`/?search=${encodeURIComponent(searchQuery.trim())}`));
-                      }
-                    }}
-                    className="flex items-center"
-                  >
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search products..."
-                      className="w-44 px-3 py-1.5 text-sm border border-gray-200 border-r-0 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
-                      autoFocus
-                    />
-                    {searchQuery && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSearchQuery("");
-                          navigate(path("/"));
-                        }}
-                        className="px-2 py-1.5 border-t border-b border-gray-200 bg-white text-gray-400 hover:text-gray-600 transition-colors"
-                        aria-label="Clear search"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                    <button
-                      type="submit"
-                      className="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-r-lg transition-colors"
-                    >
-                      <Search className="w-4 h-4" />
-                    </button>
-                  </form>
-                ) : (
-                  <button
-                    onClick={() => setSearchOpen(true)}
-                    className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-                    aria-label="Search"
-                  >
-                    <Search className="w-5 h-5" />
-                  </button>
-                )}
               </div>
 
               {/* Mobile hamburger */}
@@ -490,7 +473,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                       onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center space-x-2 px-3 py-2 pl-8 rounded-lg text-gray-600 hover:bg-gray-50"
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-[brand-600]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-brand-600" />
                       <span>{cat.name}</span>
                     </Link>
                   ))}
@@ -521,51 +504,42 @@ export default function Layout({ children }: { children: ReactNode }) {
       <main className="flex-1">{children}</main>
 
       {/* ===== FOOTER ===== */}
-      <footer className="bg-gray-900 text-gray-300">
+      <footer className="bg-white border-t">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Brand */}
-            <div className="md:col-span-1">
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-7 h-7 bg-[brand-600] rounded-md flex items-center justify-center">
-                  <ShoppingBag className="w-4 h-4 text-white" />
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-brand-500 to-brand-700 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold">U</span>
                 </div>
-                <span className="text-lg font-bold text-white">
+                <span className="text-lg font-bold text-gray-900">
                   {siteTitle}
                 </span>
               </div>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                {settingsMap["footerAbout"] || t("footerAbout")}
+              <p className="text-sm text-gray-500 leading-relaxed">
+                {settingsMap["footerAbout"] || t("footerAbout") || "Discover quality products from trusted brands. Shop with confidence."}
               </p>
             </div>
 
             {/* Quick Links */}
             <div>
-              <h3 className="text-sm font-semibold text-white mb-4">
-                {t("quickLinks")}
-              </h3>
-              <ul className="space-y-2">
+              <h4 className="font-semibold text-gray-900 mb-4">
+                {t("quickLinks") || "Quick Links"}
+              </h4>
+              <ul className="space-y-2 text-sm text-gray-500">
                 <li>
-                  <Link
-                    to={path("/")}
-                    className="text-sm text-gray-400 hover:text-[brand-600] transition-colors"
-                  >
+                  <Link to={path("/")} className="hover:text-brand-600 transition-colors">
                     {t("home")}
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to={path("/about")}
-                    className="text-sm text-gray-400 hover:text-[brand-600] transition-colors"
-                  >
+                  <Link to={path("/about")} className="hover:text-brand-600 transition-colors">
                     {t("about")}
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to={path("/contact")}
-                    className="text-sm text-gray-400 hover:text-[brand-600] transition-colors"
-                  >
+                  <Link to={path("/contact")} className="hover:text-brand-600 transition-colors">
                     {t("contact")}
                   </Link>
                 </li>
@@ -574,10 +548,10 @@ export default function Layout({ children }: { children: ReactNode }) {
 
             {/* Categories */}
             <div>
-              <h3 className="text-sm font-semibold text-white mb-4">
-                {t("categories")}
-              </h3>
-              <ul className="space-y-2">
+              <h4 className="font-semibold text-gray-900 mb-4">
+                {t("categories") || "Categories"}
+              </h4>
+              <ul className="space-y-2 text-sm text-gray-500">
                 {categories.slice(0, 6).map((cat) => (
                   <li key={cat.id}>
                     <a
@@ -592,7 +566,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                           navigate(path("/"));
                         }
                       }}
-                      className="text-sm text-gray-400 hover:text-[brand-600] transition-colors"
+                      className="hover:text-brand-600 transition-colors"
                     >
                       {cat.name}
                     </a>
@@ -601,26 +575,37 @@ export default function Layout({ children }: { children: ReactNode }) {
               </ul>
             </div>
 
-            {/* Connect + Admin */}
+            {/* Newsletter + Admin */}
             <div>
-              <h3 className="text-sm font-semibold text-white mb-4">
-                Connect
-              </h3>
-              <p className="text-sm text-gray-400 mb-3">
-                {contactEmail}
+              <h4 className="font-semibold text-gray-900 mb-4">
+                Stay Updated
+              </h4>
+              <p className="text-sm text-gray-500 mb-3">
+                Subscribe for new products and deals.
               </p>
-              <p className="text-xs text-gray-500 mb-4">
-                &copy; {new Date().getFullYear()} {siteTitle}. {t("copyright")}
-              </p>
-              {/* Admin entry - moved to footer */}
+              <div className="flex gap-2">
+                <input
+                  type="email"
+                  placeholder="Your email"
+                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                  readOnly
+                />
+                <button className="bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-700 transition-colors">
+                  Subscribe
+                </button>
+              </div>
+              {/* Admin entry */}
               <Link
                 to={path("/admin")}
-                className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-[brand-600] transition-colors bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-lg"
+                className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-brand-600 transition-colors mt-4"
               >
                 <Shield className="w-3.5 h-3.5" />
                 {t("adminLogin")}
               </Link>
             </div>
+          </div>
+          <div className="border-t mt-8 pt-8 text-center text-sm text-gray-400">
+            &copy; {new Date().getFullYear()} {siteTitle}. {t("copyright") || "All rights reserved."}
           </div>
         </div>
       </footer>

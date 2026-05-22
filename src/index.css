@@ -380,6 +380,31 @@
 }
 
 /* ========================================
+   V7 Theme Styles
+   ======================================== */
+
+.nav-pill {
+  transition: all 0.2s ease;
+}
+.nav-pill:hover {
+  background: var(--color-bg);
+  color: var(--color-primary);
+}
+
+.hero-pattern {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 50%, #f0fdf4 100%);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+  transition: all 0.3s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px -4px rgba(22,163,74,0.4);
+}
+
+/* ========================================
    Reduced Motion (Accessibility)
    ======================================== */
 
