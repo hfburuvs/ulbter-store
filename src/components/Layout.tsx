@@ -500,6 +500,37 @@ export default function Layout({ children }: { children: ReactNode }) {
         )}
       </nav>
 
+      {/* ===== SUB-NAV: Category Quick Links ===== */}
+      {categories.length > 0 && (
+        <div className="bg-white border-b border-gray-100 hidden md:block">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center gap-1 py-2 overflow-x-auto scrollbar-hide">
+              <span className="text-xs text-gray-400 font-medium mr-2 flex-shrink-0 uppercase tracking-wider">Categories</span>
+              {categories.map((cat) => (
+                <a
+                  key={cat.id}
+                  href={path(`/#cat-${cat.slug}`)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const pn = location.pathname;
+                    if (isHomePath(pn)) {
+                      setTimeout(() => { const el = document.getElementById(`cat-${cat.slug}`); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+                    } else {
+                      sessionStorage.setItem("scrollToCategory", `cat-${cat.slug}`);
+                      navigate(path("/"));
+                    }
+                  }}
+                  className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-brand-600 hover:bg-brand-50 px-3 py-1.5 rounded-full transition-colors whitespace-nowrap flex-shrink-0"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-400" />
+                  {cat.name}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ===== MAIN CONTENT ===== */}
       <main className="flex-1">{children}</main>
 

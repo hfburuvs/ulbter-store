@@ -7,10 +7,11 @@ import {
   Upload, Download, Trash2, Plus, Search, Pencil,
   Settings, Layers, Tag, LayoutDashboard, Image,
   Navigation, Globe, Code2, RotateCcw, Mail, Lock,
+  Video,
 } from "lucide-react";
 
 type Tab = "dashboard" | "products" | "messages" | "categories" | "brands"
-  | "countries" | "carousel" | "navigation" | "settings" | "seo" | "analytics" | "subscribers" | "reset";
+  | "countries" | "carousel" | "navigation" | "settings" | "seo" | "analytics" | "subscribers" | "video" | "reset";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ export default function AdminDashboard() {
     { key: "brands", label: "Brands", icon: Tag },
     { key: "countries", label: "Countries", icon: Globe },
     { key: "carousel", label: "Carousel", icon: Image },
+    { key: "video", label: "Videos", icon: Video },
     { key: "navigation", label: "Navigation", icon: Navigation },
     { key: "settings", label: "Settings", icon: Settings },
     { key: "seo", label: "SEO", icon: Globe },
@@ -78,6 +80,7 @@ export default function AdminDashboard() {
             {tab === "brands" && <BrandsTab />}
             {tab === "countries" && <CountriesTab />}
             {tab === "carousel" && <CarouselTab />}
+            {tab === "video" && <VideosTab />}
             {tab === "navigation" && <NavigationTab />}
             {tab === "settings" && <SettingsTab />}
             {tab === "seo" && <SeoTab />}
@@ -1126,6 +1129,7 @@ function CategoriesTab() {
   const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
   const [error, setError] = useState("");
 
@@ -1151,7 +1155,9 @@ function CategoriesTab() {
           const oldItem = items.find((i) => i.id === editId);
           const tempSlug = `__temp_${Date.now()}_${Math.floor(Math.random()*10000)}`;
           await supabase.from("categories").update({ slug: tempSlug }).eq("id", editId);
-          const { error: insErr } = await supabase.from("categories").insert({ id: newId, name, slug, sort_order: oldItem?.sort_order ?? 0 });
+          const insertData: any = { id: newId, name, slug, sort_order: oldItem?.sort_order ?? 0 };
+          if (imageUrl) insertData.image_url = imageUrl;
+          const { error: insErr } = await supabase.from("categories").insert(insertData);
           if (insErr) {
             // Rollback old slug
             await supabase.from("categories").update({ slug }).eq("id", editId);
@@ -1161,14 +1167,17 @@ function CategoriesTab() {
           await supabase.from("brands").update({ category_id: newId }).eq("category_id", editId);
           await supabase.from("categories").delete().eq("id", editId);
         } else {
-          await supabase.from("categories").update({ name, slug }).eq("id", editId);
+          const updateData: any = { name, slug };
+          if (imageUrl) updateData.image_url = imageUrl;
+          await supabase.from("categories").update(updateData).eq("id", editId);
         }
       } else {
         const insertData: any = { name, slug, sort_order: Math.floor(Date.now() / 1000) };
+        if (imageUrl) insertData.image_url = imageUrl;
         const { error: err } = await supabase.from("categories").insert(insertData);
         if (err) throw err;
       }
-      setId(""); setName(""); setSlug(""); setEditId(null); load();
+      setId(""); setName(""); setSlug(""); setImageUrl(""); setEditId(null); load();
     } catch (err: any) {
       setError(err.message || "Failed to save");
     }
@@ -1201,17 +1210,36 @@ function CategoriesTab() {
     load();
   };
 
+  const startEdit = (c: any) => {
+    setEditId(c.id);
+    setId(String(c.id));
+    setName(c.name);
+    setSlug(c.slug);
+    setImageUrl(c.image_url || "");
+  };
+
   return (
     <div className="space-y-4">
       {error && <ErrorMsg msg={error} onClose={() => setError("")} />}
       <h2 className="text-xl font-bold text-gray-900">Categories</h2>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-5 gap-2">
-        <input placeholder="ID (optional)" value={id} onChange={(e) => setId(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" type="number" />
-        <input placeholder="Name *" value={name} onChange={(e) => setName(e.target.value)} className="sm:col-span-2 px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
-        <input placeholder="Slug *" value={slug} onChange={(e) => setSlug(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
-        <div className="flex gap-2">
-          <button type="submit" className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Add"}</button>
-          {editId && <button type="button" onClick={() => { setEditId(null); setId(""); setName(""); setSlug(""); }} className="px-3 py-2 bg-gray-100 rounded-lg text-sm">Cancel</button>}
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+          <input placeholder="ID (optional)" value={id} onChange={(e) => setId(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" type="number" />
+          <input placeholder="Name *" value={name} onChange={(e) => setName(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
+          <input placeholder="Slug *" value={slug} onChange={(e) => setSlug(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
+          <div className="flex gap-2">
+            <button type="submit" className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Add"}</button>
+            {editId && <button type="button" onClick={() => { setEditId(null); setId(""); setName(""); setSlug(""); setImageUrl(""); }} className="px-3 py-2 bg-gray-100 rounded-lg text-sm">Cancel</button>}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <input placeholder="Category Image URL (optional, for front-end featured categories)" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" />
+          <div className="flex items-center gap-2">
+            {imageUrl && (
+              <img src={imageUrl} alt="Preview" className="w-10 h-10 rounded-lg object-cover border border-gray-200" />
+            )}
+            <span className="text-xs text-gray-400">Recommended: 1:1 ratio, 400x400px or larger</span>
+          </div>
         </div>
       </form>
       <div className="bg-white rounded-xl border border-gray-100">
@@ -1222,6 +1250,11 @@ function CategoriesTab() {
                 <button onClick={() => moveCategory(idx, "up")} disabled={idx === 0} className="p-0.5 hover:bg-gray-200 rounded disabled:opacity-30"><svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg></button>
                 <button onClick={() => moveCategory(idx, "down")} disabled={idx === items.length - 1} className="p-0.5 hover:bg-gray-200 rounded disabled:opacity-30"><svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></button>
               </div>
+              {c.image_url ? (
+                <img src={c.image_url} alt={c.name} className="w-10 h-10 rounded-lg object-cover border border-gray-200 flex-shrink-0" />
+              ) : (
+                <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 text-xs text-gray-400">No img</div>
+              )}
               <div>
                 <span className="font-medium text-gray-900">{c.name}</span>
                 <span className="text-xs text-gray-400 ml-1">/{c.slug}</span>
@@ -1229,7 +1262,7 @@ function CategoriesTab() {
               </div>
             </div>
             <div className="flex gap-1">
-              <button onClick={() => { setEditId(c.id); setId(String(c.id)); setName(c.name); setSlug(c.slug); }} className="p-1 hover:bg-gray-100 rounded"><Pencil className="w-3.5 h-3.5 text-gray-500" /></button>
+              <button onClick={() => startEdit(c)} className="p-1 hover:bg-gray-100 rounded"><Pencil className="w-3.5 h-3.5 text-gray-500" /></button>
               <button onClick={() => handleDelete(c.id)} className="p-1 hover:bg-red-50 rounded"><Trash2 className="w-3.5 h-3.5 text-red-400" /></button>
             </div>
           </div>
@@ -1502,6 +1535,86 @@ function CarouselTab() {
           </div>
         ))}
         {items.length === 0 && <p className="text-sm text-gray-400 text-center py-8">No slides</p>}
+      </div>
+    </div>
+  );
+}
+
+/* ============ Videos ============ */
+function VideosTab() {
+  const [items, setItems] = useState<any[]>([]);
+  const [title, setTitle] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [sortOrder, setSortOrder] = useState("0");
+  const [editId, setEditId] = useState<number | null>(null);
+  const [error, setError] = useState("");
+
+  async function load() {
+    try {
+      const { data, error: err } = await supabase.from("videos").select("*").order("sort_order", { ascending: true });
+      if (err) throw err;
+      setItems(data || []);
+    } catch (err: any) {
+      setError(err.message || "Failed to load videos");
+    }
+  }
+
+  useEffect(() => { load(); }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); setError("");
+    try {
+      const data = { title, video_url: videoUrl, sort_order: parseInt(sortOrder) || 0 };
+      if (editId) {
+        const { error: updErr } = await supabase.from("videos").update(data).eq("id", editId);
+        if (updErr) { setError(updErr.message); return; }
+      } else {
+        const { error: insErr } = await supabase.from("videos").insert(data);
+        if (insErr) { setError(insErr.message); return; }
+      }
+      setTitle(""); setVideoUrl(""); setSortOrder("0"); setEditId(null); load();
+    } catch (err: any) { setError(err.message || "Failed to save"); }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Delete this video?")) return;
+    try { await supabase.from("videos").delete().eq("id", id); load(); }
+    catch (err: any) { setError(err.message); }
+  };
+
+  return (
+    <div className="space-y-4">
+      {error && <ErrorMsg msg={error} onClose={() => setError("")} />}
+      <h2 className="text-xl font-bold text-gray-900">Videos</h2>
+      <p className="text-sm text-gray-500">Upload factory/production line videos. They will be displayed in a carousel on the About page.</p>
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" />
+          <input placeholder="Video URL (YouTube embed or direct MP4 link)" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" required />
+          <input placeholder="Sort Order" type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm" />
+        </div>
+        <div className="flex gap-2">
+          <button type="submit" className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Add"}</button>
+          {editId && <button type="button" onClick={() => { setEditId(null); setTitle(""); setVideoUrl(""); setSortOrder("0"); }} className="px-3 py-2 bg-gray-100 rounded-lg text-sm">Cancel</button>}
+        </div>
+      </form>
+      <div className="space-y-3">
+        {items.map((item) => (
+          <div key={item.id} className="bg-white rounded-xl border border-gray-100 p-4 flex gap-4 items-center">
+            <div className="w-24 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <Video className="w-6 h-6 text-gray-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-gray-900 truncate">{item.title || "Untitled"}</p>
+              <p className="text-xs text-gray-500 truncate">{item.video_url}</p>
+            </div>
+            <div className="flex gap-1">
+              <button onClick={() => { setEditId(item.id); setTitle(item.title); setVideoUrl(item.video_url); setSortOrder(String(item.sort_order)); }} className="p-1 hover:bg-gray-100 rounded"><Pencil className="w-3.5 h-3.5 text-gray-500" /></button>
+              <button onClick={() => handleDelete(item.id)} className="p-1 hover:bg-red-50 rounded"><Trash2 className="w-3.5 h-3.5 text-red-400" /></button>
+            </div>
+          </div>
+        ))}
+        {items.length === 0 && <p className="text-sm text-gray-400 text-center py-8">No videos. Add your first factory/production video above.</p>}
       </div>
     </div>
   );

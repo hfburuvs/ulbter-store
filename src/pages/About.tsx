@@ -1,20 +1,39 @@
 import { useState, useEffect } from "react";
-import { Shield, Eye, Smartphone, Award, Users, Zap } from "lucide-react";
+import { Shield, Eye, Smartphone, Award, Users, Zap, Video, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router";
 import { useCountry } from "@/hooks/useCountry";
 import { supabase } from "@/lib/supabase";
 
+interface VideoItem {
+  id: number;
+  title: string;
+  video_url: string;
+  sort_order: number;
+}
+
+function getYouTubeEmbedUrl(url: string): string | null {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return match && match[2].length === 11 ? `https://www.youtube.com/embed/${match[2]}` : null;
+}
+
 export default function About() {
   const { t, path, country } = useCountry();
   const [settingsMap, setSettingsMap] = useState<Record<string, string>>({});
+  const [videos, setVideos] = useState<VideoItem[]>([]);
+  const [currentVideo, setCurrentVideo] = useState(0);
 
   useEffect(() => {
     async function load() {
       try {
-        const { data } = await supabase.from("settings").select("*");
+        const [{ data: settingsData }, { data: videoData }] = await Promise.all([
+          supabase.from("settings").select("*"),
+          supabase.from("videos").select("*").order("sort_order", { ascending: true }),
+        ]);
         const map: Record<string, string> = {};
-        (data || []).forEach((s: any) => { map[s.key] = s.value; });
+        (settingsData || []).forEach((s: any) => { map[s.key] = s.value; });
         setSettingsMap(map);
+        setVideos(videoData || []);
       } catch (e) { /* ignore */ }
     }
     load();
@@ -63,15 +82,50 @@ export default function About() {
               <p>{c("aboutStory")}</p>
             </div>
           </div>
-          <div className="bg-gradient-to-br from-brand-600/10 to-brand-100 rounded-2xl p-8 text-center">
-            <div className="text-6xl font-black text-brand-600 mb-2">ulbter</div>
-            <div className="text-xl font-bold text-gray-900 mb-4">Precision Armor</div>
-            <div className="text-lg text-gray-600 italic">Unstoppable Clarity</div>
-            <div className="mt-6 flex justify-center gap-4">
-              <Shield className="w-8 h-8 text-brand-600" />
-              <Eye className="w-8 h-8 text-brand-600" />
-              <Smartphone className="w-8 h-8 text-brand-600" />
-            </div>
+          <div className="bg-gradient-to-br from-brand-600/10 to-brand-100 rounded-2xl p-6 text-center relative overflow-hidden">
+            {videos.length > 0 ? (
+              <div className="relative">
+                <div className="aspect-video rounded-xl overflow-hidden bg-black">
+                  {videos.map((v, i) => {
+                    const embedUrl = getYouTubeEmbedUrl(v.video_url);
+                    return (
+                      <div key={v.id} className={`${i === currentVideo ? 'block' : 'hidden'} w-full h-full`}>
+                        {embedUrl ? (
+                          <iframe src={embedUrl} title={v.title} className="w-full h-full" allowFullScreen />
+                        ) : (
+                          <video src={v.video_url} controls className="w-full h-full" />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                {videos.length > 1 && (
+                  <>
+                    <div className="flex justify-between items-center mt-3">
+                      <button onClick={() => setCurrentVideo((p) => (p - 1 + videos.length) % videos.length)} className="w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow transition-all"><ChevronLeft className="w-4 h-4 text-gray-700" /></button>
+                      <p className="text-sm text-gray-600 font-medium">{videos[currentVideo]?.title}</p>
+                      <button onClick={() => setCurrentVideo((p) => (p + 1) % videos.length)} className="w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow transition-all"><ChevronRight className="w-4 h-4 text-gray-700" /></button>
+                    </div>
+                    <div className="flex justify-center gap-1.5 mt-2">
+                      {videos.map((_, i) => (
+                        <button key={i} onClick={() => setCurrentVideo(i)} className={`w-2 h-2 rounded-full transition-all ${i === currentVideo ? 'bg-brand-600 w-4' : 'bg-gray-300'}`} />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+              <>
+                <div className="text-6xl font-black text-brand-600 mb-2">ulbter</div>
+                <div className="text-xl font-bold text-gray-900 mb-4">Precision Armor</div>
+                <div className="text-lg text-gray-600 italic">Unstoppable Clarity</div>
+                <div className="mt-6 flex justify-center gap-4">
+                  <Shield className="w-8 h-8 text-brand-600" />
+                  <Eye className="w-8 h-8 text-brand-600" />
+                  <Smartphone className="w-8 h-8 text-brand-600" />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>
