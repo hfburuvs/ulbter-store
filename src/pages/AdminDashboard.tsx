@@ -195,6 +195,8 @@ function ProductsTab() {
   const [search, setSearch] = useState("");
   const [countryFilter, setCountryFilter] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
   const [error, setError] = useState("");
@@ -226,8 +228,8 @@ function ProductsTab() {
 
   useEffect(() => { loadData(); }, []);
 
-  // Reset selection when filter changes
-  useEffect(() => { setSelectedIds(new Set()); }, [countryFilter]);
+  // Reset selection and page when filter changes
+  useEffect(() => { setSelectedIds(new Set()); setPage(1); }, [countryFilter, search]);
 
   // Sort products: if sort_order exists use it, otherwise use id desc
   const sortedProducts = [...products].sort((a, b) => {
@@ -242,6 +244,11 @@ function ProductsTab() {
     const matchCountry = !countryFilter || p.country === countryFilter;
     return matchSearch && matchCountry;
   });
+
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const paginated = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
 
   // Seeded random for consistent per-product rating
   const seededRandom = (seed: string) => {
@@ -423,21 +430,18 @@ function ProductsTab() {
 
         if (newRows.length === 0) { setError("No valid data rows found"); return; }
 
-        // STEP 1: Check duplicates by ASIN (before any brand/cat creation)
-        const asinFromUrl = (url: string) => {
-          const m = url?.match(/\/(dp|gp\/product)\/([A-Z0-9]{10})/i);
-          return m ? m[2].toUpperCase() : url?.toLowerCase();
-        };
+        // STEP 1: Check duplicates by full amazon_link (unique per product)
+        const normalizeLink = (url: string) => url?.trim().toLowerCase() || "";
         const { data: existingProducts } = await supabase.from("products").select("title,amazon_link");
-        const existingAsins = new Set((existingProducts || []).map((e: any) => asinFromUrl(e.amazon_link)).filter(Boolean));
+        const existingLinks = new Set((existingProducts || []).map((e: any) => normalizeLink(e.amazon_link)).filter(Boolean));
 
-        const dupRows = newRows.filter((r) => existingAsins.has(asinFromUrl(r.amazon_link)));
+        const dupRows = newRows.filter((r) => existingLinks.has(normalizeLink(r.amazon_link)));
 
         // Store ALL rows as pending - brand/cat creation happens AFTER user confirms duplicates
         setPendingRows(newRows);
 
         if (dupRows.length > 0) {
-          setDuplicateModal({ rows: dupRows, existingTitles: new Set(existingAsins as any) });
+          setDuplicateModal({ rows: dupRows, existingTitles: new Set(existingLinks as any) });
           return;
         }
 
@@ -905,9 +909,9 @@ function ProductsTab() {
         <div className="text-sm text-gray-400">Loading...</div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto max-h-[calc(100vh-280px)]">
             <table className="w-full text-sm">
-              <thead>
+              <thead className="sticky top-0 z-10">
                 <tr className="bg-gray-50 text-gray-500 text-xs uppercase">
                   <th className="px-2 py-2 text-left w-8">
                     <input
@@ -934,7 +938,7 @@ function ProductsTab() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((p) => {
+                {paginated.map((p) => {
                   const cat = categories.find((c) => c.id === p.category_id);
                   const brand = brands.find((b) => b.id === p.brand_id);
                   const sameBrand = sortedProducts.filter((x) => x.brand_id === p.brand_id);
@@ -1005,6 +1009,41 @@ function ProductsTab() {
               </tbody>
             </table>
           </div>
+          {/* Pagination */}
+          {filtered.length > 0 && (
+            <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-gray-50/50">
+              <div className="flex items-center gap-3 text-sm text-gray-600">
+                <span>Total: <strong>{filtered.length}</strong></span>
+                <select
+                  value={pageSize}
+                  onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
+                  className="px-2 py-1 border border-gray-200 rounded text-xs bg-white"
+                >
+                  <option value={50}>50 / page</option>
+                  <option value={100}>100 / page</option>
+                  <option value={200}>200 / page</option>
+                  <option value={300}>300 / page</option>
+                </select>
+              </div>
+              <div className="flex items-center gap-1">
+                <button onClick={() => setPage(1)} disabled={safePage <= 1} className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-40">First</button>
+                <button onClick={() => setPage(safePage - 1)} disabled={safePage <= 1} className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-40">Prev</button>
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pg: number;
+                  if (totalPages <= 5) pg = i + 1;
+                  else if (safePage <= 3) pg = i + 1;
+                  else if (safePage >= totalPages - 2) pg = totalPages - 4 + i;
+                  else pg = safePage - 2 + i;
+                  return (
+                    <button key={pg} onClick={() => setPage(pg)} className={`w-7 h-7 text-xs rounded ${pg === safePage ? "bg-brand-600 text-white" : "border border-gray-200 hover:bg-gray-100"}`}>{pg}</button>
+                  );
+                })}
+                <button onClick={() => setPage(safePage + 1)} disabled={safePage >= totalPages} className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-40">Next</button>
+                <button onClick={() => setPage(totalPages)} disabled={safePage >= totalPages} className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-40">Last</button>
+              </div>
+              <span className="text-xs text-gray-500">Page {safePage} of {totalPages}</span>
+            </div>
+          )}
           {filtered.length === 0 && <p className="text-center text-sm text-gray-400 py-8">No products found</p>}
         </div>
       )}

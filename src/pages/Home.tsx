@@ -411,23 +411,43 @@ function CategorySection({ category }: { category: Category }) {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [collapsed, setCollapsed] = useState(false);
   const [sortBy, setSortBy] = useState<string>("default");
+  const { country } = useCountry();
 
+  // Load brands dynamically from products in this category + country
+  // (not from brands table, to support same brand appearing in multiple categories)
   useEffect(() => {
     async function loadBrands() {
       try {
-        const { data } = await supabase
+        // Step 1: Get distinct brand_ids of products in this category + country
+        const { data: productRows, error: prodErr } = await supabase
+          .from("products")
+          .select("brand_id")
+          .eq("category_id", category.id)
+          .eq("country", country)
+          .order("brand_id");
+        if (prodErr) { console.error("[CategorySection] Product query error:", prodErr); setBrands([]); return; }
+        const brandIds = [...new Set((productRows || []).map((p: any) => p.brand_id).filter(Boolean))];
+        if (brandIds.length === 0) { setBrands([]); return; }
+        // Step 2: Load brand details for those brand_ids
+        const { data: brandRows, error: brandErr } = await supabase
           .from("brands")
           .select("*")
-          .eq("category_id", category.id)
+          .in("id", brandIds)
           .order("sort_order", { ascending: true });
-        setBrands((data || []) as Brand[]);
+        if (brandErr) { console.error("[CategorySection] Brand query error:", brandErr); setBrands([]); return; }
+        // Preserve sort order from DB but filter to only brands that have products
+        const brandMap = new Map((brandRows || []).map((b: any) => [b.id, b]));
+        const sortedBrands = brandIds
+          .map((id) => brandMap.get(id))
+          .filter((b): b is Brand => b !== undefined);
+        setBrands(sortedBrands);
       } catch (err: any) {
         console.error("[CategorySection] Failed to load brands:", err);
         setBrands([]);
       }
     }
-    loadBrands();
-  }, [category.id]);
+    if (country) loadBrands();
+  }, [category.id, country]);
 
   return (
     <section id={`cat-${category.slug}`} aria-label={`${category.name} section`} className="scroll-mt-20">
