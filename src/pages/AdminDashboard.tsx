@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { supabase } from "@/lib/supabase";
+import { countryConfig } from "@/lib/i18n";
 import {
   ShoppingBag, MessageSquare, Star, LogOut, Package,
   Upload, Download, Trash2, Plus, Search, Pencil,
@@ -189,6 +190,7 @@ function ProductsTab() {
   const [brands, setBrands] = useState<any[]>([]);
   const [countries, setCountries] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const [countryFilter, setCountryFilter] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
@@ -229,7 +231,11 @@ function ProductsTab() {
     return (b.id ?? 0) - (a.id ?? 0);
   });
 
-  const filtered = sortedProducts.filter((p) => p.title.toLowerCase().includes(search.toLowerCase()));
+  const filtered = sortedProducts.filter((p) => {
+    const matchSearch = p.title.toLowerCase().includes(search.toLowerCase());
+    const matchCountry = !countryFilter || p.country === countryFilter;
+    return matchSearch && matchCountry;
+  });
 
   // Seeded random for consistent per-product rating
   const seededRandom = (seed: string) => {
@@ -821,10 +827,27 @@ function ProductsTab() {
           </button>
         </div>
       </div>
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-        <input type="text" placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-600/20 focus:border-brand-600" />
+      <div className="flex gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input type="text" placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-600/20 focus:border-brand-600" />
+        </div>
+        <select
+          value={countryFilter}
+          onChange={(e) => setCountryFilter(e.target.value)}
+          className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-600/20 focus:border-brand-600 min-w-[140px]"
+        >
+          <option value="">All Countries</option>
+          {countries.map((c: any) => {
+            const cc = countryConfig[c.code as keyof typeof countryConfig];
+            return (
+              <option key={c.code} value={c.code}>
+                {cc?.flag || ""} {c.code?.toUpperCase()} ({c.name})
+              </option>
+            );
+          })}
+        </select>
       </div>
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
@@ -937,10 +960,24 @@ function ProductsTab() {
                       <td className="px-4 py-2"><img src={p.image_url} alt="" className="w-10 h-10 rounded object-cover" /></td>
                       <td className="px-4 py-2 font-medium text-gray-900 max-w-[150px] truncate">{p.title}</td>
                       <td className="px-4 py-2 text-xs text-gray-500">{cat?.name || "-"} / {brand?.name || "-"}</td>
-                      <td className="px-4 py-2">${p.price}</td>
+                      <td className="px-4 py-2">
+                        {(() => {
+                          const cc = countryConfig[p.country as keyof typeof countryConfig];
+                          return `${cc?.currency || "$"}${p.price}`;
+                        })()}
+                      </td>
                       <td className="px-4 py-2 text-center">
-                        <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium ${p.country === "de" ? "bg-black text-white" : p.country === "es" ? "bg-red-50 text-red-700" : p.country === "it" ? "bg-green-50 text-green-700" : p.country === "fr" ? "bg-brand-50 text-emerald-700" : "bg-gray-100 text-gray-700"}`}>
-                          {p.country?.toUpperCase() || "US"}
+                        <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium ${
+                          p.country === "uk" ? "bg-blue-50 text-blue-700" :
+                          p.country === "de" ? "bg-black text-white" :
+                          p.country === "es" ? "bg-red-50 text-red-700" :
+                          p.country === "it" ? "bg-green-50 text-green-700" :
+                          p.country === "fr" ? "bg-brand-50 text-emerald-700" :
+                          "bg-gray-100 text-gray-700"}`}>
+                          {(() => {
+                            const cc = countryConfig[p.country as keyof typeof countryConfig];
+                            return `${cc?.flag || ""} ${p.country?.toUpperCase() || "US"}`;
+                          })()}
                         </span>
                       </td>
                       <td className="px-4 py-2 text-xs">
