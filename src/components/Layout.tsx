@@ -166,7 +166,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       {/* ===== TOP BAR ===== */}
       <div className="bg-brand-700 text-white text-xs py-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <span className="truncate">{settingsMap["topBarText"] || "Free shipping on orders over $50 | New arrivals weekly"}</span>
+          <span className="truncate">{settingsMap["topBarText"] || t("topBarText") || "Free shipping on orders over $50 | New arrivals weekly"}</span>
         </div>
       </div>
 

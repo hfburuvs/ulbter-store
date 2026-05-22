@@ -1676,6 +1676,7 @@ function SettingsTab() {
     { key: "contactEmail", label: "Contact Email" },
     { key: "metaKeywords", label: "Meta Keywords" },
     { key: "metaDescription", label: "Meta Description" },
+    { key: "heroBadge", label: "Hero Badge Text (e.g. New Collection 2026)" },
     { key: "heroTitle", label: "Hero Title" },
     { key: "heroSubtitle", label: "Hero Subtitle" },
     { key: "aboutTitle", label: "About Title" },

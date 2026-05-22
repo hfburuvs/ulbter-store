@@ -147,6 +147,16 @@ export default function Home() {
     setSearchParams({});
   };
 
+  // Hero carousel auto-play
+  const [currentSlide, setCurrentSlide] = useState(0);
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
   // Handle ?cat=xxx param — scroll to category after data loads
   useEffect(() => {
     const catSlug = searchParams.get("cat");
@@ -230,7 +240,7 @@ export default function Home() {
             <div className="flex-1 space-y-5 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 bg-brand-100 text-brand-700 px-4 py-1.5 rounded-full text-sm font-medium">
                 <span className="w-2 h-2 bg-brand-500 rounded-full animate-pulse" />
-                {settingsMap["heroBadge"] || "New Collection 2026"}
+                {settingsMap["heroBadge"] || t("heroBadge") || "New Collection 2026"}
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
                 {settingsMap["heroTitle"] ? (
@@ -258,24 +268,60 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            {/* Right: Hero image */}
+            {/* Right: Carousel */}
             <div className="flex-1 relative hidden lg:block">
               <div className="absolute -inset-4 bg-brand-200 rounded-3xl opacity-30 blur-2xl" />
-              <div className="relative bg-white rounded-2xl shadow-xl p-3 md:p-4">
-                {slides.length > 0 && slides[0]?.image_url ? (
-                  <img
-                    src={slides[0].image_url}
-                    alt={slides[0].title || "Featured"}
-                    className="rounded-xl w-full object-cover"
-                    style={{ maxHeight: '360px' }}
-                    loading="eager"
-                  />
+              <div className="relative bg-white rounded-2xl shadow-xl p-3 md:p-4 overflow-hidden">
+                {slides.length > 0 ? (
+                  <div className="relative">
+                    {/* Slides */}
+                    <div className="relative aspect-[16/10] overflow-hidden rounded-xl">
+                      {slides.map((slide, index) => (
+                        <img
+                          key={slide.id}
+                          src={slide.image_url}
+                          alt={slide.title || "Featured"}
+                          className={`absolute inset-0 w-full h-full object-cover rounded-xl transition-opacity duration-700 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
+                          loading={index === 0 ? "eager" : "lazy"}
+                        />
+                      ))}
+                    </div>
+                    {/* Navigation arrows */}
+                    {slides.length > 1 && (
+                      <>
+                        <button
+                          onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-all z-10"
+                          aria-label="Previous slide"
+                        >
+                          <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                        </button>
+                        <button
+                          onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-all z-10"
+                          aria-label="Next slide"
+                        >
+                          <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                        </button>
+                        {/* Dots indicator */}
+                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                          {slides.map((_, index) => (
+                            <button
+                              key={index}
+                              onClick={() => setCurrentSlide(index)}
+                              className={`w-2 h-2 rounded-full transition-all ${index === currentSlide ? 'bg-brand-600 w-5' : 'bg-white/70'}`}
+                              aria-label={`Go to slide ${index + 1}`}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 ) : (
                   <img
                     src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=500&fit=crop"
                     alt="Featured products"
-                    className="rounded-xl w-full object-cover"
-                    style={{ maxHeight: '360px' }}
+                    className="rounded-xl w-full object-cover aspect-[16/10]"
                     loading="eager"
                   />
                 )}
