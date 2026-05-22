@@ -1352,26 +1352,39 @@ function CarouselTab() {
     if (!validTypes.includes(file.type)) { setUploadError("Only JPG, PNG, WebP allowed"); return; }
     if (file.size > 2 * 1024 * 1024) { setUploadError("Max 2MB"); return; }
 
-    // Try to create bucket if it doesn't exist, then upload
+    // Strategy 1: Try Supabase Storage upload
     const fileExt = file.name.split('.').pop() || 'jpg';
     const fileName = `carousel-${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
     try {
-      // First try to create the bucket (will fail silently if it already exists)
-      try {
-        await supabase.storage.createBucket('carousel', { public: true });
-      } catch { /* bucket may already exist, ignore */ }
-
       const { error: uploadErr } = await supabase.storage.from("carousel").upload(fileName, file, { contentType: file.type });
-      if (uploadErr) {
-        setUploadError(`Storage upload failed: ${uploadErr.message}. Please use "Or paste image URL" field below instead.`);
+      if (!uploadErr) {
+        // Storage upload succeeded
+        const { data: urlData } = supabase.storage.from("carousel").getPublicUrl(fileName);
+        const publicUrl = urlData?.publicUrl || "";
+        setPreviewUrl(publicUrl);
+        setForm((p) => ({ ...p, image_url: publicUrl }));
         return;
       }
-      const { data: urlData } = supabase.storage.from("carousel").getPublicUrl(fileName);
-      const publicUrl = urlData?.publicUrl || "";
-      setPreviewUrl(publicUrl);
-      setForm((p) => ({ ...p, image_url: publicUrl }));
-    } catch (err: any) {
-      setUploadError(`Upload failed: ${err?.message || 'Unknown error'}. Please use "Or paste image URL" field instead.`);
+      // Upload failed — fall through to base64
+    } catch {
+      /* fall through to base64 */
+    }
+
+    // Strategy 2: Fall back to base64 (works without any Storage bucket)
+    try {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const result = ev.target?.result as string;
+        setPreviewUrl(result);
+        setForm((p) => ({ ...p, image_url: result }));
+        setUploadError("");
+      };
+      reader.onerror = () => {
+        setUploadError("Failed to read file. Please use \"Or paste image URL\" field below instead.");
+      };
+      reader.readAsDataURL(file);
+    } catch {
+      setUploadError("File processing failed. Please use \"Or paste image URL\" field below instead.");
     }
   };
 
