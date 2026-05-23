@@ -129,10 +129,10 @@ function DashboardTab({ onNavigate }: { onNavigate: (t: Tab) => void }) {
   }, []);
 
   const statCards = [
-    { label: "Products", value: stats.products, icon: Package, color: "text-emerald-600 bg-brand-50", tab: "products" as Tab },
+    { label: "Products", value: stats.products, icon: Package, color: "text-blue-600 bg-brand-50", tab: "products" as Tab },
     { label: "Messages", value: stats.messages, icon: MessageSquare, color: "text-purple-600 bg-purple-50", tab: "messages" as Tab },
     { label: "New", value: stats.newMessages, icon: Star, color: "text-red-600 bg-red-50", tab: "messages" as Tab },
-    { label: "Subscribers", value: stats.subscribers, icon: Mail, color: "text-green-600 bg-green-50", tab: "subscribers" as Tab },
+    { label: "Subscribers", value: stats.subscribers, icon: Mail, color: "text-blue-600 bg-blue-50", tab: "subscribers" as Tab },
   ];
 
   return (
@@ -926,14 +926,14 @@ function ProductsTab() {
         </form>
       )}
       {sortOrderTip && (
-        <div className="bg-brand-50 border border-emerald-100 rounded-lg p-3 text-sm text-emerald-700">
+        <div className="bg-brand-50 border border-blue-100 rounded-lg p-3 text-sm text-blue-700">
           <strong>Tip:</strong> To enable drag-to-sort, run this in Supabase SQL Editor:
-          <code className="block mt-1 bg-emerald-100 px-2 py-1 rounded text-xs font-mono">ALTER TABLE products ADD COLUMN sort_order INTEGER DEFAULT 0;</code>
+          <code className="block mt-1 bg-blue-100 px-2 py-1 rounded text-xs font-mono">ALTER TABLE products ADD COLUMN sort_order INTEGER DEFAULT 0;</code>
           <button onClick={() => setSortOrderTip(false)} className="text-xs text-brand-500 hover:underline mt-1">Dismiss</button>
         </div>
       )}
       {importResult && (
-        <div className="bg-green-50 border border-green-100 rounded-lg p-3 text-sm text-green-700">
+        <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-sm text-blue-700">
           Import complete: {importResult.added} added{importResult.failed ? `, ${importResult.failed} failed` : ""}, {importResult.updated} updated, {importResult.skipped} skipped
         </div>
       )}
@@ -1017,8 +1017,8 @@ function ProductsTab() {
                           p.country === "uk" ? "bg-blue-50 text-blue-700" :
                           p.country === "de" ? "bg-black text-white" :
                           p.country === "es" ? "bg-red-50 text-red-700" :
-                          p.country === "it" ? "bg-green-50 text-green-700" :
-                          p.country === "fr" ? "bg-brand-50 text-emerald-700" :
+                          p.country === "it" ? "bg-blue-50 text-blue-700" :
+                          p.country === "fr" ? "bg-brand-50 text-blue-700" :
                           "bg-gray-100 text-gray-700"}`}>
                           {(() => {
                             const cc = countryConfig[p.country as keyof typeof countryConfig];
@@ -1113,7 +1113,7 @@ function MessagesTab() {
             {!m.is_read && <span className="text-xs bg-brand-600 text-white px-1.5 py-0.5 rounded-full">New</span>}
           </div>
           <p className="text-sm text-gray-600 mb-2">{m.content}</p>
-          {m.reply && <div className="bg-green-50 rounded-lg p-2 text-sm text-green-700 mb-2"><strong>Reply:</strong> {m.reply}</div>}
+          {m.reply && <div className="bg-blue-50 rounded-lg p-2 text-sm text-blue-700 mb-2"><strong>Reply:</strong> {m.reply}</div>}
           {replying === m.id ? (
             <div className="flex gap-2">
               <input value={replyText} onChange={(e) => setReplyText(e.target.value)} placeholder="Type reply..." className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-sm" />
@@ -1123,7 +1123,7 @@ function MessagesTab() {
           ) : (
             <div className="flex gap-2">
               {!m.is_read && <button onClick={() => markRead(m.id)} className="text-xs text-brand-600 hover:underline">Mark read</button>}
-              <button onClick={() => { setReplying(m.id); setReplyText(""); }} className="text-xs text-emerald-600 hover:underline">Reply</button>
+              <button onClick={() => { setReplying(m.id); setReplyText(""); }} className="text-xs text-blue-600 hover:underline">Reply</button>
               <button onClick={() => del(m.id)} className="text-xs text-red-400 hover:underline">Delete</button>
             </div>
           )}
@@ -1209,6 +1209,7 @@ function CategoriesTab() {
   const [editId, setEditId] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [imgError, setImgError] = useState("");
+  const [saving, setSaving] = useState(false);
 
   async function load() {
     try {
@@ -1652,8 +1653,8 @@ function CarouselTab() {
               <p className="font-medium text-gray-900 truncate">{item.title || "Untitled"}</p>
               <p className="text-xs text-gray-500 truncate">{item.subtitle}</p>
               <div className="flex gap-2 mt-2">
-                <button onClick={() => toggleActive(item.id, item.is_active)} className={`text-xs px-2 py-1 rounded ${item.is_active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>{item.is_active ? "Active" : "Inactive"}</button>
-                <button onClick={() => startEdit(item)} className="text-xs text-emerald-600 hover:underline">Edit</button>
+                <button onClick={() => toggleActive(item.id, item.is_active)} className={`text-xs px-2 py-1 rounded ${item.is_active ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"}`}>{item.is_active ? "Active" : "Inactive"}</button>
+                <button onClick={() => startEdit(item)} className="text-xs text-blue-600 hover:underline">Edit</button>
                 <button onClick={() => { if (confirm("Delete?")) { supabase.from("carousel").delete().eq("id", item.id).then(() => load()); } }} className="text-xs text-red-400 hover:underline">Delete</button>
               </div>
             </div>
@@ -1894,7 +1895,7 @@ function CountriesTab() {
         <input placeholder="Flag emoji" value={form.flag} onChange={(e) => setForm({ ...form, flag: e.target.value })} className="border p-2 rounded" />
         <input type="number" placeholder="Order" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })} className="border p-2 rounded" />
         <div className="flex gap-2">
-          <button type="submit" className="bg-emerald-600 text-white px-4 py-2 rounded">{editingId ? "Update" : "Add"}</button>
+          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">{editingId ? "Update" : "Add"}</button>
           {editingId && <button type="button" onClick={() => { setForm({ code: "", name: "", currency_symbol: "", flag: "", sort_order: 0, is_active: true }); setEditingId(null); }} className="bg-gray-300 px-4 py-2 rounded">Cancel</button>}
         </div>
       </form>
@@ -1908,7 +1909,7 @@ function CountriesTab() {
             <td className="p-2 border">{item.flag}</td>
             <td className="p-2 border">{item.sort_order}</td>
             <td className="p-2 border space-x-2">
-              <button onClick={() => handleEdit(item)} className="text-emerald-600">Edit</button>
+              <button onClick={() => handleEdit(item)} className="text-blue-600">Edit</button>
               <button onClick={() => handleDelete(item.id)} className="text-red-600">Delete</button>
             </td>
           </tr>
@@ -2191,7 +2192,7 @@ function PasswordChangeSection() {
   return (
     <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-4">
       <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2"><Lock size={18} className="text-brand-600" /> Change Admin Password</h3>
-      {msg && <p className="text-sm text-green-600 bg-green-50 p-2 rounded">{msg}</p>}
+      {msg && <p className="text-sm text-blue-600 bg-blue-50 p-2 rounded">{msg}</p>}
       {err && <p className="text-sm text-red-600 bg-red-50 p-2 rounded">{err}</p>}
       <form onSubmit={handleChange} className="space-y-3">
         <div><label className="block text-sm font-medium text-gray-700 mb-1">Old Password</label><input type="password" value={oldPass} onChange={(e) => setOldPass(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" required /></div>
@@ -2247,7 +2248,7 @@ function SeoTab() {
       <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
         <div className="flex items-center justify-between">
           <label className="text-sm font-semibold text-gray-900">Meta Description</label>
-          {savedDesc === metaDescription && metaDescription && <span className="text-xs text-green-600">Saved</span>}
+          {savedDesc === metaDescription && metaDescription && <span className="text-xs text-blue-600">Saved</span>}
         </div>
         <p className="text-xs text-gray-500">Shown in Google search results as the page description. Keep under 160 characters.</p>
         <textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} placeholder="e.g. ULBTER offers premium camera accessories including screen protectors and lens caps..." className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" rows={3} />
@@ -2261,7 +2262,7 @@ function SeoTab() {
       <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
         <div className="flex items-center justify-between">
           <label className="text-sm font-semibold text-gray-900">Meta Keywords</label>
-          {savedKeywords === metaKeywords && metaKeywords && <span className="text-xs text-green-600">Saved</span>}
+          {savedKeywords === metaKeywords && metaKeywords && <span className="text-xs text-blue-600">Saved</span>}
         </div>
         <p className="text-xs text-gray-500">Comma-separated keywords. Note: Google no longer uses this for ranking, but some other search engines do.</p>
         <input value={metaKeywords} onChange={(e) => setMetaKeywords(e.target.value)} placeholder="e.g. camera accessories, screen protector, gopro case, lens cap" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
@@ -2311,7 +2312,7 @@ function AnalyticsTab() {
             <div className="flex items-center justify-between mb-2">
               <span className="font-medium text-gray-900">{item.name}</span>
               <div className="flex gap-2">
-                <button onClick={() => toggleActive(item.id, item.is_active)} className={`text-xs px-2 py-1 rounded ${item.is_active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>{item.is_active ? "Active" : "Inactive"}</button>
+                <button onClick={() => toggleActive(item.id, item.is_active)} className={`text-xs px-2 py-1 rounded ${item.is_active ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"}`}>{item.is_active ? "Active" : "Inactive"}</button>
                 <button onClick={() => { if (confirm("Delete?")) { supabase.from("analytics").delete().eq("id", item.id).then(() => load()); } }} className="p-1 hover:bg-red-50 rounded"><Trash2 className="w-3.5 h-3.5 text-red-400" /></button>
               </div>
             </div>
