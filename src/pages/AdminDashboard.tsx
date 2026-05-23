@@ -2095,6 +2095,50 @@ function SettingsTab() {
         <button onClick={save} disabled={saving} className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium disabled:opacity-50">{saving ? "Saving..." : "Save Settings"}</button>
       </div>
 
+      {/* Site Logo Upload */}
+      <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900">Site Logo</h3>
+        <p className="text-xs text-gray-500">Upload a <strong>PNG</strong> or <strong>SVG</strong> with transparent background. SVG is recommended (vector format, no scaling blur). If not uploaded, the Site Title text (e.g. &quot;ulbter&quot;) will be displayed. <strong>PNG Recommended: 400×100 px</strong>. <strong>SVG Recommended: viewBox=&quot;0 0 400 100&quot;</strong> (display height is 36px; width scales automatically).</p>
+        <div className="flex items-center gap-4">
+          {settings["logoImage"] && settings["logoImage"].trim().length > 10 ? (
+            <div className="relative">
+              <img src={settings["logoImage"]} alt="Logo preview" className="h-12 w-auto object-contain border rounded-lg p-1" />
+              <button onClick={async () => {
+                setSettings({ ...settings, "logoImage": "" });
+                try { await supabase.from("settings").delete().eq("key", "logoImage"); } catch (e: any) { setError(e.message); }
+              }} className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center">×</button>
+            </div>
+          ) : (
+            <div className="h-12 px-4 flex items-center justify-center border border-dashed border-gray-300 rounded-lg text-sm text-gray-400">No logo — Site Title text will show</div>
+          )}
+          <label className="cursor-pointer px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors flex items-center gap-1.5">
+            <Upload className="w-4 h-4" /> Upload Logo
+            <input type="file" accept="image/png,image/svg+xml" className="hidden" onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              const reader = new FileReader();
+              reader.onload = (ev) => {
+                const result = ev.target?.result as string;
+                if (result) {
+                  setSettings({ ...settings, "logoImage": result });
+                }
+              };
+              reader.readAsDataURL(file);
+              e.target.value = "";
+            }} />
+          </label>
+          {settings["logoImage"] && settings["logoImage"].trim().length > 10 && (
+            <button onClick={async () => {
+              try {
+                const { data: existing } = await supabase.from("settings").select("id").eq("key", "logoImage").single();
+                if (existing) { await supabase.from("settings").update({ value: settings["logoImage"] }).eq("key", "logoImage"); }
+                else { await supabase.from("settings").insert({ key: "logoImage", value: settings["logoImage"] }); }
+              } catch (e: any) { setError(e.message); }
+            }} className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium">Save Logo</button>
+          )}
+        </div>
+      </div>
+
       {/* Password Change */}
       <PasswordChangeSection />
     </div>

@@ -121,6 +121,15 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   const siteTitle = settingsMap["siteTitle"] || "ulbter";
   const contactEmail = settingsMap["contactEmail"] || "";
+  const logoImage = settingsMap["logoImage"] || "";
+
+  // Country flag image URL from flagcdn (ISO 3166-1 alpha-2 codes)
+  // Note: UK uses 'gb' as ISO code, so we map internal codes to ISO codes
+  const flagUrl = (code: string) => {
+    const isoMap: Record<string, string> = { uk: 'gb' };
+    const isoCode = isoMap[code?.toLowerCase()] || code?.toLowerCase();
+    return `https://flagcdn.com/w40/${isoCode}.png`;
+  };
   // SEO: prioritize seo_settings table, fallback to settings table, then defaults
   const metaKeywords =
     seoMap["metaKeywords"] ||
@@ -176,12 +185,18 @@ export default function Layout({ children }: { children: ReactNode }) {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
-              <div className="w-9 h-9 bg-gradient-to-br from-brand-500 to-brand-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">U</span>
-              </div>
-              <span className="text-xl font-bold text-gray-900 tracking-tight">
-                {siteTitle}
-              </span>
+              {logoImage && logoImage.trim().length > 10 ? (
+                <img src={logoImage} alt={siteTitle} style={{ height: 36, width: 'auto' }} />
+              ) : (
+                <>
+                  <div className="w-9 h-9 bg-gradient-to-br from-brand-500 to-brand-700 rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold text-lg">U</span>
+                  </div>
+                  <span className="text-xl font-bold text-gray-900 tracking-tight">
+                    {siteTitle}
+                  </span>
+                </>
+              )}
             </Link>
 
             {/* Desktop Search - Centered */}
@@ -372,10 +387,10 @@ export default function Layout({ children }: { children: ReactNode }) {
 
             {/* Right side: Country switcher + Mobile menu */}
             <div className="flex items-center gap-2">
-              {/* Country Switcher */}
+              {/* Country Switcher with flag images */}
               <div className="relative group">
-                <button className="flex items-center gap-1 text-sm font-medium px-2 py-1.5 rounded-full text-gray-700 hover:bg-gray-100 transition-colors">
-                  <span>{dbCountries.find((c: any) => c.code === country)?.flag || countryConfig[country]?.flag || "🌍"}</span>
+                <button className="flex items-center gap-1.5 text-sm font-medium px-2 py-1.5 rounded-full text-gray-700 hover:bg-gray-100 transition-colors">
+                  <img src={flagUrl(country)} width={20} height={15} style={{ borderRadius: 2, objectFit: 'cover' }} alt={country} />
                   <span className="uppercase text-xs">{country}</span>
                   <ChevronDown className="w-3 h-3" />
                 </button>
@@ -384,11 +399,11 @@ export default function Layout({ children }: { children: ReactNode }) {
                     <button
                       key={c.code}
                       onClick={() => switchCountry(c.code as CountryCode)}
-                      className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                      className={`w-full flex items-center gap-2.5 px-4 py-2 text-sm transition-colors ${
                         country === c.code ? "text-brand-600 bg-brand-50 font-medium" : "text-gray-700 hover:bg-brand-50 hover:text-brand-600"
                       }`}
                     >
-                      <span>{c.flag || "🌍"}</span>
+                      <img src={flagUrl(c.code)} width={20} height={15} style={{ borderRadius: 2, objectFit: 'cover' }} alt={c.code} />
                       <span>{c.name || c.code.toUpperCase()}</span>
                     </button>
                   ))}
