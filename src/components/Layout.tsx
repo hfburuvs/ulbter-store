@@ -140,6 +140,32 @@ export default function Layout({ children }: { children: ReactNode }) {
     loadData();
   }, [country]);
 
+  // Dynamically inject analytics scripts when analyticsCode changes
+  useEffect(() => {
+    if (!analyticsCode || analyticsCode.trim().length === 0) return;
+    if ((window as any).__analyticsInjected) return;
+    const gtagMatch = analyticsCode.match(/gtag\('config',\s*['"](G-[A-Z0-9]+)['"]\)/);
+    const gtagId = gtagMatch ? gtagMatch[1] : null;
+    if (gtagId) {
+      if (document.querySelector(`script[data-gtag="${gtagId}"]`)) return;
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${gtagId}`;
+      script.setAttribute('data-gtag', gtagId);
+      document.head.appendChild(script);
+      const inline = document.createElement('script');
+      inline.textContent = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gtagId}');`;
+      document.head.appendChild(inline);
+      (window as any).__analyticsInjected = true;
+      console.log('[Analytics] gtag.js injected for', gtagId);
+    } else {
+      const inline = document.createElement('script');
+      inline.textContent = analyticsCode;
+      document.head.appendChild(inline);
+      (window as any).__analyticsInjected = true;
+    }
+  }, [analyticsCode]);
+
   const siteTitle = settingsMap["siteTitle"] || "ulbter";
   const contactEmail = settingsMap["contactEmail"] || "";
   const logoImage = settingsMap["logoImage"] || "";
@@ -671,9 +697,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       </footer>
 
       {/* Analytics code injection */}
-      {analyticsCode && (
-        <div dangerouslySetInnerHTML={{ __html: analyticsCode }} />
-      )}
+      {/* Analytics code is injected via useEffect above */}
     </div>
   );
 }
