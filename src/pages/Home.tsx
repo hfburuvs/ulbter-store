@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Star, ExternalLink, Camera, Watch, Search, X, ChevronDown, ChevronRight, ArrowUpDown } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useCountry } from "@/hooks/useCountry";
+import { trackSelectItem, trackClickAffiliate } from "@/lib/analytics";
 import Carousel from "@/components/Carousel";
 
 /* ========================================
@@ -209,7 +210,7 @@ export default function Home() {
           ) : searchResults.length > 0 ? (
             <div className="space-y-4">
               {searchResults.map((product) => (
-                <ProductRow key={product.id} product={product} />
+                <ProductRow key={product.id} product={product} categoryName="Search Results" />
               ))}
             </div>
           ) : (
@@ -498,7 +499,7 @@ function CategorySection({ category }: { category: Category }) {
           </p>
           <div className="space-y-10">
             {brands.map((brand) => (
-              <BrandGroup key={brand.id} brand={brand} categoryId={category.id} sortBy={sortBy} />
+              <BrandGroup key={brand.id} brand={brand} categoryId={category.id} categoryName={category.name} sortBy={sortBy} />
             ))}
           </div>
         </>
@@ -507,7 +508,7 @@ function CategorySection({ category }: { category: Category }) {
   );
 }
 
-function BrandGroup({ brand, categoryId, sortBy = "default" }: { brand: Brand; categoryId: number; sortBy?: string }) {
+function BrandGroup({ brand, categoryId, categoryName = "", sortBy = "default" }: { brand: Brand; categoryId: number; categoryName?: string; sortBy?: string }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
@@ -581,7 +582,7 @@ function BrandGroup({ brand, categoryId, sortBy = "default" }: { brand: Brand; c
         ) : (
           <div className="space-y-4" role="list" aria-label={`${brand.name} products`}>
             {sortedProducts.map((product) => (
-              <ProductRow key={product.id} product={product} />
+              <ProductRow key={product.id} product={product} categoryName={`${categoryName} > ${brand.name}`} />
             ))}
           </div>
         )
@@ -590,12 +591,29 @@ function BrandGroup({ brand, categoryId, sortBy = "default" }: { brand: Brand; c
   );
 }
 
-function ProductRow({ product }: { product: Product }) {
+function ProductRow({ product, categoryName = "" }: { product: Product; categoryName?: string }) {
   const { country, path, config } = useCountry();
+
+  const handleSelectItem = () => {
+    trackSelectItem(
+      "home_list",
+      categoryName || "All Products",
+      {
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        category: product.category_name || categoryName,
+        brand: product.brand_name || "",
+        currency: config.currency,
+      },
+      config.currency
+    );
+  };
+
   return (
     <article className="product-card bg-white rounded-xl border border-black/[0.08] p-4 md:p-5 flex gap-5 md:gap-6 hover:shadow-lg transition-all duration-300">
       {/* Product Image */}
-      <Link to={path(`/product/${product.id}`)} className="block flex-shrink-0" aria-label={`View details: ${product.title}`}>
+      <Link to={path(`/product/${product.id}`)} className="block flex-shrink-0" aria-label={`View details: ${product.title}`} onClick={handleSelectItem}>
         <div className="w-40 h-40 md:w-52 md:h-52 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
           <img
             src={product.image_url}
@@ -622,7 +640,7 @@ function ProductRow({ product }: { product: Product }) {
 
           {/* Title */}
           <h4 className="text-base md:text-lg font-semibold text-gray-900 mb-2 hover:text-brand-600 transition-colors leading-snug">
-            <Link to={path(`/product/${product.id}`)}>{product.title}</Link>
+            <Link to={path(`/product/${product.id}`)} onClick={handleSelectItem}>{product.title}</Link>
           </h4>
 
           {/* Description */}
@@ -659,7 +677,13 @@ function ProductRow({ product }: { product: Product }) {
             rel="noopener noreferrer"
             className="btn-primary text-white px-5 md:px-6 py-2.5 rounded-full text-sm font-semibold flex-shrink-0"
             aria-label={`${config.domain}: ${product.title}`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              trackClickAffiliate(
+                { id: product.id, title: product.title, price: product.price, category: product.category_name || categoryName, brand: product.brand_name || "", currency: config.currency },
+                config.currency
+              );
+            }}
           >
             <span className="hidden sm:inline">Check Price on Amazon</span>
             <span className="sm:hidden">Amazon</span>
