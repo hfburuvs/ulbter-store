@@ -9,10 +9,10 @@
 
 @layer base {
   :root {
-    /* ---- Brand Colors (V7 Green Theme) ---- */
-    --color-primary: #16a34a;
-    --color-primary-hover: #15803d;
-    --color-primary-light: #22c55e;
+    /* ---- Brand Colors (Blue Theme) ---- */
+    --color-primary: #2563eb;
+    --color-primary-hover: #1d4ed8;
+    --color-primary-light: #3b82f6;
     --color-accent-yellow: #FFD814;
     --color-accent-yellow-hover: #F7CA00;
     --color-star: #FFA41C;
@@ -392,16 +392,16 @@
 }
 
 .hero-pattern {
-  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 50%, #f0fdf4 100%);
+  background: linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #eff6ff 100%);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
   transition: all 0.3s ease;
 }
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px -4px rgba(22,163,74,0.4);
+  box-shadow: 0 8px 20px -4px rgba(37,99,235,0.4);
 }
 
 /* ========================================
