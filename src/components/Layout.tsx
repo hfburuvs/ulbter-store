@@ -640,14 +640,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   Subscribe
                 </button>
               </div>
-              {/* Admin entry */}
-              <Link
-                to={path("/admin")}
-                className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-brand-600 transition-colors mt-4"
-              >
-                <Shield className="w-3.5 h-3.5" />
-                {t("adminLogin")}
-              </Link>
+
             </div>
           </div>
           <div className="border-t mt-8 pt-8 text-center text-sm text-gray-400">

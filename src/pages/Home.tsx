@@ -369,8 +369,8 @@ export default function Home() {
                   </div>
                 ) : (
                   <img
-                    src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=500&fit=crop"
-                    alt="Featured products"
+                    src="/hero-default.jpg"
+                    alt="Premium electronics accessories"
                     className="rounded-xl w-full object-cover aspect-[16/10]"
                     loading="eager"
                   />

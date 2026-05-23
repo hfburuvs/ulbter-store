@@ -2028,6 +2028,7 @@ function NavigationTab() {
 function SettingsTab() {
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+  const [logoSaving, setLogoSaving] = useState(false);
   const [error, setError] = useState("");
 
   const keys = [
@@ -2129,12 +2130,18 @@ function SettingsTab() {
           </label>
           {settings["logoImage"] && settings["logoImage"].trim().length > 10 && (
             <button onClick={async () => {
+              setLogoSaving(true);
               try {
                 const { data: existing } = await supabase.from("settings").select("id").eq("key", "logoImage").single();
                 if (existing) { await supabase.from("settings").update({ value: settings["logoImage"] }).eq("key", "logoImage"); }
                 else { await supabase.from("settings").insert({ key: "logoImage", value: settings["logoImage"] }); }
               } catch (e: any) { setError(e.message); }
-            }} className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium">Save Logo</button>
+              finally { setLogoSaving(false); }
+            }} disabled={logoSaving} className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium disabled:opacity-50 flex items-center gap-1.5">
+              {logoSaving ? (
+                <><svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>Saving...</>
+              ) : "Save Logo"}
+            </button>
           )}
         </div>
       </div>
