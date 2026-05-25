@@ -2118,6 +2118,28 @@ function SettingsTab() {
   const allKeys = sections.flatMap(s => s.keys);
 
   const defaultSettings: Record<string, string> = {
+    // Site Info
+    siteTitle: "ulbter",
+    contactEmail: "123@123.com",
+    topBarText: "Free shipping on orders over $50 | Camera accessories for every photographer",
+
+    // Hero Section
+    heroBadge: "New Collection 2026",
+    heroTitle: "Premium Camera Accessories & Protection",
+    heroSubtitle: "Screen protectors, body caps, lens caps, eyecups, hot shoe covers and more — find the perfect gear for your camera.",
+
+    // About Page
+    aboutTitle: "About ulbter",
+    aboutHero: "Your trusted source for premium camera accessories",
+    aboutSubtitle: "The Story Behind",
+    aboutStory: "Founded with a passion for photography and protection, ulbter began as a dedicated brand focused on solving a common problem for photographers: keeping their valuable camera equipment safe from daily wear and tear. What started with a quest for the perfect screen protector has grown into a comprehensive lineup of premium accessories including hot shoe bubble levels, body caps, rear lens caps, eyecups, camera bags, and more. We believe that camera protection should never compromise functionality or convenience. Every product in our catalog is rigorously tested and hand-picked to ensure it meets our high standards for quality, durability, and photographer-friendly design.",
+    aboutWhyTitle: "Why Choose Us?",
+    aboutCommitment: "Our Commitment",
+    aboutCommitmentText: "At ulbter, we are committed to providing not just products, but peace of mind for photographers at every level. We understand that your camera gear is a significant investment and an essential part of your creative process. Our mission is to keep your equipment protected without getting in the way of your work. We continuously research and develop new solutions for the latest camera models, ensuring that when a new camera hits the market, we have the accessories ready. Our commitment extends beyond our products to our customer service, where we strive to provide a seamless shopping experience from browsing to delivery and beyond.",
+    aboutCTA: "Ready to Protect Your Gear?",
+    aboutCTADesc: "Explore our collection of premium camera accessories and protection today.",
+
+    // Contact Page
     contactTitle: "Contact Us",
     contactSubtitle: "Have questions? We'd love to hear from you.",
     contactInfo: "Contact Information",
@@ -2136,6 +2158,9 @@ function SettingsTab() {
     contactFormTitle: "Send us a Message",
     contactSuccessTitle: "Message Sent!",
     contactSuccessDesc: "Thank you for reaching out. We'll get back to you soon.",
+
+    // Footer
+    footerAbout: "ulbter offers premium camera accessories including screen protectors, body caps, lens caps, eyecups, hot shoe covers, and camera bags. Quality gear for photographers at affordable prices.",
   };
 
   async function load() {
