@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useCountry } from "@/hooks/useCountry";
 
 export default function Contact() {
-  const { t } = useCountry();
+  const { t, country } = useCountry();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [content, setContent] = useState("");
@@ -13,6 +13,7 @@ export default function Contact() {
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
   const [contactEmail, setContactEmail] = useState("");
+  const [settingsMap, setSettingsMap] = useState<Record<string, string>>({});
 
   useEffect(() => {
     async function load() {
@@ -20,11 +21,17 @@ export default function Contact() {
         const { data } = await supabase.from("settings").select("*");
         const map: Record<string, string> = {};
         (data || []).forEach((s: any) => { map[s.key] = s.value; });
+        setSettingsMap(map);
         if (map["contactEmail"]) setContactEmail(map["contactEmail"]);
       } catch (e) { /* ignore */ }
     }
     load();
   }, []);
+
+  const c = (key: string) => {
+    if (country === "us") return settingsMap[key] || t(key);
+    return t(key);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,10 +61,10 @@ export default function Contact() {
             {t("contactUs") || "Get in Touch"}
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
-            {t("contactTitle")}
+            {c("contactTitle")}
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            {t("contactSubtitle")}
+            {c("contactSubtitle")}
           </p>
         </div>
       </section>
@@ -68,8 +75,8 @@ export default function Contact() {
           {/* Left: Info */}
           <div className="space-y-8">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">{t("contactInfo")}</h2>
-              <p className="text-sm text-gray-500 mb-6 leading-relaxed">{t("contactInfoDesc")}</p>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">{c("contactInfo")}</h2>
+              <p className="text-sm text-gray-500 mb-6 leading-relaxed">{c("contactInfoDesc")}</p>
               <div className="space-y-4">
                 {contactEmail && (
                   <div className="flex items-start space-x-3">
@@ -87,8 +94,8 @@ export default function Contact() {
                     <MessageSquare className="w-5 h-5 text-brand-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{t("contactResponseTime")}</p>
-                    <p className="text-sm text-gray-500">{t("contactResponseValue")}</p>
+                    <p className="text-sm font-medium text-gray-900">{c("contactResponseTime")}</p>
+                    <p className="text-sm text-gray-500">{c("contactResponseValue")}</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
@@ -96,22 +103,22 @@ export default function Contact() {
                     <User className="w-5 h-5 text-brand-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{t("contactBusinessHours")}</p>
-                    <p className="text-sm text-gray-500">{t("contactBusinessValue")}</p>
+                    <p className="text-sm font-medium text-gray-900">{c("contactBusinessHours")}</p>
+                    <p className="text-sm text-gray-500">{c("contactBusinessValue")}</p>
                   </div>
                 </div>
               </div>
             </div>
             <div className="bg-gray-50 rounded-xl p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">{t("contactFAQ")}</h3>
+              <h3 className="font-semibold text-gray-900 mb-4">{c("contactFAQ")}</h3>
               <div className="space-y-3">
                 {[1,2,3].map(i => (
                   <details key={i} className="group">
                     <summary className="flex items-center justify-between text-sm font-medium text-gray-700 cursor-pointer">
-                      {t(`contactFAQ${i}Q` as any)}
+                      {c(`contactFAQ${i}Q` as any)}
                       <svg className="w-4 h-4 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                     </summary>
-                    <p className="mt-2 text-sm text-gray-500">{t(`contactFAQ${i}A` as any)}</p>
+                    <p className="mt-2 text-sm text-gray-500">{c(`contactFAQ${i}A` as any)}</p>
                   </details>
                 ))}
               </div>
@@ -125,32 +132,32 @@ export default function Contact() {
                 <div className="w-16 h-16 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Check className="w-8 h-8 text-brand-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t("contactSuccessTitle")}</h3>
-                <p className="text-sm text-gray-500 mb-6">{t("contactSuccessDesc")}</p>
-                <button onClick={() => setSubmitted(false)} className="text-brand-600 hover:underline text-sm font-medium">{t("contactSendAnother")}</button>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{c("contactSuccessTitle")}</h3>
+                <p className="text-sm text-gray-500 mb-6">{c("contactSuccessDesc")}</p>
+                <button onClick={() => setSubmitted(false)} className="text-brand-600 hover:underline text-sm font-medium">{c("contactSendAnother")}</button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">{t("contactFormTitle")}</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">{c("contactFormTitle")}</h2>
                 {error && <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg text-sm"><AlertCircle className="w-4 h-4 flex-shrink-0" /><span>{error}</span></div>}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("contactNameLabel")}</label>
-                  <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm" placeholder={t("contactNamePlaceholder")} />
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{c("contactNameLabel")}</label>
+                  <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm" placeholder={c("contactNamePlaceholder")} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("contactEmailLabel")}</label>
-                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm" placeholder={t("contactEmailPlaceholder")} />
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{c("contactEmailLabel")}</label>
+                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm" placeholder={c("contactEmailPlaceholder")} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("contactMessageLabel")}</label>
-                  <textarea value={content} onChange={e => setContent(e.target.value)} rows={5} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm resize-none" placeholder={t("contactMessagePlaceholder")} />
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{c("contactMessageLabel")}</label>
+                  <textarea value={content} onChange={e => setContent(e.target.value)} rows={5} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm resize-none" placeholder={c("contactMessagePlaceholder")} />
                 </div>
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input type="checkbox" checked={subscribe} onChange={e => setSubscribe(e.target.checked)} className="w-4 h-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500/20" />
-                  <span className="text-sm text-gray-600">{t("contactSubscribe")}</span>
+                  <span className="text-sm text-gray-600">{c("contactSubscribe")}</span>
                 </label>
                 <button type="submit" disabled={sending} className="btn-primary w-full py-2.5 text-white font-medium rounded-full transition-all disabled:opacity-50 flex items-center justify-center gap-2">
-                  <Send className="w-4 h-4" /><span>{sending ? t("contactSending") : t("contactSend")}</span>
+                  <Send className="w-4 h-4" /><span>{sending ? c("contactSending") : c("contactSend")}</span>
                 </button>
               </form>
             )}
