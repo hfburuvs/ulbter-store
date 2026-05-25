@@ -37,7 +37,7 @@ export default function Contact() {
     e.preventDefault();
     setError("");
     if (!name.trim() || !email.trim() || !content.trim()) {
-      setError(t("contactRequiredError"));
+      setError(c("contactRequiredError"));
       return;
     }
     setSending(true);
@@ -58,7 +58,7 @@ export default function Contact() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 bg-brand-100 text-brand-700 px-4 py-1.5 rounded-full text-sm font-medium mb-6">
             <span className="w-2 h-2 bg-brand-500 rounded-full animate-pulse" />
-            {t("contactUs") || "Get in Touch"}
+            {t("contact") || "Get in Touch"}
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
             {c("contactTitle")}
