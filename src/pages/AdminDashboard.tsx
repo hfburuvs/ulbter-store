@@ -7,7 +7,7 @@ import {
   Upload, Download, Trash2, Plus, Search, Pencil,
   Settings, Layers, Tag, LayoutDashboard, Image,
   Navigation, Globe, Code2, RotateCcw, Mail, Lock,
-  Video, BookOpen, Loader, ArrowUp, ArrowDown,
+  Video, BookOpen, Loader, ArrowUp, ArrowDown, HelpCircle,
 } from "lucide-react";
 
 type Tab = "dashboard" | "products" | "messages" | "categories" | "brands"
