@@ -2,7 +2,8 @@
   "outputDirectory": "dist",
   "rewrites": [
     {"source": "/about", "destination": "/"},
-    {"source": "/contact", "destination": "/"},
+    {"source": "/support", "destination": "/"},
+    {"source": "/contact", "destination": "/support"},
     {"source": "/admin", "destination": "/"},
     {"source": "/admin/:path*", "destination": "/"},
     {"source": "/:country([a-z]{2})", "destination": "/"},
