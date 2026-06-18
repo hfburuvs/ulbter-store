@@ -24,6 +24,9 @@ interface Category {
 interface InstallationGuide {
   id: number;
   category_id: number;
+  icon_url: string;
+  product_tag: string;
+  country_code: string;
   video_url: string;
   manual_url: string;
   sort_order: number;
@@ -114,14 +117,17 @@ export default function Support() {
     { icon: Briefcase, label: c("contactBusinessHours"), value: c("contactBusinessValue") },
   ];
 
-  // Group guides by category
+  // Group guides by category → product_tag → country variants
   const guidesByCategory = guides.reduce((acc, guide) => {
     const cat = categories.find((c) => c.id === guide.category_id);
     if (!cat) return acc;
-    if (!acc[cat.id]) acc[cat.id] = { category: cat, guides: [] };
-    acc[cat.id].guides.push(guide);
+    if (!acc[cat.id]) acc[cat.id] = { category: cat, products: {} as Record<string, { icon_url: string; tag: string; guides: InstallationGuide[] }> };
+    const tag = guide.product_tag || guide.title || "untitled";
+    if (!acc[cat.id].products[tag]) acc[cat.id].products[tag] = { icon_url: guide.icon_url, tag, guides: [] };
+    if (guide.icon_url && !acc[cat.id].products[tag].icon_url) acc[cat.id].products[tag].icon_url = guide.icon_url;
+    acc[cat.id].products[tag].guides.push(guide);
     return acc;
-  }, {} as Record<number, { category: Category; guides: InstallationGuide[] }>);
+  }, {} as Record<number, { category: Category; products: Record<string, { icon_url: string; tag: string; guides: InstallationGuide[] }> }>);
 
   // Download helper: open preview in new window + trigger file download
   async function downloadFile(url: string, filename?: string) {
@@ -219,11 +225,12 @@ export default function Support() {
             </div>
           ) : (
             <div className="space-y-6">
-              {Object.values(guidesByCategory).map(({ category, guides }) => (
-                <div key={category.id} className="rounded-lg overflow-hidden border border-gray-100">
-                  <div className="px-5 py-3 font-semibold text-sm bg-gray-200 text-gray-900 border-b border-gray-300">
+              {Object.values(guidesByCategory).map(({ category, products }) => (
+                <div key={category.id} className="rounded-lg overflow-hidden" style={{ border: '1px solid #eee' }}>
+                  <div className="px-5 py-3 font-semibold text-sm" style={{ background: '#f7f8f8', color: '#0F1111' }}>
                     {category.name}
                   </div>
+
                   <div className="p-5 space-y-4">
                     {guides.map((guide) => (
                       <div key={guide.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-lg bg-white border border-gray-200 shadow-sm">
