@@ -173,7 +173,7 @@ export default function Support() {
         <section>
           <div className="flex items-center gap-3 mb-5">
             <div className="w-8 h-8 rounded-md flex items-center justify-center bg-brand-600">
-              <Store className="w-4 h-4 text-brand-600" />
+              <Store className="w-4 h-4 text-white" />
             </div>
             <h2 className="text-xl font-bold text-gray-900">{t("storeLinksTitle") || "Our Amazon Stores"}</h2>
           </div>
@@ -205,7 +205,7 @@ export default function Support() {
         {/* ============ Section 2: Installation Guides ============ */}
         <section>
           <div className="flex items-center gap-3 mb-5">
-            <div className="w-8 h-8 rounded-md flex items-center justify-center bg-gray-800">
+            <div className="w-8 h-8 rounded-md flex items-center justify-center bg-brand-600">
               <BookOpen className="w-4 h-4 text-white" />
             </div>
             <h2 className="text-xl font-bold text-gray-900">{t("installationGuidesTitle") || "Installation Guides"}</h2>
@@ -266,7 +266,7 @@ export default function Support() {
         <section>
           <div className="flex items-center gap-3 mb-5">
             <div className="w-8 h-8 rounded-md flex items-center justify-center bg-brand-600">
-              <MessageSquare className="w-4 h-4 text-brand-600" />
+              <MessageSquare className="w-4 h-4 text-white" />
             </div>
             <h2 className="text-xl font-bold text-gray-900">{c("contactTitle")}</h2>
           </div>
@@ -282,7 +282,7 @@ export default function Support() {
                   {infoItems.map((item, i) => (
                     <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-white border border-gray-100">
                       <div className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0 bg-brand-600">
-                        <item.icon className="w-4 h-4 text-brand-600" />
+                        <item.icon className="w-4 h-4 text-white" />
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-gray-900">{item.label}</p>
@@ -319,7 +319,7 @@ export default function Support() {
                     </div>
                     <h3 className="text-lg font-bold mb-2 text-gray-900">{c("contactSuccessTitle")}</h3>
                     <p className="text-sm mb-5 text-gray-500">{c("contactSuccessDesc")}</p>
-                    <button onClick={() => setSubmitted(false)} className="text-sm font-medium text-brand-600">{c("contactSendAnother")}</button>
+                    <button onClick={() => setSubmitted(false)} className="text-sm font-medium text-white">{c("contactSendAnother")}</button>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-4">
