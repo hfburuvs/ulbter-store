@@ -123,8 +123,9 @@ export default function Support() {
     return acc;
   }, {} as Record<number, { category: Category; guides: InstallationGuide[] }>);
 
-  // Download helper — uses fetch+blob for cross-origin downloads
+  // Download helper: open preview in new window + trigger file download
   async function downloadFile(url: string, filename?: string) {
+    window.open(url, '_blank', 'noopener,noreferrer');
     try {
       const res = await fetch(url);
       const blob = await res.blob();
@@ -136,10 +137,12 @@ export default function Support() {
       a.download = name;
       document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(objUrl);
+      setTimeout(() => {
+        if (a.parentNode) document.body.removeChild(a);
+        URL.revokeObjectURL(objUrl);
+      }, 200);
     } catch {
-      window.open(url, '_blank', 'noopener,noreferrer');
+      // Preview window already open
     }
   }
 
