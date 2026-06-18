@@ -185,8 +185,7 @@ export default function Support() {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col items-center gap-2 p-4 rounded-lg transition-all hover:shadow-md"
-                className="bg-white border border-gray-100"
+                className="flex flex-col items-center gap-2 p-4 rounded-lg transition-all hover:shadow-md bg-white border border-gray-100"
               >
                 <img
                   src={`https://flagcdn.com/w80/${link.country_code === 'uk' ? 'gb' : link.country_code}.png`}
@@ -206,8 +205,8 @@ export default function Support() {
         {/* ============ Section 2: Installation Guides ============ */}
         <section>
           <div className="flex items-center gap-3 mb-5">
-            <div className="w-8 h-8 rounded-md flex items-center justify-center bg-brand-600">
-              <BookOpen className="w-4 h-4 text-brand-600" />
+            <div className="w-8 h-8 rounded-md flex items-center justify-center bg-gray-800">
+              <BookOpen className="w-4 h-4 text-white" />
             </div>
             <h2 className="text-xl font-bold text-gray-900">{t("installationGuidesTitle") || "Installation Guides"}</h2>
           </div>
@@ -222,12 +221,12 @@ export default function Support() {
             <div className="space-y-6">
               {Object.values(guidesByCategory).map(({ category, guides }) => (
                 <div key={category.id} className="rounded-lg overflow-hidden border border-gray-100">
-                  <div className="px-5 py-3 font-semibold text-sm" style={{ background: '#f7f8f8', color: '#0F1111' }}>
+                  <div className="px-5 py-3 font-semibold text-sm bg-gray-200 text-gray-900 border-b border-gray-300">
                     {category.name}
                   </div>
                   <div className="p-5 space-y-4">
                     {guides.map((guide) => (
-                      <div key={guide.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-lg bg-gray-50">
+                      <div key={guide.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-lg bg-white border border-gray-200 shadow-sm">
                         <div className="flex-1">
                           <p className="text-sm font-medium text-gray-900">{guide.title || `${category.name} Guide`}</p>
                         </div>
@@ -237,8 +236,7 @@ export default function Support() {
                               href={guide.video_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-xs font-semibold transition-all"
-                              className="bg-brand-600 text-white border border-brand-700 hover:bg-brand-700 transition-colors"
+                              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-xs font-semibold transition-all bg-brand-600 text-white border border-brand-700 hover:bg-brand-700"
                             >
                               <Video className="w-3.5 h-3.5" />{t("watchVideo") || "Watch Video"}
                             </a>
