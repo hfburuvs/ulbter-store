@@ -3,7 +3,8 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
-import Contact from "./pages/Contact";
+import Support from "./pages/Support";
+import { Navigate } from "react-router";
 import About from "./pages/About";
 import SitemapXml from "./pages/SitemapXml";
 import RobotsTxt from "./pages/RobotsTxt";
@@ -42,7 +43,8 @@ export default function App() {
           <Route path="/:country?/product/:id" element={<ProductDetail />} />
           <Route path="/:country?/category/:slug" element={<Home />} />
           <Route path="/:country?/about" element={<About />} />
-          <Route path="/:country?/contact" element={<Contact />} />
+          <Route path="/:country?/support" element={<Support />} />
+          <Route path="/:country?/contact" element={<Navigate to="/support" replace />} />
           <Route path="/:country?/sitemap.xml" element={<SitemapXml />} />
           <Route path="/:country?/robots.txt" element={<RobotsTxt />} />
         </Routes>

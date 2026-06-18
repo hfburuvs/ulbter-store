@@ -192,8 +192,8 @@ export default function Layout({ children }: { children: ReactNode }) {
   const pageTitle =
     cleanPath === "/"
       ? siteTagline ? `${siteTitle} - ${siteTagline}` : siteTitle
-      : cleanPath === "/contact"
-      ? `${t("contact")} - ${siteTitle}`
+      : cleanPath === "/support"
+      ? `${t("support") || "Support"} - ${siteTitle}`
       : cleanPath === "/about"
       ? `${t("about")} - ${siteTitle}`
       : cleanPath.startsWith("/product/")
@@ -290,7 +290,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                       home: t("home"),
                       products: t("products"),
                       about: t("about"),
-                      contact: t("contact"),
+                      contact: t("support") || "Support",
                     };
                     const children = navItems.filter((n) => n.parent_id === item.id);
                     const isActive = location.pathname === item.link;
@@ -337,7 +337,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                       );
                     }
                     return (
-                      <Link key={item.id} to={item.link === "/" ? path("/") : item.link === "/about" ? path("/about") : item.link === "/contact" ? path("/contact") : item.link} className={`nav-pill flex items-center space-x-1 text-sm font-medium px-4 py-2 rounded-full transition-colors ${isActive ? "text-brand-600 bg-brand-50" : "text-gray-700 hover:text-brand-600 hover:bg-brand-50"}`}>
+                      <Link key={item.id} to={item.link === "/" ? path("/") : item.link === "/about" ? path("/about") : item.link === "/contact" ? path("/support") : item.link} className={`nav-pill flex items-center space-x-1 text-sm font-medium px-4 py-2 rounded-full transition-colors ${isActive ? "text-brand-600 bg-brand-50" : "text-gray-700 hover:text-brand-600 hover:bg-brand-50"}`}>
                         <span>{displayLabel}</span>
                       </Link>
                     );
@@ -418,15 +418,15 @@ export default function Layout({ children }: { children: ReactNode }) {
                   </Link>
 
                   <Link
-                    to={path("/contact")}
+                    to={path("/support")}
                     className={`nav-pill flex items-center space-x-1.5 text-sm font-medium px-4 py-2 rounded-full transition-colors ${
-                      cleanPath === "/contact"
+                      cleanPath === "/support"
                         ? "text-brand-600 bg-brand-50"
                         : "text-gray-700 hover:text-brand-600 hover:bg-brand-50"
                     }`}
                   >
                     <MessageSquare className="w-4 h-4" />
-                    <span>{t("contact")}</span>
+                    <span>{t("support") || "Support"}</span>
                   </Link>
                 </>
               )}
@@ -511,7 +511,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   .map((item) => (
                     <Link
                       key={item.id}
-                      to={item.link === "/" ? path("/") : item.link === "/about" ? path("/about") : item.link === "/contact" ? path("/contact") : item.link}
+                      to={item.link === "/" ? path("/") : item.link === "/about" ? path("/about") : item.link === "/contact" ? path("/support") : item.link}
                       onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50"
                     >
@@ -548,12 +548,12 @@ export default function Layout({ children }: { children: ReactNode }) {
                     <span>{t("about")}</span>
                   </Link>
                   <Link
-                    to={path("/contact")}
+                    to={path("/support")}
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50"
                   >
                     <MessageSquare className="w-4 h-4" />
-                    <span>{t("contact")}</span>
+                    <span>{t("support") || "Support"}</span>
                   </Link>
                 </>
               )}
@@ -632,8 +632,8 @@ export default function Layout({ children }: { children: ReactNode }) {
                   </Link>
                 </li>
                 <li>
-                  <Link to={path("/contact")} className="hover:text-brand-600 transition-colors">
-                    {t("contact")}
+                  <Link to={path("/support")} className="hover:text-brand-600 transition-colors">
+                    {t("support") || "Support"}
                   </Link>
                 </li>
               </ul>
