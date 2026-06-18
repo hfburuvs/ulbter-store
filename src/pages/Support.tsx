@@ -231,31 +231,46 @@ export default function Support() {
                     {category.name}
                   </div>
 
-                  <div className="p-5 space-y-4">
-                    {guides.map((guide) => (
-                      <div key={guide.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-lg bg-white border border-gray-200 shadow-sm">
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">{guide.title || `${category.name} Guide`}</p>
+                  <div className="p-4 space-y-4" style={{ background: '#fafafa' }}>
+                    {Object.values(products).map((product) => (
+                      <div key={product.tag} className="rounded-lg overflow-hidden bg-white" style={{ border: '1px solid #e5e5e5' }}>
+                        <div className="flex items-center gap-3 px-4 py-2.5" style={{ background: '#f7f8f8', borderBottom: '1px solid #eee' }}>
+                          {product.icon_url ? (
+                            <img src={product.icon_url} alt="" className="w-10 h-10 rounded-full object-cover border border-gray-200 flex-shrink-0" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#e5e7eb' }}>
+                              <HelpCircle className="w-5 h-5" style={{ color: '#9ca3af' }} />
+                            </div>
+                          )}
+                          <span className="text-sm font-medium text-gray-900">{product.tag}</span>
                         </div>
-                        <div className="flex items-center gap-2 flex-shrink-0">
-                          {guide.video_url && (
-                            <a
-                              href={guide.video_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-xs font-semibold transition-all bg-brand-600 text-white border border-brand-700 hover:bg-brand-700"
-                            >
-                              <Video className="w-3.5 h-3.5" />{t("watchVideo") || "Watch Video"}
-                            </a>
-                          )}
-                          {guide.manual_url && (
-                            <button
-                              onClick={() => downloadFile(guide.manual_url, (guide.title || "manual").replace(/[^a-zA-Z0-9]/g, "_"))}
-                              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-xs font-semibold transition-all cursor-pointer bg-white text-gray-900 border border-gray-200 hover:border-brand-300 transition-colors"
-                            >
-                              <Download className="w-3.5 h-3.5" />{t("downloadManual") || "Manual"}
-                            </button>
-                          )}
+                        <div className="divide-y divide-gray-100">
+                          {product.guides.map((guide) => (
+                            <div key={guide.id} className="flex flex-col sm:flex-row sm:items-center gap-2 px-4 py-3">
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                <img
+                                  src={`https://flagcdn.com/w40/${guide.country_code === 'uk' ? 'gb' : guide.country_code}.png`}
+                                  alt={guide.country_code}
+                                  className="w-6 h-4 object-cover rounded-sm flex-shrink-0"
+                                />
+                                <span className="text-sm truncate text-gray-900">{guide.title || product.tag}</span>
+                              </div>
+                              <div className="flex items-center gap-2 flex-shrink-0">
+                                {guide.video_url && (
+                                  <a href={guide.video_url} target="_blank" rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all bg-brand-600 text-white border border-brand-700 hover:bg-brand-700">
+                                    <Video className="w-3 h-3" />{t("watchVideo") || "Video"}
+                                  </a>
+                                )}
+                                {guide.manual_url && (
+                                  <button onClick={() => downloadFile(guide.manual_url, (guide.title || product.tag).replace(/[^a-zA-Z0-9]/g, "_"))}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer bg-white text-gray-900 border border-gray-200 hover:border-brand-300">
+                                    <Download className="w-3 h-3" />{t("downloadManual") || "Manual"}
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     ))}
