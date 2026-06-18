@@ -140,7 +140,7 @@ export default function Support() {
       <section className="bg-brand-600 text-white" style={{ padding: '48px 24px' }}>
         <div className="max-w-[1500px] mx-auto text-center">
           <h1 className="text-3xl md:text-5xl font-bold mb-3">{t("supportTitle") || "Support"}</h1>
-          <p className="text-base max-w-2xl mx-auto" className="text-brand-100">{t("supportSubtitle") || "Find installation guides, store links, and get in touch with us."}</p>
+          <p className="text-base max-w-2xl mx-auto text-brand-100">{t("supportSubtitle") || "Find installation guides, store links, and get in touch with us."}</p>
         </div>
       </section>
 
@@ -149,12 +149,12 @@ export default function Support() {
         {/* ============ Section 1: Store Links ============ */}
         <section>
           <div className="flex items-center gap-3 mb-5">
-            <div className="w-8 h-8 rounded-md flex items-center justify-center" className="bg-brand-600">
-              <Store className="w-4 h-4" className="text-brand-600" />
+            <div className="w-8 h-8 rounded-md flex items-center justify-center bg-brand-600">
+              <Store className="w-4 h-4 text-brand-600" />
             </div>
-            <h2 className="text-xl font-bold" className="text-gray-900">{t("storeLinksTitle") || "Our Amazon Stores"}</h2>
+            <h2 className="text-xl font-bold text-gray-900">{t("storeLinksTitle") || "Our Amazon Stores"}</h2>
           </div>
-          <p className="text-sm mb-5" className="text-gray-500">{t("storeLinksDesc") || "Click to visit our store in your country:"}</p>
+          <p className="text-sm mb-5 text-gray-500">{t("storeLinksDesc") || "Click to visit our store in your country:"}</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {displayStoreLinks.map((link) => (
               <a
@@ -170,8 +170,8 @@ export default function Support() {
                   alt={link.country_code}
                   className="w-10 h-7 object-cover rounded-sm"
                 />
-                <span className="text-sm font-semibold" className="text-gray-900">{link.label}</span>
-                <ExternalLink className="w-3.5 h-3.5" className="text-gray-400" />
+                <span className="text-sm font-semibold text-gray-900">{link.label}</span>
+                <ExternalLink className="w-3.5 h-3.5 text-gray-400" />
               </a>
             ))}
           </div>
@@ -183,30 +183,30 @@ export default function Support() {
         {/* ============ Section 2: Installation Guides ============ */}
         <section>
           <div className="flex items-center gap-3 mb-5">
-            <div className="w-8 h-8 rounded-md flex items-center justify-center" className="bg-brand-600">
-              <BookOpen className="w-4 h-4" className="text-brand-600" />
+            <div className="w-8 h-8 rounded-md flex items-center justify-center bg-brand-600">
+              <BookOpen className="w-4 h-4 text-brand-600" />
             </div>
-            <h2 className="text-xl font-bold" className="text-gray-900">{t("installationGuidesTitle") || "Installation Guides"}</h2>
+            <h2 className="text-xl font-bold text-gray-900">{t("installationGuidesTitle") || "Installation Guides"}</h2>
           </div>
-          <p className="text-sm mb-5" className="text-gray-500">{t("installationGuidesDesc") || "Find video tutorials and download instruction manuals by product category:"}</p>
+          <p className="text-sm mb-5 text-gray-500">{t("installationGuidesDesc") || "Find video tutorials and download instruction manuals by product category:"}</p>
 
           {Object.keys(guidesByCategory).length === 0 ? (
-            <div className="text-center py-10 rounded-lg" className="bg-gray-50 border border-dashed border-gray-200">
-              <HelpCircle className="w-8 h-8 mx-auto mb-2" className="text-gray-400" />
-              <p className="text-sm" className="text-gray-500">{t("noGuides") || "No installation guides available yet."}</p>
+            <div className="text-center py-10 rounded-lg bg-gray-50 border border-dashed border-gray-200">
+              <HelpCircle className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+              <p className="text-sm text-gray-500">{t("noGuides") || "No installation guides available yet."}</p>
             </div>
           ) : (
             <div className="space-y-6">
               {Object.values(guidesByCategory).map(({ category, guides }) => (
-                <div key={category.id} className="rounded-lg overflow-hidden" className="border border-gray-100">
+                <div key={category.id} className="rounded-lg overflow-hidden border border-gray-100">
                   <div className="px-5 py-3 font-semibold text-sm" style={{ background: '#f7f8f8', color: '#0F1111' }}>
                     {category.name}
                   </div>
                   <div className="p-5 space-y-4">
                     {guides.map((guide) => (
-                      <div key={guide.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-lg" className="bg-gray-50">
+                      <div key={guide.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-lg bg-gray-50">
                         <div className="flex-1">
-                          <p className="text-sm font-medium" className="text-gray-900">{guide.title || `${category.name} Guide`}</p>
+                          <p className="text-sm font-medium text-gray-900">{guide.title || `${category.name} Guide`}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           {guide.video_url && (
@@ -247,44 +247,44 @@ export default function Support() {
         {/* ============ Section 3: Contact Us ============ */}
         <section>
           <div className="flex items-center gap-3 mb-5">
-            <div className="w-8 h-8 rounded-md flex items-center justify-center" className="bg-brand-600">
-              <MessageSquare className="w-4 h-4" className="text-brand-600" />
+            <div className="w-8 h-8 rounded-md flex items-center justify-center bg-brand-600">
+              <MessageSquare className="w-4 h-4 text-brand-600" />
             </div>
-            <h2 className="text-xl font-bold" className="text-gray-900">{c("contactTitle")}</h2>
+            <h2 className="text-xl font-bold text-gray-900">{c("contactTitle")}</h2>
           </div>
-          <p className="text-sm mb-5" className="text-gray-500">{c("contactSubtitle")}</p>
+          <p className="text-sm mb-5 text-gray-500">{c("contactSubtitle")}</p>
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             {/* Left: Contact Info */}
             <div className="lg:col-span-2 space-y-6">
               <div>
-                <h3 className="text-lg font-bold mb-4" className="text-gray-900">{c("contactInfo")}</h3>
-                <p className="text-sm mb-5 leading-relaxed" className="text-gray-500">{c("contactInfoDesc")}</p>
+                <h3 className="text-lg font-bold mb-4 text-gray-900">{c("contactInfo")}</h3>
+                <p className="text-sm mb-5 leading-relaxed text-gray-500">{c("contactInfoDesc")}</p>
                 <div className="space-y-3">
                   {infoItems.map((item, i) => (
-                    <div key={i} className="flex items-start gap-3 p-3 rounded-lg" className="bg-white border border-gray-100">
-                      <div className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0" className="bg-brand-600">
-                        <item.icon className="w-4 h-4" className="text-brand-600" />
+                    <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-white border border-gray-100">
+                      <div className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0 bg-brand-600">
+                        <item.icon className="w-4 h-4 text-brand-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold" className="text-gray-900">{item.label}</p>
-                        <p className="text-xs" className="text-gray-500">{item.value}</p>
+                        <p className="text-sm font-semibold text-gray-900">{item.label}</p>
+                        <p className="text-xs text-gray-500">{item.value}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
               {/* FAQ */}
-              <div className="bg-white rounded-lg p-5" className="border border-gray-100">
-                <h3 className="font-bold mb-3 text-sm" className="text-gray-900">{c("contactFAQ")}</h3>
+              <div className="bg-white rounded-lg p-5 border border-gray-100">
+                <h3 className="font-bold mb-3 text-sm text-gray-900">{c("contactFAQ")}</h3>
                 <div className="space-y-2">
                   {[1, 2, 3].map(i => (
                     <details key={i} className="group">
-                      <summary className="flex items-center justify-between text-sm py-2 cursor-pointer" className="text-gray-900">
+                      <summary className="flex items-center justify-between text-sm py-2 cursor-pointer text-gray-900">
                         {c(`contactFAQ${i}Q` as any)}
-                        <svg className="w-3.5 h-3.5 transition group-open:rotate-180" className="text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                        <svg className="w-3.5 h-3.5 transition group-open:rotate-180 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                       </summary>
-                      <p className="pb-2 text-xs" className="text-gray-500">{c(`contactFAQ${i}A` as any)}</p>
+                      <p className="pb-2 text-xs text-gray-500">{c(`contactFAQ${i}A` as any)}</p>
                     </details>
                   ))}
                 </div>
@@ -293,43 +293,43 @@ export default function Support() {
 
             {/* Right: Form */}
             <div className="lg:col-span-3">
-              <div className="bg-white rounded-lg p-6" className="border border-gray-100">
+              <div className="bg-white rounded-lg p-6 border border-gray-100">
                 {submitted ? (
                   <div className="text-center py-12">
-                    <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" className="bg-green-50">
-                      <Check className="w-7 h-7" className="text-green-600" />
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 bg-green-50">
+                      <Check className="w-7 h-7 text-green-600" />
                     </div>
-                    <h3 className="text-lg font-bold mb-2" className="text-gray-900">{c("contactSuccessTitle")}</h3>
-                    <p className="text-sm mb-5" className="text-gray-500">{c("contactSuccessDesc")}</p>
-                    <button onClick={() => setSubmitted(false)} className="text-sm font-medium" className="text-brand-600">{c("contactSendAnother")}</button>
+                    <h3 className="text-lg font-bold mb-2 text-gray-900">{c("contactSuccessTitle")}</h3>
+                    <p className="text-sm mb-5 text-gray-500">{c("contactSuccessDesc")}</p>
+                    <button onClick={() => setSubmitted(false)} className="text-sm font-medium text-brand-600">{c("contactSendAnother")}</button>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    <h3 className="text-lg font-bold mb-2" className="text-gray-900">{c("contactFormTitle")}</h3>
-                    {error && <div className="flex items-center gap-2 p-3 rounded-lg text-sm" className="text-red-600 bg-red-50"><AlertCircle className="w-4 h-4 flex-shrink-0" /><span>{error}</span></div>}
+                    <h3 className="text-lg font-bold mb-2 text-gray-900">{c("contactFormTitle")}</h3>
+                    {error && <div className="flex items-center gap-2 p-3 rounded-lg text-sm text-red-600 bg-red-50"><AlertCircle className="w-4 h-4 flex-shrink-0" /><span>{error}</span></div>}
                     <div>
-                      <label className="block text-sm font-medium mb-1.5" className="text-gray-900">{c("contactNameLabel")}</label>
-                      <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2.5 border rounded-md text-sm outline-none focus:ring-2" className="border-gray-200" placeholder={c("contactNamePlaceholder")}
+                      <label className="block text-sm font-medium mb-1.5 text-gray-900">{c("contactNameLabel")}</label>
+                      <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2.5 border rounded-md text-sm outline-none focus:ring-2 border-gray-200" placeholder={c("contactNamePlaceholder")}
                         onFocus={(e) => { e.currentTarget.classList.add("border-brand-500","ring-2","ring-brand-200"); }}
                         onBlur={(e) => { e.currentTarget.classList.remove("border-brand-500","ring-2","ring-brand-200"); }} />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1.5" className="text-gray-900">{c("contactEmailLabel")}</label>
-                      <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-3 py-2.5 border rounded-md text-sm outline-none" className="border-gray-200" placeholder={c("contactEmailPlaceholder")}
+                      <label className="block text-sm font-medium mb-1.5 text-gray-900">{c("contactEmailLabel")}</label>
+                      <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-3 py-2.5 border rounded-md text-sm outline-none border-gray-200" placeholder={c("contactEmailPlaceholder")}
                         onFocus={(e) => { e.currentTarget.classList.add("border-brand-500","ring-2","ring-brand-200"); }}
                         onBlur={(e) => { e.currentTarget.classList.remove("border-brand-500","ring-2","ring-brand-200"); }} />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1.5" className="text-gray-900">{c("contactMessageLabel")}</label>
-                      <textarea value={content} onChange={e => setContent(e.target.value)} rows={5} className="w-full px-3 py-2.5 border rounded-md text-sm outline-none resize-none" className="border-gray-200" placeholder={c("contactMessagePlaceholder")}
+                      <label className="block text-sm font-medium mb-1.5 text-gray-900">{c("contactMessageLabel")}</label>
+                      <textarea value={content} onChange={e => setContent(e.target.value)} rows={5} className="w-full px-3 py-2.5 border rounded-md text-sm outline-none resize-none border-gray-200" placeholder={c("contactMessagePlaceholder")}
                         onFocus={(e) => { e.currentTarget.classList.add("border-brand-500","ring-2","ring-brand-200"); }}
                         onBlur={(e) => { e.currentTarget.classList.remove("border-brand-500","ring-2","ring-brand-200"); }} />
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" checked={subscribe} onChange={e => setSubscribe(e.target.checked)} className="w-4 h-4 rounded" className="accent-brand-600" />
-                      <span className="text-sm" className="text-gray-500">{c("contactSubscribe")}</span>
+                      <input type="checkbox" checked={subscribe} onChange={e => setSubscribe(e.target.checked)} className="w-4 h-4 rounded accent-brand-600" />
+                      <span className="text-sm text-gray-500">{c("contactSubscribe")}</span>
                     </label>
-                    <button type="submit" disabled={sending} className="w-full py-2.5 rounded-md text-sm font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2" className="bg-brand-600 text-white border border-brand-700 hover:bg-brand-700 transition-colors">
+                    <button type="submit" disabled={sending} className="w-full py-2.5 rounded-md text-sm font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2 bg-brand-600 text-white border border-brand-700 hover:bg-brand-700 transition-colors">
                       <Send className="w-4 h-4" /><span>{sending ? c("contactSending") : c("contactSend")}</span>
                     </button>
                   </form>
