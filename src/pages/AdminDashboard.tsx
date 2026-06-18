@@ -2772,17 +2772,21 @@ CREATE POLICY "Allow all" ON public.installation_guides FOR ALL USING (true) WIT
               if (file.size > 10 * 1024 * 1024) { setError("File too large. Max 10MB."); e.target.value = ""; return; }
               setUploadingManual(true); setError("");
               try {
-                const safeName = file.name.replace(/[^\x00-\x7F]/g, "").replace(/\s+/g, "_").replace(/[^a-zA-Z0-9._-]/g, "");
-                const fileName = `guides/${Date.now()}_${safeName || "manual.pdf"}`;
+                const ext = file.name.split('.').pop()?.toLowerCase() || "pdf";
+                const safeExt = ext.match(/^(jpg|jpeg|png|pdf)$/) ? ext : "pdf";
+                const fileName = `guides/${Date.now()}_manual.${safeExt}`;
                 let { data: upData, error: upErr } = await supabase.storage.from("instructions").upload(fileName, file, { contentType: file.type, upsert: false });
                 if (upErr && (upErr.message?.includes("bucket") || upErr.message?.includes("Bucket") || upErr.message?.includes("not found"))) {
                   try {
                     await supabase.storage.createBucket("instructions", { public: true, fileSizeLimit: 10485760 });
-                    const retry = await supabase.storage.from("instructions").upload(fileName, file, { contentType: file.type, upsert: false });
-                    upData = retry.data; upErr = retry.error;
-                  } catch { /* ignore */ }
+                  } catch { /* bucket may already exist */ }
                 }
-                if (upErr) { setError(upErr.message); setUploadingManual(false); e.target.value = ""; return; }
+                if (upErr) {
+                  if (upErr.message?.includes("row-level security") || upErr.message?.includes("RLS") || upErr.message?.includes("policy")) {
+                    setError('Upload blocked by RLS policy. Please go to Supabase Dashboard > Storage > instructions bucket > Policies, then add a policy with "Allowed operation: ALL" and expression: true');
+                  } else { setError(upErr.message); }
+                  setUploadingManual(false); e.target.value = ""; return;
+                }
                 const { data: urlData } = supabase.storage.from("instructions").getPublicUrl(upData!.path);
                 setManualUrl(urlData.publicUrl);
               } catch (err: any) { setError(err.message); }
