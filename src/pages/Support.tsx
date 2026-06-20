@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import {
   Mail, User, MessageSquare, Send, Check, AlertCircle, Clock, Briefcase,
-  Store, ExternalLink, Video, Download, BookOpen, HelpCircle, ChevronDown, Globe
+  Store, ExternalLink, Video, Download, BookOpen, HelpCircle, ChevronDown, ChevronRight, Globe
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useCountry } from "@/hooks/useCountry";
@@ -75,6 +75,12 @@ export default function Support() {
   const [sending, setSending] = useState(false);
   const [contactEmail, setContactEmail] = useState("");
   const [settingsMap, setSettingsMap] = useState<Record<string, string>>({});
+
+  // Collapse state for categories and tags
+  const [collapsedCats, setCollapsedCats] = useState<Set<number>>(new Set());
+  const [collapsedTags, setCollapsedTags] = useState<Set<string>>(new Set());
+  const toggleCat = (id: number) => setCollapsedCats(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  const toggleTag = (key: string) => setCollapsedTags(prev => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); return n; });
 
   // Store links
   const [storeLinks, setStoreLinks] = useState<StoreLink[]>([]);
@@ -259,57 +265,112 @@ export default function Support() {
             </div>
           ) : (
             <div className="space-y-6">
-              {guidesByCategory.map(({ category, products }) => (
-                <div key={category.id} className="rounded-lg overflow-hidden" style={{ border: '1px solid #eee' }}>
-                  <div className="px-5 py-3 font-semibold text-sm" style={{ background: '#f7f8f8', color: '#0F1111' }}>
-                    {category.name}
-                  </div>
-
-                  <div className="p-4 space-y-4" style={{ background: '#fafafa' }}>
-                    {Object.values(products).sort((a, b) => (a.guides[0]?.sort_order ?? 0) - (b.guides[0]?.sort_order ?? 0)).map((product) => (
-                      <div key={product.tag} className="rounded-lg overflow-hidden bg-white" style={{ border: '1px solid #e5e5e5' }}>
-                        <div className="flex items-center gap-3 px-4 py-2.5" style={{ background: '#f7f8f8', borderBottom: '1px solid #eee' }}>
-                          {product.icon_url ? (
-                            <img src={product.icon_url} alt="" className="w-10 h-10 rounded-full object-cover border border-gray-200 flex-shrink-0" />
-                          ) : (
-                            <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#e5e7eb' }}>
-                              <HelpCircle className="w-5 h-5" style={{ color: '#9ca3af' }} />
-                            </div>
-                          )}
-                          <span className="text-sm font-medium text-gray-900">{product.tag}</span>
-                        </div>
-                        <div className="divide-y divide-gray-100">
-                          {product.guides.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)).map((guide) => (
-                            <div key={guide.id} className="flex flex-col sm:flex-row sm:items-center gap-2 px-4 py-3">
-                              <div className="flex items-center gap-2 flex-1 min-w-0">
-                                <span
-                                  title={getLangFullName(guide.country_code)}
-                                  className="inline-flex items-center justify-center w-8 h-5 rounded text-[10px] font-bold flex-shrink-0 bg-indigo-50 text-indigo-800 border border-indigo-200"
-                                >{guide.language || getLangLabel(guide.country_code)}</span>
-                                <span className="text-sm truncate text-gray-900">{guide.title || product.tag}</span>
+              {guidesByCategory.map(({ category, products }) => {
+                const isCatCollapsed = collapsedCats.has(category.id);
+                return (
+                  <div key={category.id} className="rounded-lg overflow-hidden" style={{ border: '1px solid #eee' }}>
+                    {/* Category header (Level 1) — clickable toggle */}
+                    <button onClick={() => toggleCat(category.id)} className="w-full flex items-center justify-between px-5 py-3 font-semibold text-sm cursor-pointer bg-gray-100 text-gray-900">
+                      <span>{category.name}</span>
+                      {isCatCollapsed ? <ChevronRight className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                    </button>
+                    {/* Products (Level 2) */}
+                    {!isCatCollapsed && (
+                      <div className="p-4 space-y-4 bg-gray-50">
+                        {Object.values(products).sort((a, b) => (a.guides[0]?.sort_order ?? 0) - (b.guides[0]?.sort_order ?? 0)).map((product) => {
+                          const tagKey = `${category.id}:${product.tag}`;
+                          const isTagCollapsed = collapsedTags.has(tagKey);
+                          // Single guide: merge Level 2 + Level 3 into one row
+                          if (product.guides.length === 1) {
+                            const guide = product.guides[0];
+                            return (
+                              <div key={product.tag} className="flex flex-col sm:flex-row sm:items-center gap-2 px-4 py-3 rounded-lg bg-white border border-gray-200">
+                                <div className="flex items-center gap-3 flex-1 min-w-0">
+                                  {product.icon_url ? (
+                                    <img src={product.icon_url} alt="" className="w-10 h-10 rounded-full object-cover border border-gray-200 flex-shrink-0" />
+                                  ) : (
+                                    <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-gray-200">
+                                      <HelpCircle className="w-5 h-5 text-gray-400" />
+                                    </div>
+                                  )}
+                                  <span className="text-sm font-medium text-gray-900">{product.tag}</span>
+                                  <span
+                                    title={getLangFullName(guide.country_code)}
+                                    className="inline-flex items-center justify-center w-8 h-5 rounded text-[10px] font-bold flex-shrink-0 bg-indigo-50 text-indigo-800 border border-indigo-200"
+                                  >{guide.language || getLangLabel(guide.country_code)}</span>
+                                </div>
+                                <div className="flex items-center gap-2 flex-shrink-0">
+                                  {guide.video_url && (
+                                    <a href={guide.video_url} target="_blank" rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all bg-brand-600 text-white border border-brand-700 hover:bg-brand-700">
+                                      <Video className="w-3 h-3" />{t("watchVideo") || "Video"}
+                                    </a>
+                                  )}
+                                  {guide.manual_url && (
+                                    <button onClick={() => downloadFile(guide.manual_url, (guide.title || product.tag).replace(/[^a-zA-Z0-9]/g, "_"))}
+                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer bg-white text-gray-900 border border-gray-200 hover:border-brand-300">
+                                      <Download className="w-3 h-3" />{t("downloadManual") || "Manual"}
+                                    </button>
+                                  )}
+                                </div>
                               </div>
-                              <div className="flex items-center gap-2 flex-shrink-0">
-                                {guide.video_url && (
-                                  <a href={guide.video_url} target="_blank" rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all bg-brand-600 text-white border border-brand-700 hover:bg-brand-700">
-                                    <Video className="w-3 h-3" />{t("watchVideo") || "Video"}
-                                  </a>
-                                )}
-                                {guide.manual_url && (
-                                  <button onClick={() => downloadFile(guide.manual_url, (guide.title || product.tag).replace(/[^a-zA-Z0-9]/g, "_"))}
-                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer bg-white text-gray-900 border border-gray-200 hover:border-brand-300">
-                                    <Download className="w-3 h-3" />{t("downloadManual") || "Manual"}
-                                  </button>
-                                )}
-                              </div>
+                            );
+                          }
+                          // Multi guides: normal 3-level display with collapsible tag
+                          return (
+                            <div key={product.tag} className="rounded-lg overflow-hidden bg-white border border-gray-200">
+                              {/* Tag header (Level 2) — clickable toggle */}
+                              <button onClick={() => toggleTag(tagKey)} className="w-full flex items-center justify-between px-4 py-2.5 cursor-pointer bg-gray-100">
+                                <div className="flex items-center gap-3">
+                                  {product.icon_url ? (
+                                    <img src={product.icon_url} alt="" className="w-10 h-10 rounded-full object-cover border border-gray-200 flex-shrink-0" />
+                                  ) : (
+                                    <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-gray-200">
+                                      <HelpCircle className="w-5 h-5 text-gray-400" />
+                                    </div>
+                                  )}
+                                  <span className="text-sm font-medium text-gray-900">{product.tag}</span>
+                                </div>
+                                {isTagCollapsed ? <ChevronRight className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                              </button>
+                              {/* Language variants (Level 3) */}
+                              {!isTagCollapsed && (
+                                <div className="divide-y divide-gray-100">
+                                  {product.guides.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)).map((guide) => (
+                                    <div key={guide.id} className="flex flex-col sm:flex-row sm:items-center gap-2 px-4 py-3">
+                                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                                        <span
+                                          title={getLangFullName(guide.country_code)}
+                                          className="inline-flex items-center justify-center w-8 h-5 rounded text-[10px] font-bold flex-shrink-0 bg-indigo-50 text-indigo-800 border border-indigo-200"
+                                        >{guide.language || getLangLabel(guide.country_code)}</span>
+                                        <span className="text-sm truncate text-gray-900">{guide.title || product.tag}</span>
+                                      </div>
+                                      <div className="flex items-center gap-2 flex-shrink-0">
+                                        {guide.video_url && (
+                                          <a href={guide.video_url} target="_blank" rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all bg-brand-600 text-white border border-brand-700 hover:bg-brand-700">
+                                            <Video className="w-3 h-3" />{t("watchVideo") || "Video"}
+                                          </a>
+                                        )}
+                                        {guide.manual_url && (
+                                          <button onClick={() => downloadFile(guide.manual_url, (guide.title || product.tag).replace(/[^a-zA-Z0-9]/g, "_"))}
+                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer bg-white text-gray-900 border border-gray-200 hover:border-brand-300">
+                                            <Download className="w-3 h-3" />{t("downloadManual") || "Manual"}
+                                          </button>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                             </div>
-                          ))}
-                        </div>
+                          );
+                        })}
                       </div>
-                    ))}
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>
